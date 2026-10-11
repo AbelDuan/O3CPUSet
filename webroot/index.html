@@ -846,6 +846,30 @@ async function applyFreqAll() {
 }
 
 // 顶部「应用」→ 分应用频率页：把当前窗口里所有下拉选择写回 app_freq.tsv，并保活守护
+// 小程序分组：把一个档位应用到整组子进程（复用 batch 接口，一次提交）
+async function applyMiniGroupThread(key, val) {
+  const g = splitMiniGroups(S.apps || []).groups.filter(x => x.key === key)[0];
+  if (!g) { showToast('找不到分组：' + key); return; }
+  const role = (val && val !== 'auto') ? val : 'auto';
+  const rows = g.items.map(a => a.pkg + '\t' + role);
+  const r = await busy('应用到整组…', () => Api.aethersetbatch(b64enc(rows.join('\n'))));
+  showToast(/OK/.test(r)
+    ? ('✅ ' + g.label + ' ' + rows.length + ' 个子进程 → ' + (role === 'auto' ? '跟随自动' : role))
+    : ('失败：' + (r || '').slice(0, 60)));
+  await loadApps(); await refreshAether(); renderApps();
+}
+
+async function applyMiniGroupFreq(key, val) {
+  const g = splitMiniGroups(S.appList || []).groups.filter(x => x.key === key)[0];
+  if (!g) { showToast('找不到分组：' + key); return; }
+  const rows = g.items.map(a => a.pkg + '\t' + val);
+  const r = await busy('应用到整组…', () => Api.appfreqbatch(b64enc(rows.join('\n'))));
+  showToast(/OK/.test(r)
+    ? ('✅ ' + g.label + ' ' + rows.length + ' 个子进程频率已设置')
+    : ('失败：' + (r || '').slice(0, 60)));
+  await loadAppFreq(); await Api.ensureguard(); renderAppFreq();
+}
+
 async function applyAppFreqAll() {
   const rows = [];
   const seenF = new Set();
@@ -1629,7 +1653,14 @@ function openSchemeSheet() {
    ============================================================ */
 document.addEventListener('click', async (e) => {
   const act = e.target.closest('[data-act]');
-  if (act) { const fn = ACTIONS[act.dataset.act]; if (fn) { await fn(act); return; } }
+  // ★ 点行内交互控件（下拉/按钮/勾选）时**不触发行级动作**：
+  //   分组行整行挂了 togglegrp，若不拦截，点下拉会被抢走 → 表现为
+  //   「点一下变成展开、改不了配置」。
+  //   inner !== act 保证动作元素**自身**（如删除按钮）仍有正常行为。
+  const inner = e.target.closest('select,button,input,a,label,option');
+  if (act && !(inner && inner !== act && act.contains(inner))) {
+    const fn = ACTIONS[act.dataset.act]; if (fn) { await fn(act); return; }
+  }
   if (e.target.closest('[data-scheme]')) return;
   // 分应用频率 / 线程页 的筛选 chips
   const flt = e.target.closest('[data-flt]');
@@ -1657,6 +1688,17 @@ document.addEventListener('change', async (e) => {
   }
   if (e.target.id === 'appfreq-presetfilter') {
     S.appPresetFilter = e.target.value; S.appShow = 40; renderAppFreq(); return;
+  }
+  // ★ 小程序分组下拉（线程页 data-setmini / 频率页 data-appfreqgrp）
+  //   之前只处理 data-set / data-appfreq，分组下拉没有 handler → 改了不生效
+  const setm = e.target.closest('select[data-mini="1"]');
+  if (setm) {
+    if (setm.hasAttribute('data-appfreqgrp')) {
+      await applyMiniGroupFreq(setm.dataset.appfreqgrp, setm.value); return;
+    }
+    if (setm.hasAttribute('data-setmini')) {
+      await applyMiniGroupThread(setm.dataset.setmini, setm.value); return;
+    }
   }
   const sel = e.target.closest('[data-sel]');
   if (sel && sel.closest('#apps-card')) {

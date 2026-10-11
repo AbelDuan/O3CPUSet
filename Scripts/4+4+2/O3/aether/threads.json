@@ -1280,9 +1280,19 @@
       }
     },
     {
-      "friendly": "微信小程序·appbrand1",
+      "friendly": "微信小程序",
       "packages": [
-        "com.tencent.mm:appbrand1"
+        "com.tencent.mm:*"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "支付宝小程序",
+      "packages": [
+        "com.eg.android.AlipayGphone:*"
       ],
       "cpuset": {
         "main_thread": "{all_core}",
@@ -1857,16 +1867,6 @@
             "*.tencent.mm"
           ]
         }
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand0",
-      "packages": [
-        "com.tencent.mm:appbrand0"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
       }
     },
     {
@@ -6076,156 +6076,6 @@
             "RenderThread"
           ]
         }
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand2",
-      "packages": [
-        "com.tencent.mm:appbrand2"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand3",
-      "packages": [
-        "com.tencent.mm:appbrand3"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand4",
-      "packages": [
-        "com.tencent.mm:appbrand4"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand5",
-      "packages": [
-        "com.tencent.mm:appbrand5"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand6",
-      "packages": [
-        "com.tencent.mm:appbrand6"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand7",
-      "packages": [
-        "com.tencent.mm:appbrand7"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand8",
-      "packages": [
-        "com.tencent.mm:appbrand8"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand9",
-      "packages": [
-        "com.tencent.mm:appbrand9"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "微信小程序·appbrand",
-      "packages": [
-        "com.tencent.mm:appbrand"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "支付宝小程序·sandboxed_privilege_process0",
-      "packages": [
-        "com.eg.android.AlipayGphone:sandboxed_privilege_process0"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "支付宝小程序·sandboxed_privilege_process1",
-      "packages": [
-        "com.eg.android.AlipayGphone:sandboxed_privilege_process1"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "支付宝小程序·sandboxed_privilege_process2",
-      "packages": [
-        "com.eg.android.AlipayGphone:sandboxed_privilege_process2"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "支付宝小程序·sandboxed_privilege_process3",
-      "packages": [
-        "com.eg.android.AlipayGphone:sandboxed_privilege_process3"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "支付宝小程序·sandboxed_privilege_process4",
-      "packages": [
-        "com.eg.android.AlipayGphone:sandboxed_privilege_process4"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
-      }
-    },
-    {
-      "friendly": "支付宝小程序·sandboxed_privilege_process",
-      "packages": [
-        "com.eg.android.AlipayGphone:sandboxed_privilege_process"
-      ],
-      "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
       }
     }
   ]
