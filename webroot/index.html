@@ -1041,9 +1041,9 @@ function renderAppFreq(keepScroll, noHydrate) {
   if (cnt) { cnt.textContent = all.length + ' 个'; cnt.className = 'pill'; }
   // 多选工具条（置顶，静态结构在 viewAppFreq 里）：只更新计数
   updateSelCounts();
-  const sliced = all.slice(0, S.appShow);
-  const sgF = splitMiniGroups(sliced);
-  const list = sgF.rest;
+  // ★ 同线程页：完整列表上分组，分页只作用于普通应用
+  const sgF = splitMiniGroups(all);
+  const list = sgF.rest.slice(0, S.appShow);
   if (!list.length && !sgF.groups.length) {
     win.innerHTML = '<div class="empty">没有匹配的应用<br>换个筛选或搜索词试试</div>';
     return;
@@ -1061,8 +1061,8 @@ function renderAppFreq(keepScroll, noHydrate) {
       (cur ? '<button class="btn btn-xs ghost" data-act="appfreqdel" data-pkg="' + esc(p.pkg) + '">移除</button>' : '') +
     '</div>';
   }).join('');
-  if (all.length > sliced.length) {
-    win.innerHTML += '<div class="winmore" data-act="appfreqmore">加载更多（已显示 ' + sliced.length + '/' + all.length + '）</div>';
+  if (sgF.rest.length > S.appShow) {
+    win.innerHTML += '<div class="winmore" data-act="appfreqmore">加载更多（已显示 ' + list.length + '/' + sgF.rest.length + '）</div>';
   }
   bindAppwinScroll('appfreq-win');
   if (prevTop) win.scrollTop = prevTop;
@@ -1293,17 +1293,25 @@ function currentPkgs() {
 // ================= 小程序分组（WebUI 折叠）=================
 //  17 个子进程折叠成 2 个可配档位的分组行；点开展开显示明细（只读）。
 //  改分组档位 = 通过 aethersetbatch 批量改整组所有子进程。
-//   正则覆盖该宿主在应用列表里的全部子进程（截至 v18.3.2-nobig）：
-//     微信     com.tencent.mm:{appbrand, appbrand0-9, toolsmp}  = 12
-//     支付宝   com.eg.android.AlipayGphone:sandboxed_privilege_process{0-4} = 6
+//   匹配用**通配**（glob，仅支持 *）：宿主包名 + ":" + "*" 即覆盖其全部子进程。
+//   微信     com.tencent.mm:*      （appbrand, appbrand0-9, toolsmp, 未来新增…）
+//   支付宝   com.eg.android.AlipayGphone:*
+//   好处：宿主新增子进程命名无需改代码；未命中者退回普通应用行，不会丢配置能力。
 var MINI_GROUPS = [
-  { key: 'com.tencent.mm:appbrand', label: '微信小程序',
-    re: /^com\.tencent\.mm:(appbrand|toolsmp)/ },
-  { key: 'com.eg.android.AlipayGphone:sandboxed_privilege_process', label: '支付宝小程序',
-    re: /^com\.eg\.android\.AlipayGphone:sandboxed_privilege_process/ }
+  { key: 'com.tencent.mm:*', label: '微信小程序' },
+  { key: 'com.eg.android.AlipayGphone:*', label: '支付宝小程序' }
 ];
+// glob → 正则（转义正则元字符后把 \* 还原为 .*），结果缓存
+var MINI_RE = {};
+function miniPatternRe(pat) {
+  if (!MINI_RE[pat]) {
+    var esc = pat.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\\*/g, '.*');
+    MINI_RE[pat] = new RegExp('^' + esc + '$');
+  }
+  return MINI_RE[pat];
+}
 function splitMiniGroups(apps) {
-  var gs = MINI_GROUPS.map(function (g) { return { key: g.key, label: g.label, re: g.re, items: [] }; });
+  var gs = MINI_GROUPS.map(function (g) { return { key: g.key, label: g.label, re: miniPatternRe(g.key), items: [] }; });
   var rest = [];
   apps.forEach(function (a) {
     for (var i = 0; i < gs.length; i++) {
@@ -1380,15 +1388,16 @@ function renderApps(noHydrate) {
   var all = currentPkgs();
   var cnt = document.getElementById('apps-count');
   if (cnt) { cnt.textContent = all.length + ' 个'; cnt.className = 'pill'; }
-  // 子进程折叠成分组行（2 行）而不是 17 行
-  var sg = splitMiniGroups(all.slice(0, S.showCount));
-  var list = sg.rest;
-  if (!list.length && !sg.groups.length) { card.innerHTML = '<div class="empty">没有匹配的应用<br>换个筛选或搜索词试试</div>'; return; }
-  var html = sg.groups.map(function (g) { return miniGroupHtml(g, !!(S.openGrp && S.openGrp[g.key])); }).join('');
+  // ★ 在完整列表上分组：分组行恒定 2 行（不受分页影响、计数准确），
+  //   分页只作用于普通应用 —— 否则小程序会占掉「加载更多」的名额
+  var sgAll = splitMiniGroups(all);
+  var list = sgAll.rest.slice(0, S.showCount);
+  if (!list.length && !sgAll.groups.length) { card.innerHTML = '<div class="empty">没有匹配的应用<br>换个筛选或搜索词试试</div>'; return; }
+  var html = sgAll.groups.map(function (g) { return miniGroupHtml(g, !!(S.openGrp && S.openGrp[g.key])); }).join('');
   html += list.map(appRowHtml).join('');
   card.innerHTML = html;
-  if (all.length > S.showCount) {
-    card.innerHTML += '<div class="winmore" data-act="loadmore">加载更多（已显示 ' + S.showCount + '/' + all.length + '）</div>';
+  if (sgAll.rest.length > S.showCount) {
+    card.innerHTML += '<div class="winmore" data-act="loadmore">加载更多（已显示 ' + list.length + '/' + sgAll.rest.length + '）</div>';
   }
   bindAppwinScroll('apps-card');
   updateSelCounts();
