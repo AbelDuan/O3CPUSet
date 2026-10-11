@@ -31,9 +31,11 @@ BASE="$STATE_DIR/threads_base.json"
 OVR="$STATE_DIR/aether_overrides.tsv"
 # 应用→核位映射（由 base 生成，WebUI 展示用）：包名<TAB>核位<TAB>艇长名
 APPRULES="$STATE_DIR/apprules.tsv"
-# 模块内置的应用档位表（含小程序等子进程定义）：包名<TAB>档位
-APP_ASSIGN_SRC="$MODDIR/Config/app_assign.tsv"
-[ -f "$APP_ASSIGN_SRC" ] || APP_ASSIGN_SRC="$STATE_DIR/webui/app_assign.tsv"
+# 应用档位表（含小程序等子进程定义）：包名<TAB>档位
+#   ⚠ state 优先：WebUI 改档位写的是 $STATE_DIR/webui/app_assign.tsv，
+#     读模块内置那份会导致"改了不生效"。模块内置仅作首装种子。
+APP_ASSIGN_SRC="$STATE_DIR/webui/app_assign.tsv"
+[ -f "$APP_ASSIGN_SRC" ] || APP_ASSIGN_SRC="$MODDIR/Config/app_assign.tsv"
 mkdir -p "$STATE_DIR" "$TMPD" 2>/dev/null
 
 has(){ command -v "$1" >/dev/null 2>&1; }
@@ -388,21 +390,7 @@ cmd_apps() {
     pm list packages -3 2>/dev/null | sed 's/^package://' | sort -u > "$lp"
   fi
   pm list packages -s 2>/dev/null | sed 's/^package://' | sort -u > "$sp"
-  # ★ v18.3.2-nobig：补入「模块已配置的子进程」（微信/支付宝小程序等无 LAUNCHER 入口的子进程）
-  #   这些包名含 ":"，必须出现在应用列表里才能单独设档位。
-  if [ -f "$APP_ASSIGN_SRC" ] || [ -s "$OVR" ] || [ -s "$APPRULES" ]; then
-    local subf="${TMPD}/subpkgs.txt"
-    : > "$subf"
-    [ -f "$APP_ASSIGN_SRC" ] && cut -f1 "$APP_ASSIGN_SRC" 2>/dev/null >> "$subf"
-    [ -s "$OVR" ]            && cut -f1 "$OVR" 2>/dev/null             >> "$subf"
-    [ -s "$APPRULES" ]       && cut -f1 "$APPRULES" 2>/dev/null        >> "$subf"
-    awk 'NF>0 { p=$1; gsub(/[ \r]/,"",p); if (p!="" && index(p,":")>0) print p }' \
-      "$subf" >> "$lp" 2>/dev/null
-    rm -f "$subf" 2>/dev/null
-  fi
-  # 去重（\`sort -u -o\` 在 toybox 下等价于 sort -u + 覆盖写）
-  sort -u "$lp" > "${lp}.s" 2>/dev/null && mv -f "${lp}.s" "$lp" 2>/dev/null
-  # ① 预处理三张表 → 统一映射（避免多文件 awk + fc 计数的脆弱性）
+  # 预处理三张表 → 统一映射 "pkg|kind|...": 一次读入，后面不再 fork
   : > "$mp"
   [ -s "$OVR" ] && awk -F'\t' 'NF>=2 && $1!="" { print $1 "|custom|" $2 }' \
       "$OVR" >> "$mp" 2>/dev/null
@@ -410,6 +398,11 @@ cmd_apps() {
       "$APPRULES" >> "$mp" 2>/dev/null
   [ -f "$APP_ASSIGN_SRC" ] && awk -F'\t' 'NF>=2 && $1!="" { print $1 "|assign|" $2 }' \
       "$APP_ASSIGN_SRC" >> "$mp" 2>/dev/null
+  # 补入含 ":" 的子进程（小程序等无 LAUNCHER 入口，query-activities 取不到）
+  #   → 直接从 $mp 取，无需再读一遍三张表
+  awk -F'|' 'index($1,":")>0 { print $1 }' "$mp" >> "$lp" 2>/dev/null
+  sort -u "$lp" > "${lp}.tmp" 2>/dev/null
+  mv -f "${lp}.tmp" "$lp" 2>/dev/null
   # ② 单趟输出：优先 自定义 > 规则集 > 内置档 > 未配置
   awk -F'|' -v OFS='|' '
     # 第一遍：读映射表
@@ -431,7 +424,11 @@ cmd_apps() {
       if (p in as) { print "APP=" p, s, "1", "1", as[p], "模块内置"; next }
       print "APP=" p, s, "0", "0", "", ""
     }
-  ' "$mp" "$lp"
+  ' "$mp" "$lp" | awk -F'|' '
+    # 小程序/子进程（包名含 ":"）前置：showCount 有限，放最后等于看不见
+    { if (index($1, ":")) pri[++n]=$0; else oth[++m]=$0 }
+    END { for (i=1;i<=n;i++) print pri[i]; for (i=1;i<=m;i++) print oth[i] }
+  '
   rm -f "$mp" 2>/dev/null
 }
 
