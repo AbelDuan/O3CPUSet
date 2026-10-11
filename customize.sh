@@ -114,14 +114,15 @@ ui_print " "
 ui_print "---------- 线程引擎（艇长 Aether）----------"
 chmod 0755 "$MODPATH/Scripts/4+4+2/O3/aether/aether_ctl.sh" 2>/dev/null
 chmod 0755 "$MODPATH/Scripts/4+4+2/O3/aether/aether-optext" 2>/dev/null
-# ★ v18.3.2-nobig 分支自愈：本分支的 zip 内 aether-optext 已是「去动态升核」复刻版
-#   （patch 0x6a5e8 / 0x6a864 两道 tbz 闸门为无条件 b → 永不 promoted to perf cores）。
-#   若设备上被旧版/手动替换回原版，这里用 zip 内的复刻版盖回去，避免升级后静默失效。
+# ★ v18.3.2-nobig 分支自愈：本分支 zip 内 aether-optext 已是「去升核」复刻版
+#   （patch：0x6a5e8/0x6a864 置 tbz→b；0x5f22c/0x5f544 置 bl→NOP）。
+#   哈希：d1096544…（现行：禁 promoted 两道 + NOP load_aware 两处落核）  原版=d9153c58…
 if [ -f "$MODPATH/Scripts/4+4+2/O3/aether/aether-optext" ]; then
     _cursum=$(sha256sum "$MODPATH/Scripts/4+4+2/O3/aether/aether-optext" 2>/dev/null | cut -d' ' -f1)
     case "$_cursum" in
-      d9153c58*|693fe35a*) : ;;   # 已是本分支版本，无需处理
-      *) ui_print "- 注意：二进制哈希异常（$_cursum），已按本分支复刻版部署" ;;
+      d1096544*) ui_print "- 线程引擎：nobig 复刻版（已禁升核 8-9）" ;;
+      d9153c58*) ui_print "- ⚠ 线程引擎为原版（动态升核仍在），非 nobig 方案" ;;
+      *)         ui_print "- 线程引擎哈希: $_cursum" ;;
     esac
 fi
 # 默认开启艇长线程引擎（用户要求：线程核心分配直接用艇长的方案）

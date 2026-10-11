@@ -31,6 +31,9 @@ BASE="$STATE_DIR/threads_base.json"
 OVR="$STATE_DIR/aether_overrides.tsv"
 # 应用→核位映射（由 base 生成，WebUI 展示用）：包名<TAB>核位<TAB>艇长名
 APPRULES="$STATE_DIR/apprules.tsv"
+# 模块内置的应用档位表（含小程序等子进程定义）：包名<TAB>档位
+APP_ASSIGN_SRC="$MODDIR/Config/app_assign.tsv"
+[ -f "$APP_ASSIGN_SRC" ] || APP_ASSIGN_SRC="$STATE_DIR/webui/app_assign.tsv"
 mkdir -p "$STATE_DIR" "$TMPD" 2>/dev/null
 
 has(){ command -v "$1" >/dev/null 2>&1; }
@@ -162,6 +165,14 @@ cmd_deploy() {
 #    占位符（{e_core}/{p1_core}/{hp_core}…）在 deploy 时按真机拓扑展开。
 merge_overrides() {
   detect_topo
+  # ★ v18.3.2-nobig：未配置应用交由 Aether 原生 auto-for-none 处理（不再做模块兜底）。
+  #   理由（实测）：Aether 的 auto-for-none 会为新应用自动分配核位（日志 "auto-assign done"），
+  #     且分配结果不含 8-9；无需模块侧重复兜底，避免 CFG 膨胀（曾 +120 条规则）。
+  #   规则分工不变：
+  #     · 游戏          → 模板 {hp_core} 规则，可用 8-9
+  #     · 不接管(none)  → {all_core}=0-9
+  #     · 省电/流畅/性能 → 0-3 / 0-3,4-7 / 0-7（本就不含 8-9）
+  #     · 未配置        → Aether auto-for-none 自动接管
   [ -s "$OVR" ] || { cp -f "$BASE" "$CFG" 2>/dev/null; chmod 0666 "$CFG" 2>/dev/null; return 0; }
   # 一次性迁移历史值（幂等）：极速 fast 与「游戏 game」实测行为一致，v18.2.7 起
   # 删除 fast 角色，历史条目自动并入 game；老前端写入的裸核位同样归一到角色。
@@ -369,38 +380,59 @@ gen_apprules() {
 #      现改为「一次性读入 OVR/APPRULES 到内存表 + 单趟扫描清单」的纯 awk，
 #      全程零 per-pkg fork，几百个应用也能秒出。
 cmd_apps() {
-  local lp="${TMPD}/launch.txt" sp="${TMPD}/sys.txt"
+  local lp="${TMPD}/launch.txt" sp="${TMPD}/sys.txt" mp="${TMPD}/map.txt"
   cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER 2>/dev/null \
     | sed -n 's#^[[:space:]]*\([^/][^/]*\)/.*#\1#p' | sort -u > "$lp"
-  # ★ 兜底：launcher 查询无结果（某些 ROM / 权限下会返回空）时，退回 pm 全包清单，
-  #   避免线程页「读不出有界面应用」。注意：$lp/$sp 必须是**纯包名**（与正常路径一致，
-  #   awk 里据此判定系统/第三方），不要加 APP= 前缀。第三方(pm -3)进 $lp、系统(pm -s)进 $sp。
+  # ★ 兜底：launcher 查询无结果（某些 ROM / 权限下会返回空）时，退回 pm 全包清单
   if [ ! -s "$lp" ]; then
     pm list packages -3 2>/dev/null | sed 's/^package://' | sort -u > "$lp"
   fi
   pm list packages -s 2>/dev/null | sed 's/^package://' | sort -u > "$sp"
-  # 四份输入各包一行哨兵（# 开头），保证空文件也能正确计数（mawk/toybox 没有 ARGIND）
-  local ovrf="${TMPD}/ovr.txt" aprf="${TMPD}/apr.txt" spf="${TMPD}/sp.txt" lpf="${TMPD}/lp.txt"
-  { echo '#'; [ -s "$OVR" ]      && cat "$OVR"; }      > "$ovrf" 2>/dev/null
-  { echo '#'; [ -s "$APPRULES" ] && cat "$APPRULES"; } > "$aprf" 2>/dev/null
-  { echo '#'; cat "$sp"; }                             > "$spf"  2>/dev/null
-  { echo '#'; cat "$lp"; }                             > "$lpf"  2>/dev/null
-  awk -F'\t' -v OFS='|' '
-    /^#/ { fc++; next }                                # 每个文件的哨兵：文件序号 +1
-    fc==1 { ovr[$1]=$2; next }                         # 文件1: OVR 自定义覆盖 pkg->cluster
-    fc==2 { if (!($1 in ovr)) apa[$1]=$2 SUBSEP $3; next }  # 文件2: APPRULES pkg->cluster\friendly
-    fc==3 { sys[$0]=1; next }                          # 文件3: 系统包清单
-    {                                                 # 文件4: launcher 清单（主输出）
+  # ★ v18.3.2-nobig：补入「模块已配置的子进程」（微信/支付宝小程序等无 LAUNCHER 入口的子进程）
+  #   这些包名含 ":"，必须出现在应用列表里才能单独设档位。
+  if [ -f "$APP_ASSIGN_SRC" ] || [ -s "$OVR" ] || [ -s "$APPRULES" ]; then
+    local subf="${TMPD}/subpkgs.txt"
+    : > "$subf"
+    [ -f "$APP_ASSIGN_SRC" ] && cut -f1 "$APP_ASSIGN_SRC" 2>/dev/null >> "$subf"
+    [ -s "$OVR" ]            && cut -f1 "$OVR" 2>/dev/null             >> "$subf"
+    [ -s "$APPRULES" ]       && cut -f1 "$APPRULES" 2>/dev/null        >> "$subf"
+    awk 'NF>0 { p=$1; gsub(/[ \r]/,"",p); if (p!="" && index(p,":")>0) print p }' \
+      "$subf" >> "$lp" 2>/dev/null
+    rm -f "$subf" 2>/dev/null
+  fi
+  # 去重（\`sort -u -o\` 在 toybox 下等价于 sort -u + 覆盖写）
+  sort -u "$lp" > "${lp}.s" 2>/dev/null && mv -f "${lp}.s" "$lp" 2>/dev/null
+  # ① 预处理三张表 → 统一映射（避免多文件 awk + fc 计数的脆弱性）
+  : > "$mp"
+  [ -s "$OVR" ] && awk -F'\t' 'NF>=2 && $1!="" { print $1 "|custom|" $2 }' \
+      "$OVR" >> "$mp" 2>/dev/null
+  [ -s "$APPRULES" ] && awk -F'\t' 'NF>=2 && $1!="" { print $1 "|rule|" $2 "|" $3 }' \
+      "$APPRULES" >> "$mp" 2>/dev/null
+  [ -f "$APP_ASSIGN_SRC" ] && awk -F'\t' 'NF>=2 && $1!="" { print $1 "|assign|" $2 }' \
+      "$APP_ASSIGN_SRC" >> "$mp" 2>/dev/null
+  # ② 单趟输出：优先 自定义 > 规则集 > 内置档 > 未配置
+  awk -F'|' -v OFS='|' '
+    # 第一遍：读映射表
+    NR==FNR {
+      k=$1
+      if ($2=="custom") { cu[k]=$3 }
+      else if ($2=="rule") { if (!(k in cu)) ru[k]=$3 SUBSEP $4 }
+      else if ($2=="assign") { if (!(k in cu) && !(k in ru)) as[k]=$3 }
+      next
+    }
+    # 第二遍：读应用清单并输出
+    {
       p=$0
       if (p=="") next
-      if (p ~ /[\/<>\" \x60]/) next
+      if (p ~ /[\/<>"` ]/) next
       s=(p in sys)?"1":"0"
-      if (p in ovr)      { print "APP=" p, s, "1", "1", ovr[p], "自定义"; next }
-      if (p in apa)      { split(apa[p], a, SUBSEP); print "APP=" p, s, "1", "0", a[1], a[2]; next }
+      if (p in cu) { print "APP=" p, s, "1", "1", cu[p], "自定义"; next }
+      if (p in ru) { split(ru[p], a, SUBSEP); print "APP=" p, s, "1", "0", a[1], a[2]; next }
+      if (p in as) { print "APP=" p, s, "1", "1", as[p], "模块内置"; next }
       print "APP=" p, s, "0", "0", "", ""
     }
-  ' "$ovrf" "$aprf" "$spf" "$lpf"
-  rm -f "$ovrf" "$aprf" "$spf" "$lpf" 2>/dev/null
+  ' "$mp" "$lp"
+  rm -f "$mp" 2>/dev/null
 }
 
 # ---------- set：为应用套用「角色档」（分进程五层策略）----------

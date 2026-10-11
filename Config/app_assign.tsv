@@ -43,3 +43,20 @@ com.samsung.agc.gcam84	fast
 cn.ianzb.hypernavbar	balance
 com.tencent.jkchess	performance
 com.tencent.tmgp.sgame	performance
+# v18.3.2-nobig: 小程序独立化（默认不接管 0-9，用户可自行改档位）
+com.tencent.mm:appbrand0	fast
+com.tencent.mm:appbrand1	fast
+com.tencent.mm:appbrand2	fast
+com.tencent.mm:appbrand3	fast
+com.tencent.mm:appbrand4	fast
+com.tencent.mm:appbrand5	fast
+com.tencent.mm:appbrand6	fast
+com.tencent.mm:appbrand7	fast
+com.tencent.mm:appbrand8	fast
+com.tencent.mm:appbrand9	fast
+com.eg.android.AlipayGphone:sandboxed_privilege_process0	fast
+com.eg.android.AlipayGphone:sandboxed_privilege_process1	fast
+com.eg.android.AlipayGphone:sandboxed_privilege_process2	fast
+com.eg.android.AlipayGphone:sandboxed_privilege_process3	fast
+com.eg.android.AlipayGphone:sandboxed_privilege_process4	fast
+com.eg.android.AlipayGphone:sandboxed_privilege_process	fast

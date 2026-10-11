@@ -8,7 +8,9 @@
     "blacklist": [],
     "render_guard": true,
     "min_cpus": 4,
-    "lagrange": { "enable": true }
+    "lagrange": {
+      "enable": true
+    }
   },
   "rules": [
     {
@@ -1278,12 +1280,13 @@
       }
     },
     {
-      "friendly": "com.tencent.mm:appbrand1",
+      "friendly": "微信小程序·appbrand1",
       "packages": [
         "com.tencent.mm:appbrand1"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}"
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
       }
     },
     {
@@ -1394,10 +1397,6 @@
       "cpuset": {
         "other": "{e_core},{p_core}",
         "comm": {
-          "{p_core}": [
-            "com.miui.home",
-            "binder*"
-          ],
           "{p_core}": [
             "RenderThread"
           ]
@@ -1861,21 +1860,13 @@
       }
     },
     {
-      "friendly": "微信小程序",
+      "friendly": "微信小程序·appbrand0",
       "packages": [
         "com.tencent.mm:appbrand0"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
-        "comm": {
-          "{p_core}": [
-            "*Re"
-          ],
-          "1-7": [
-            "*appbrand0",
-            "JSR*"
-          ]
-        }
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
       }
     },
     {
@@ -2555,12 +2546,6 @@
         "other": "{e_core},{p_core}",
         "comm": {
           "{p_core}": [
-            "RenderThread",
-            "1.ui",
-            "taobao.idlefish",
-            "1.raster"
-          ],
-          "{p_core}": [
             "*.idlefish",
             "*.ui",
             "*.raster"
@@ -2580,11 +2565,6 @@
       "cpuset": {
         "other": "{e_core},{p_core}",
         "comm": {
-          "{p_core}": [
-            "RenderThread",
-            "sankuai.meituan",
-            "TTE-keyAgreemen"
-          ],
           "{p_core}": [
             "*.meituan"
           ]
@@ -5515,9 +5495,6 @@
         "other": "{e_core},{p_core}",
         "comm": {
           "{p_core}": [
-            "me.ele"
-          ],
-          "{p_core}": [
             "dp2ndk",
             "Xxdn-Worker",
             "1.raster",
@@ -5942,10 +5919,6 @@
         "other": "{e_core},{p_core}",
         "comm": {
           "{p_core}": [
-            "om.xhey.xcamera",
-            "Algorithm-"
-          ],
-          "{p_core}": [
             "RxCachedThreadS"
           ]
         }
@@ -6103,6 +6076,156 @@
             "RenderThread"
           ]
         }
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand2",
+      "packages": [
+        "com.tencent.mm:appbrand2"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand3",
+      "packages": [
+        "com.tencent.mm:appbrand3"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand4",
+      "packages": [
+        "com.tencent.mm:appbrand4"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand5",
+      "packages": [
+        "com.tencent.mm:appbrand5"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand6",
+      "packages": [
+        "com.tencent.mm:appbrand6"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand7",
+      "packages": [
+        "com.tencent.mm:appbrand7"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand8",
+      "packages": [
+        "com.tencent.mm:appbrand8"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand9",
+      "packages": [
+        "com.tencent.mm:appbrand9"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "微信小程序·appbrand",
+      "packages": [
+        "com.tencent.mm:appbrand"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "支付宝小程序·sandboxed_privilege_process0",
+      "packages": [
+        "com.eg.android.AlipayGphone:sandboxed_privilege_process0"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "支付宝小程序·sandboxed_privilege_process1",
+      "packages": [
+        "com.eg.android.AlipayGphone:sandboxed_privilege_process1"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "支付宝小程序·sandboxed_privilege_process2",
+      "packages": [
+        "com.eg.android.AlipayGphone:sandboxed_privilege_process2"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "支付宝小程序·sandboxed_privilege_process3",
+      "packages": [
+        "com.eg.android.AlipayGphone:sandboxed_privilege_process3"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "支付宝小程序·sandboxed_privilege_process4",
+      "packages": [
+        "com.eg.android.AlipayGphone:sandboxed_privilege_process4"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
+      }
+    },
+    {
+      "friendly": "支付宝小程序·sandboxed_privilege_process",
+      "packages": [
+        "com.eg.android.AlipayGphone:sandboxed_privilege_process"
+      ],
+      "cpuset": {
+        "main_thread": "{all_core}",
+        "other": "{all_core}"
       }
     }
   ]
