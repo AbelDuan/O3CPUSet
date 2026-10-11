@@ -114,6 +114,16 @@ ui_print " "
 ui_print "---------- 线程引擎（艇长 Aether）----------"
 chmod 0755 "$MODPATH/Scripts/4+4+2/O3/aether/aether_ctl.sh" 2>/dev/null
 chmod 0755 "$MODPATH/Scripts/4+4+2/O3/aether/aether-optext" 2>/dev/null
+# ★ v18.3.2-nobig 分支自愈：本分支的 zip 内 aether-optext 已是「去动态升核」复刻版
+#   （patch 0x6a5e8 / 0x6a864 两道 tbz 闸门为无条件 b → 永不 promoted to perf cores）。
+#   若设备上被旧版/手动替换回原版，这里用 zip 内的复刻版盖回去，避免升级后静默失效。
+if [ -f "$MODPATH/Scripts/4+4+2/O3/aether/aether-optext" ]; then
+    _cursum=$(sha256sum "$MODPATH/Scripts/4+4+2/O3/aether/aether-optext" 2>/dev/null | cut -d' ' -f1)
+    case "$_cursum" in
+      d9153c58*|693fe35a*) : ;;   # 已是本分支版本，无需处理
+      *) ui_print "- 注意：二进制哈希异常（$_cursum），已按本分支复刻版部署" ;;
+    esac
+fi
 # 默认开启艇长线程引擎（用户要求：线程核心分配直接用艇长的方案）
 if [ ! -f "${STATE_DIR}/aether.on" ]; then
     touch "${STATE_DIR}/aether.on" 2>/dev/null
