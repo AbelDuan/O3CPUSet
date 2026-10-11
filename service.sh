@@ -58,7 +58,10 @@ fi
 #   （CWD 已在文件顶部切到 /，守护与子进程均不持有模块目录，见顶部注释）
 GUARD_SH="$MODDIR/Scripts/4+4+2/O3/guard.sh"
 if [ -f "$GUARD_SH" ]; then
-    nohup sh "$GUARD_SH" </dev/null >> "$LOG_FILE" 2>&1 &
+    # ★ setsid 脱离 KSU 进程组：nohup 只挡 SIGHUP，service.sh 退出时
+    #   KSU 仍会回收整个进程组 → 守护被连带杀掉（WebUI 显示"未运行"）。
+    #   setsid 后 ppid=1，不再受 service.sh 生命周期影响，实测稳定。
+    setsid sh "$GUARD_SH" </dev/null >> "$LOG_FILE" 2>&1 &
     log "· 调度守护已拉起（guard.sh pid $!）"
 fi
 

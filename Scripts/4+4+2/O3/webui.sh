@@ -509,7 +509,8 @@ cmd_ensureguard() {
     fi
     local g="$MODDIR/Scripts/4+4+2/O3/guard.sh"
     [ -f "$g" ] || { echo "ERR 找不到 guard.sh"; return 1; }
-    nohup sh "$g" </dev/null >> "$LOG_FILE" 2>&1 &
+    # ★ 同 service.sh：必须 setsid 脱离进程组，否则被 KSU 回收
+    setsid sh "$g" </dev/null >> "$LOG_FILE" 2>&1 &
     sleep 1
     echo "OK 已重新拉起调度守护（pid $!）"
 }

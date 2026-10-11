@@ -671,7 +671,8 @@ const S = {
   tab: 'freq', status: {}, schemes: [], freqview: {},
   appfreq: {}, appList: null, appShow: 30, appSearch: '',
   aether: {}, apps: [], appsLoaded: false, appfilter: 'all', appsearch: '',
-  sel: new Set(), showCount: 40
+  sel: new Set(), showCount: 40,
+  openGrp: {}  // 小程序分组展开态 {groupKey: true}
 };
 
 function showToast(m) {
@@ -847,8 +848,18 @@ async function applyFreqAll() {
 // 顶部「应用」→ 分应用频率页：把当前窗口里所有下拉选择写回 app_freq.tsv，并保活守护
 async function applyAppFreqAll() {
   const rows = [];
+  const seenF = new Set();
+  // 分组行（微信小程序/支付宝小程序）→ 展开为整组子进程
+  document.querySelectorAll('#appfreq-win select[data-appfreqgrp]').forEach(sel => {
+    const key = sel.dataset.appfreqgrp; const md = sel.value;
+    const g = splitMiniGroups(S.appList || []).groups.filter(x => x.key === key)[0];
+    if (!g) return;
+    g.items.forEach(a => { rows.push(a.pkg + '\t' + md); seenF.add(a.pkg); });
+  });
+  // 普通应用（跳过已被分组覆盖的子进程）
   document.querySelectorAll('#appfreq-win select[data-appfreq]').forEach(sel => {
-    const pkg = sel.dataset.appfreq; const md = sel.value;
+    const pkg = sel.dataset.appfreq; if (seenF.has(pkg)) return;
+    const md = sel.value;
     rows.push(pkg + '\t' + md);
   });
   if (!rows.length) { showToast('没有可保存的分应用频率'); return; }
@@ -863,8 +874,23 @@ async function applyAppFreqAll() {
 // 顶部「应用」→ 线程页：把当前所有下拉选择（含未批量套用的）批量写回
 async function applyThreadAll() {
   const rows = [];
+  const seen = new Set();
+  // 分组下拉（微信小程序/支付宝小程序）→ 展开成整组子进程
+  document.querySelectorAll('#apps-card select[data-setmini]').forEach(sel => {
+    if (!sel.dataset.mini) return;                       // 只处理分组行
+    const key = sel.dataset.setmini; const tpl = sel.value;
+    const g = splitMiniGroups(S.apps).groups.find(x => x.key === key);
+    if (!g) return;
+    g.items.forEach(a => {
+      const role = (tpl && tpl !== 'auto') ? tpl : 'auto';
+      rows.push(a.pkg + '\t' + role);
+      seen.add(a.pkg);
+    });
+  });
+  // 普通应用下拉（跳过已被分组覆盖的子进程）
   document.querySelectorAll('#apps-card select[data-set]').forEach(sel => {
-    const pkg = sel.dataset.set; const tpl = sel.value;
+    const pkg = sel.dataset.set; if (seen.has(pkg)) return;
+    const tpl = sel.value;
     if (tpl && tpl !== 'auto') rows.push(pkg + '\t' + tpl);
     else rows.push(pkg + '\t' + 'auto');
   });
@@ -1015,12 +1041,14 @@ function renderAppFreq(keepScroll, noHydrate) {
   if (cnt) { cnt.textContent = all.length + ' 个'; cnt.className = 'pill'; }
   // 多选工具条（置顶，静态结构在 viewAppFreq 里）：只更新计数
   updateSelCounts();
-  const list = all.slice(0, S.appShow);
-  if (!list.length) {
+  const sliced = all.slice(0, S.appShow);
+  const sgF = splitMiniGroups(sliced);
+  const list = sgF.rest;
+  if (!list.length && !sgF.groups.length) {
     win.innerHTML = '<div class="empty">没有匹配的应用<br>换个筛选或搜索词试试</div>';
     return;
   }
-  win.innerHTML = list.map(p => {
+  win.innerHTML = sgF.groups.map(g => miniGroupHtmlFreq(g, !!(S.openGrp && S.openGrp[g.key]), m)).join('') + list.map(p => {
     const cur = m[p.pkg] || '';
     const opts = APP_MODE_OPTS.map(o => '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('');
     const cfg = cur ? '<span class="pill ok">已设</span>' : '';
@@ -1033,8 +1061,8 @@ function renderAppFreq(keepScroll, noHydrate) {
       (cur ? '<button class="btn btn-xs ghost" data-act="appfreqdel" data-pkg="' + esc(p.pkg) + '">移除</button>' : '') +
     '</div>';
   }).join('');
-  if (all.length > list.length) {
-    win.innerHTML += '<div class="winmore" data-act="appfreqmore">加载更多（已显示 ' + list.length + '/' + all.length + '）</div>';
+  if (all.length > sliced.length) {
+    win.innerHTML += '<div class="winmore" data-act="appfreqmore">加载更多（已显示 ' + sliced.length + '/' + all.length + '）</div>';
   }
   bindAppwinScroll('appfreq-win');
   if (prevTop) win.scrollTop = prevTop;
@@ -1262,39 +1290,108 @@ function currentPkgs() {
   });
 }
 
-function renderApps(noHydrate) {
-  const card = document.getElementById('apps-card'); if (!card) return;
-  const all = currentPkgs();
-  const cnt = document.getElementById('apps-count');
-  if (cnt) { cnt.textContent = all.length + ' 个'; cnt.className = 'pill'; }
-  const list = all.slice(0, S.showCount);
-  if (!list.length) { card.innerHTML = '<div class="empty">没有匹配的应用<br>换个筛选或搜索词试试</div>'; return; }
-  card.innerHTML = list.map(a => {
-    let statusPill, selVal, extra = '';
-    if (a.custom === '1') {
-      statusPill = '<span class="pill accent">自定义</span>'; selVal = a.tpl;
-      extra = '<button class="btn btn-xs ghost" data-act="aetherdel" data-pkg="' + esc(a.pkg) + '">恢复自动</button>';
-    } else if (a.defined === '1') {
-      statusPill = '<span class="pill ok">艇长已配</span>'; selVal = a.tpl;
-    } else {
-      statusPill = '<span class="pill">未接管</span>'; selVal = a.tpl || '';
+// ================= 小程序分组（WebUI 折叠）=================
+//  17 个子进程折叠成 2 个可配档位的分组行；点开展开显示明细（只读）。
+//  改分组档位 = 通过 aethersetbatch 批量改整组所有子进程。
+//   正则覆盖该宿主在应用列表里的全部子进程（截至 v18.3.2-nobig）：
+//     微信     com.tencent.mm:{appbrand, appbrand0-9, toolsmp}  = 12
+//     支付宝   com.eg.android.AlipayGphone:sandboxed_privilege_process{0-4} = 6
+var MINI_GROUPS = [
+  { key: 'com.tencent.mm:appbrand', label: '微信小程序',
+    re: /^com\.tencent\.mm:(appbrand|toolsmp)/ },
+  { key: 'com.eg.android.AlipayGphone:sandboxed_privilege_process', label: '支付宝小程序',
+    re: /^com\.eg\.android\.AlipayGphone:sandboxed_privilege_process/ }
+];
+function splitMiniGroups(apps) {
+  var gs = MINI_GROUPS.map(function (g) { return { key: g.key, label: g.label, re: g.re, items: [] }; });
+  var rest = [];
+  apps.forEach(function (a) {
+    for (var i = 0; i < gs.length; i++) {
+      if (gs[i].re.test(a.pkg)) { gs[i].items.push(a); return; }
     }
-    if (selVal === 'fast') selVal = 'game'; // 兼容历史：极速已并入游戏
-    const opts = TPL_OPTS.map(o => '<option value="' + o[0] + '"' + (selVal === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('');
-    const checked = S.sel.has(a.pkg) ? ' checked' : '';
-    return '<div class="row app-row' + (S.sel.has(a.pkg) ? ' sel' : '') + '" data-pkg="' + esc(a.pkg) + '" style="display:flex;align-items:center;gap:10px">' +
-      '<input type="checkbox" class="app-sel" data-sel="' + esc(a.pkg) + '"' + checked + '>' +
-      appMediaHtml(a, statusPill) +
-      '<select class="f" data-set="' + esc(a.pkg) + '" style="width:auto;flex:none;min-width:96px">' + opts + '</select>' +
-      extra +
+    rest.push(a);
+  });
+  return { groups: gs.filter(function (g) { return g.items.length; }), rest: rest };
+}
+function appRowHtml(a) {
+  var statusPill, selVal, extra = '';
+  if (a.custom === '1') {
+    statusPill = '<span class="pill accent">自定义</span>'; selVal = a.tpl;
+    extra = '<button class="btn btn-xs ghost" data-act="aetherdel" data-pkg="' + esc(a.pkg) + '">恢复自动</button>';
+  } else if (a.defined === '1') {
+    statusPill = '<span class="pill ok">模块内置</span>'; selVal = a.tpl;
+  } else {
+    statusPill = '<span class="pill">未接管</span>'; selVal = a.tpl || '';
+  }
+  if (selVal === 'fast') selVal = 'game';
+  var opts = TPL_OPTS.map(function (o) { return '<option value="' + o[0] + '"' + (selVal === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
+  var checked = S.sel.has(a.pkg) ? ' checked' : '';
+  return '<div class="row app-row' + (S.sel.has(a.pkg) ? ' sel' : '') + '" data-pkg="' + esc(a.pkg) + '" style="display:flex;align-items:center;gap:10px">' +
+    '<input type="checkbox" class="app-sel" data-sel="' + esc(a.pkg) + '"' + checked + '>' +
+    appMediaHtml(a, statusPill) +
+    '<select class="f" data-set="' + esc(a.pkg) + '" data-setmini="' + esc(a.pkg) + '" style="width:auto;flex:none;min-width:96px">' + opts + '</select>' +
+    extra + '</div>';
+}
+function miniGroupHtml(g, open) {
+  var cur = g.items[0].tpl || '';
+  var sel = (cur === 'fast') ? 'game' : cur;
+  var opts = TPL_OPTS.map(function (o) { return '<option value="' + o[0] + '"' + (sel === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
+  var h = '<div class="row app-row minigroup-head" data-grp="' + esc(g.key) + '" data-act="togglegrp" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600">' +
+      '<span style="width:14px;text-align:center">' + (open ? '▾' : '▸') + '</span>' +
+      '<span style="flex:1">' + g.label + '（' + g.items.length + ' 个子进程）</span>' +
+      '<select class="f" data-setmini="' + esc(g.key) + '" data-mini="1" style="width:auto;flex:none;min-width:96px">' + opts + '</select>' +
     '</div>';
-  }).join('');
-  if (all.length > list.length) {
-    card.innerHTML += '<div class="winmore" data-act="loadmore">加载更多（已显示 ' + list.length + '/' + all.length + '）</div>';
+  if (open) {
+    h += '<div class="minigroup-body" data-grpbody="' + esc(g.key) + '" style="padding:2px 0 6px">' +
+      g.items.map(function (a) {
+        var t = a.tpl === 'fast' ? '不接管' : (a.tpl || '自动');
+        return '<div class="row" style="display:flex;align-items:center;gap:10px;padding-left:30px;opacity:.72;font-size:12px">' +
+          '<span style="flex:1">' + esc(a.pkg) + '</span><span class="pill">' + t + '</span></div>';
+      }).join('') + '</div>';
+  }
+  return h;
+}
+// 分应用频率页的小程序分组行：一行 = 一个分组，改动整组
+function miniGroupHtmlFreq(g, open, m) {
+  var vals = g.items.map(function (a) { return (m && m[a.pkg]) || ''; });
+  var same = vals.every(function (v) { return v === vals[0]; });
+  var cur = same ? vals[0] : '';
+  var opts = APP_MODE_OPTS.map(function (o) { return '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
+  var h = '<div class="row app-row minigroup-head" data-grp="' + esc(g.key) + '" data-act="togglegrp" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600">' +
+      '<span style="width:14px;text-align:center">' + (open ? '▾' : '▸') + '</span>' +
+      '<span style="flex:1">' + g.label + '（' + g.items.length + ' 个子进程）</span>' +
+      '<select class="f" data-appfreqgrp="' + esc(g.key) + '" data-mini="1" style="width:auto;flex:none;min-width:96px">' + opts + '</select>' +
+    '</div>';
+  if (open) {
+    h += '<div class="minigroup-body" style="padding:2px 0 6px">' +
+      g.items.map(function (a) {
+        var v = (m && m[a.pkg]) || '';
+        var hit = APP_MODE_OPTS.filter(function (o) { return o[0] === v; })[0];
+        var t = hit ? hit[1] : '跟随全局';
+        return '<div class="row" style="display:flex;align-items:center;gap:10px;padding-left:30px;opacity:.72;font-size:12px">' +
+          '<span style="flex:1">' + esc(a.pkg) + '</span><span class="pill">' + esc(t) + '</span></div>';
+      }).join('') + '</div>';
+  }
+  return h;
+}
+
+function renderApps(noHydrate) {
+  var card = document.getElementById('apps-card'); if (!card) return;
+  var all = currentPkgs();
+  var cnt = document.getElementById('apps-count');
+  if (cnt) { cnt.textContent = all.length + ' 个'; cnt.className = 'pill'; }
+  // 子进程折叠成分组行（2 行）而不是 17 行
+  var sg = splitMiniGroups(all.slice(0, S.showCount));
+  var list = sg.rest;
+  if (!list.length && !sg.groups.length) { card.innerHTML = '<div class="empty">没有匹配的应用<br>换个筛选或搜索词试试</div>'; return; }
+  var html = sg.groups.map(function (g) { return miniGroupHtml(g, !!(S.openGrp && S.openGrp[g.key])); }).join('');
+  html += list.map(appRowHtml).join('');
+  card.innerHTML = html;
+  if (all.length > S.showCount) {
+    card.innerHTML += '<div class="winmore" data-act="loadmore">加载更多（已显示 ' + S.showCount + '/' + all.length + '）</div>';
   }
   bindAppwinScroll('apps-card');
   updateSelCounts();
-  // 首屏不阻塞：后台按可见切片补全名字（中文/图标）
   if (!noHydrate) hydrateVisible('thread');
 }
 
@@ -1415,6 +1512,13 @@ const ACTIONS = {
   appselall: () => { currentPkgs().forEach(a => S.sel.add(a.pkg)); renderApps(); },
   appselclear: () => { S.sel.clear(); renderApps(); },
   loadmore: () => { S.showCount += 40; renderApps(); },
+  togglegrp: (el) => {
+    const k = el.getAttribute('data-grp');
+    if (!k) return;
+    S.openGrp[k] = !S.openGrp[k];
+    // 频率页与线程页共用展开态，按所在容器决定重绘哪个
+    if (el.closest('#appfreq-win')) renderAppFreq(true); else renderApps();
+  },
   aetherswitch: async (b) => {
     const on = b.checked;
     const r = await busy(on ? '启用线程引擎…' : '停用线程引擎…', () => Api.aetherswitch(on ? 'on' : 'off'));
