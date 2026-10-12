@@ -57,6 +57,34 @@ selfheal_pending_update
 
 has(){ command -v "$1" >/dev/null 2>&1; }
 
+# ---------- 当前前台包名 ----------
+#   与 guard.sh 的 fg_pkg 完全同源（原样移植，逻辑不许分叉）：
+#   两边判定前台必须一致，否则会出现「守护认得、WebUI 认不得」——
+#   结果就是 WebUI 认为不在前台、不做即时下发，而守护又在 120s 后才补，
+#   用户侧依旧是「设了没反应」。
+#   注：guard.sh 里的同名函数只在那一个脚本内定义，webui.sh 不会自动继承，
+#   所以这里必须自带一份；判空一律走空输出，绝不 echo 噪声。
+_fg_pkg() {
+    local l pkg fg=""
+    fg=$(dumpsys window 2>/dev/null | {
+        while IFS= read -r l; do
+            case "$l" in
+              *"mCurrentFocus="*)
+                case "$l" in *"=null"*) continue ;; esac
+                printf '%s' "$l"; break
+                ;;
+            esac
+        done
+    })
+    case "$fg" in
+      *"Window{"*)
+        pkg="${fg##* }"; pkg="${pkg%%/*}"; pkg="${pkg##* }"
+        case "$pkg" in *.*) printf '%s' "$pkg" ;; *) printf '' ;; esac
+        ;;
+      *) printf '' ;;
+    esac
+}
+
 # ---------- 文件 ID → 真实路径（白名单，v18 只含模块自有配置）----------
 path_of() {
     case "$1" in
@@ -336,6 +364,109 @@ cmd_appfreq() {
     echo "AF_N=$(awk -F"\t" 'NF>=2 && $1!="" && $1!~/^#/' "$APP_FREQ_FILE" 2>/dev/null | wc -l | tr -d ' ')"
 }
 
+# ---------- 游戏频率（每应用一个模式档，写 game_assign.tsv，优先级高于 app_assign）----------
+GAME_FREQ_FILE="${WEBUI_DIR}/game_assign.tsv"
+cmd_gamefreq() {
+    if [ -s "$GAME_FREQ_FILE" ]; then
+        awk -F'\t' 'NF>=2 && $1!="" && $1!~/^#/ { print "GF_"$1"="$2 }' "$GAME_FREQ_FILE" 2>/dev/null
+    fi
+    echo "GF_N=$(awk -F"\t" 'NF>=2 && $1!="" && $1!~/^#/' "$GAME_FREQ_FILE" 2>/dev/null | wc -l | tr -d ' ')"
+}
+
+# ---------- 频率档 → 线程角色档（应用页同步用）----------
+#   用户语义：应用页选一个档，频率与线程一起切。
+#   省电→powersave / 流畅→balance / 性能→performance / 极速→不接管(none)。
+#   游戏页不调此映射（线程固定 game）。
+freq2tpl() {
+    case "$1" in
+      powersave)   printf 'powersave' ;;
+      balance)     printf 'balance' ;;
+      performance) printf 'performance' ;;
+      fast)        printf 'none' ;;   # ★ v18.3.9：极速 → 不接管
+      *)           return 1 ;;
+    esac
+}
+
+# ---------- 统一设置（应用页/游戏页 共用，原子写 频率 + 线程）----------
+#   $1=pkg  $2=mode(powersave|balance|performance|fast)  $3=kind(app|game)
+#   kind=app：频率写 app_freq.tsv，线程按 freq2tpl 映射（极速→none）
+#   kind=game：频率写 game_assign.tsv（优先级高于 app），线程固定 game
+#   两处写入 + 即时下发一次性完成，避免「只设了频率没设线程」的半同步（用户踩过的坑）。
+cmd_appset() {
+    local pkg="$1" mode="$2" kind="$3"
+    [ -n "$pkg" ] || { echo "ERR 缺少包名"; return 1; }
+    mode_valid "$mode" || { echo "ERR 未知模式: $mode"; return 1; }
+    case "$kind" in app|game) ;; *) echo "ERR 未知类型: $kind"; return 1 ;; esac
+    # ★ v18.3.9：允许子进程通配符 `*`（如 com.tencent.mm:appbrand*），与 aether_ctl set 一致；
+    #   否则小程序/沙箱进程无法被接管 → 省电落不到小程序，仍跑中/大核。
+    case "$pkg" in *[!A-Za-z0-9._:\*]*) echo "ERR 包名非法"; return 1 ;; esac
+
+    local FREQ_FILE TPL_ROLE
+    if [ "$kind" = "game" ]; then
+        FREQ_FILE="$GAME_FREQ_FILE"; TPL_ROLE="game"
+    else
+        FREQ_FILE="$APP_FREQ_FILE"
+        TPL_ROLE="$(freq2tpl "$mode")" || { echo "ERR 无法映射线程档: $mode"; return 1; }
+    fi
+
+    # ① 写频率表（upsert）
+    mkdir -p "$WEBUI_DIR" 2>/dev/null
+    local ftmp="${TMPD}/appset_freq.new"; : > "$ftmp"
+    [ -s "$FREQ_FILE" ] && awk -F'\t' -v P="$pkg" '!($1==P)' "$FREQ_FILE" >> "$ftmp" 2>/dev/null
+    printf '%s\t%s\n' "$pkg" "$mode" >> "$ftmp"
+    cp -f "$ftmp" "$FREQ_FILE" 2>/dev/null; chmod 0666 "$FREQ_FILE" 2>/dev/null; rm -f "$ftmp"
+
+    # ② 写线程角色档（aether_ctl set，自带 deploy；失败即回滚频率表并报错）
+    local ares
+    ares=$(sh "$AETHER_CTL" set "$pkg" "$TPL_ROLE" 2>&1)
+    case "$ares" in *"ERR"*)
+        # 回滚：把刚写的频率表那一行删掉，避免半同步残留
+        local rtmp="${TMPD}/appset_rollback.new"; : > "$rtmp"
+        [ -s "$FREQ_FILE" ] && awk -F'\t' -v P="$pkg" '!($1==P)' "$FREQ_FILE" >> "$rtmp" 2>/dev/null
+        cp -f "$rtmp" "$FREQ_FILE" 2>/dev/null; chmod 0666 "$FREQ_FILE" 2>/dev/null; rm -f "$rtmp"
+        echo "ERR 线程设置失败（已回滚频率）: $ares"; return 1
+        ;;
+    esac
+
+    # ③ 即时下发频率（前台时按新档推 QoS；非前台交给守护在前台变化轮应用）
+    local _as_fg; _as_fg=$(_fg_pkg | head -1)
+    if [ -n "$_as_fg" ] && [ "$_as_fg" = "$pkg" ]; then
+        local _cm; _cm=$(active_mode); _cm="${_cm:-balance}"
+        if [ "$mode" != "$_cm" ]; then
+            apply_mode_freq "$mode" >/dev/null 2>&1
+            log "webui: 前台 ${pkg} → 立即下发频率档[${mode}]（原全局 ${_cm}）"
+        fi
+    fi
+
+    local kind_cn; [ "$kind" = "game" ] && kind_cn="游戏" || kind_cn="应用"
+    local tpl_cn; case "$TPL_ROLE" in powersave) tpl_cn=省电;; balance) tpl_cn=流畅;; performance) tpl_cn=性能;; game) tpl_cn=游戏;; none) tpl_cn=不接管;; *) tpl_cn="$TPL_ROLE";; esac
+    echo "OK ${pkg} 已设为${kind_cn}[${mode}]（频率+线程同步：${tpl_cn}）"
+}
+
+# ---------- 统一移除（应用页/游戏页 共用）----------
+#   $1=pkg  $2=kind(app|game)。频率表移除对应行 + 线程恢复 auto（aether del）。
+cmd_appdel() {
+    local pkg="$1" kind="$2"
+    [ -n "$pkg" ] || { echo "ERR 缺少包名"; return 1; }
+    case "$kind" in app|game) ;; *) echo "ERR 未知类型: $kind"; return 1 ;; esac
+    local FREQ_FILE; [ "$kind" = "game" ] && FREQ_FILE="$GAME_FREQ_FILE" || FREQ_FILE="$APP_FREQ_FILE"
+    [ -s "$FREQ_FILE" ] || { echo "OK 无此配置"; return 0; }
+    local ftmp="${TMPD}/appdel_freq.new"
+    awk -F'\t' -v P="$pkg" '!($1==P)' "$FREQ_FILE" > "$ftmp" 2>/dev/null
+    cp -f "$ftmp" "$FREQ_FILE" 2>/dev/null; chmod 0666 "$FREQ_FILE" 2>/dev/null; rm -f "$ftmp"
+    # 线程恢复 auto
+    local ares; ares=$(sh "$AETHER_CTL" del "$pkg" 2>&1)
+    case "$ares" in *"ERR"*) echo "ERR 线程恢复失败: $ares"; return 1 ;; esac
+    # 若被删的正是当前前台覆盖档，立刻回落全局模式
+    local cm; cm=$(active_mode); cm="${cm:-balance}"
+    local _del_fg; _del_fg=$(_fg_pkg | head -1)
+    if [ -n "$_del_fg" ] && [ "$_del_fg" = "$pkg" ]; then
+        apply_mode_freq "$cm" >/dev/null 2>&1
+        log "webui: 前台 ${pkg} 移除覆盖 → 回落全局模式[${cm}]"
+    fi
+    echo "OK 已移除 ${pkg}（频率 + 线程均已恢复全局/自动）"
+}
+
 # 列出设备上的应用（供「分应用频率 / 线程」的搜索添加用）
 #   ⚠ v18.2.x 修正：原版只走 aether_ctl apps，若它因任何原因返回空（如 cmd 不可用、
 #      线程引擎未启用等）就会「读不出有界面的 app」。改为：
@@ -367,11 +498,68 @@ cmd_appfreqapps() {
     echo ""
 }
 
+# ★ v18.3.9→v18.4：游戏页只显示「已安装的游戏」。
+#   游戏清单取「艇长 aether 默认 gamelist」（多位置回退，优先级：模块自带 > 已部署副本），
+#   输出 GAME=<pkg> 全集；前端取 gamelist ∩ 已安装 = 已装游戏。
+#   —— 直接复用 aether_ctl 的权威清单，不再自行维护，避免与上游 aether 漂移。
+cmd_games() {
+    local gl=""
+    for cand in \
+        "$MODDIR/Scripts/4+4+2/O3/aether/gamelist" \
+        "/sdcard/Android/Aether/gamelist" \
+        "$STATE_DIR/gamelist"; do
+        if [ -s "$cand" ]; then gl="$cand"; break; fi
+    done
+    [ -n "$gl" ] || { echo "ERR 找不到游戏清单（已尝试模块自带 / 已部署副本）"; return 1; }
+    while IFS= read -r p; do
+        [ -n "$p" ] && echo "GAME=$p"
+    done < "$gl"
+}
+
+# ★ v18.4：批量设置（应用/游戏 通用）——「无感切换」核心。
+#   $1 = base64 编码的 TSV（每行 pkg\tmode，mode ∈ powersave|balance|performance|fast）。
+#   ① 频率表（APP_FREQ_FILE/GAME_FREQ_FILE）批量 upsert 一次重写（纯文件，开销极小）。
+#   ② 线程：仅 kind=app 才调 aether_ctl setbatch（一次 deploy）。
+#      kind=game 不碰线程——游戏线程完全交给艇长 Aether 默认配置，WebUI 只调 CPU 频率。
+#   → N 个进程/小程序也只 deploy 一次，消除逐个 appset 的卡顿。
+cmd_appsetbatch() {
+    local b64="$1" kind="$2"
+    case "$kind" in app|game) ;; *) echo "ERR 未知类型: $kind"; return 1 ;; esac
+    local FREQ_FILE; [ "$kind" = "game" ] && FREQ_FILE="$GAME_FREQ_FILE" || FREQ_FILE="$APP_FREQ_FILE"
+    local tsv; tsv=$(printf '%s' "$b64" | base64 -d 2>/dev/null)
+    [ -n "$tsv" ] || { echo "ERR 解码批量输入失败"; return 1; }
+    mkdir -p "$WEBUI_DIR" 2>/dev/null
+    # ① 频率表：收集本次涉及的 mode 类 pkg，批量去重重写（纯文件，开销极小）
+    local remf="${TMPD}/batch_rem.txt"; : > "$remf"
+    printf '%s\n' "$tsv" | while IFS= read -r line; do
+        [ -z "$line" ] && continue
+        p=$(printf '%s' "$line" | cut -f1)
+        r=$(printf '%s' "$line" | cut -f2- | tr -d ' \r')
+        case "$r" in powersave|balance|performance|fast) [ -n "$p" ] && echo "$p" >> "$remf" ;; esac
+    done
+    local ftmp="${TMPD}/batch_freq.new"; : > "$ftmp"
+    [ -s "$FREQ_FILE" ] && [ -s "$remf" ] && awk -F'\t' 'NR==FNR{rem[$1]=1;next} !($1 in rem)' "$remf" "$FREQ_FILE" >> "$ftmp" 2>/dev/null
+    [ -s "$FREQ_FILE" ] && [ ! -s "$remf" ] && cat "$FREQ_FILE" >> "$ftmp" 2>/dev/null
+    printf '%s\n' "$tsv" | while IFS= read -r line; do
+        [ -z "$line" ] && continue
+        p=$(printf '%s' "$line" | cut -f1)
+        r=$(printf '%s' "$line" | cut -f2- | tr -d ' \r')
+        case "$r" in powersave|balance|performance|fast) [ -n "$p" ] && printf '%s\t%s\n' "$p" "$r" >> "$ftmp" ;; esac
+    done
+    cp -f "$ftmp" "$FREQ_FILE" 2>/dev/null; chmod 0666 "$FREQ_FILE" 2>/dev/null; rm -f "$ftmp"
+    # ② 线程：仅应用需要同步线程角色；游戏线程交由 Aether 默认，不动。
+    if [ "$kind" = "app" ]; then
+        printf '%s\n' "$tsv" | sh "$AETHER_CTL" setbatch
+    else
+        echo "OK 游戏仅更新频率档（线程保持 Aether 默认）"
+    fi
+}
+
 cmd_appfreqset() {
     local pkg="$1" md="$2"
     [ -n "$pkg" ] || { echo "ERR 缺少包名"; return 1; }
     mode_valid "$md" || { echo "ERR 未知模式: $md"; return 1; }
-    case "$pkg" in *[!A-Za-z0-9._:-]*) echo "ERR 包名非法"; return 1 ;; esac
+    case "$pkg" in *[!A-Za-z0-9._:\*]*) echo "ERR 包名非法"; return 1 ;; esac
     mkdir -p "$WEBUI_DIR" 2>/dev/null
     local tmp="${TMPD}/app_freq.new"
     : > "$tmp"
@@ -380,6 +568,20 @@ cmd_appfreqset() {
     fi
     printf '%s\t%s\n' "$pkg" "$md" >> "$tmp"
     cp -f "$tmp" "$APP_FREQ_FILE" 2>/dev/null; chmod 0666 "$APP_FREQ_FILE" 2>/dev/null; rm -f "$tmp"
+    # ★ v18.3.8 修复「设了不生效」：写表后**立即下发**，不再等守护兜底。
+    #   旧行为：只写 app_freq.tsv 就返回 OK，实际下发要等 guard.sh 的 WORK 轮——
+    #   而 WORK 仅在前台包名变化或每 24 轮(≈120s) 才成立（guard.sh:187），
+    #   于是「给正在前台的酷安设省电」看起来毫无反应，最长要熬 2 分钟。
+    #   现在：若该包当前正处于前台且新档≠全局档，立刻按新档推 PM QoS。
+    #   非前台包不必下发（切过去时守护会在前台变化那一轮立刻应用）。
+    _aft_fg=$(_fg_pkg | head -1)
+    if [ -n "$_aft_fg" ] && [ "$_aft_fg" = "$pkg" ]; then
+        local _cm; _cm=$(active_mode); _cm="${_cm:-balance}"
+        if [ "$md" != "$_cm" ]; then
+            apply_mode_freq "$md" >/dev/null 2>&1
+            log "webui: 前台 ${pkg} → 立即下发频率档[${md}]（原全局 ${_cm}）"
+        fi
+    fi
     echo "OK 已为 ${pkg} 设置 ${md}"
 }
 
@@ -391,8 +593,18 @@ cmd_appfreqdel() {
     awk -F'\t' -v P="$pkg" '!($1==P)' "$APP_FREQ_FILE" > "$tmp" 2>/dev/null
     cp -f "$tmp" "$APP_FREQ_FILE" 2>/dev/null; chmod 0666 "$APP_FREQ_FILE" 2>/dev/null; rm -f "$tmp"
     # 若被删的正是当前前台覆盖档，立刻回落全局模式
-    local cm; cm=$(active_mode)
-    apply_mode_freq_bg "${cm:-balance}"
+    # ★ v18.3.8：原先走 apply_mode_freq_bg（后台异步），WebUI 先返回 OK、
+    #   实际写入可能在用户切走页面后才跑完。这里改为同步下发一次并回显档位，
+    #   保证「移除」也有确定反馈（后台保底路径仍由守护兜底）。
+    local cm; cm=$(active_mode); cm="${cm:-balance}"
+    local _del_fg; _del_fg=$(_fg_pkg | head -1)
+    if [ -n "$_del_fg" ] && [ "$_del_fg" = "$pkg" ]; then
+        apply_mode_freq "$cm" >/dev/null 2>&1
+        log "webui: 前台 ${pkg} 移除覆盖 → 回落全局模式[${cm}]"
+        echo "OK 已移除 ${pkg}（已回落全局模式 ${cm}）"
+        return 0
+    fi
+    apply_mode_freq_bg "${cm}"
     echo "OK 已移除 ${pkg}"
 }
 
@@ -450,6 +662,16 @@ cmd_setappmode() {
     fi
     [ -s "$tmp" ] || { rm -f "$tmp"; echo "ERR 生成 app_assign.tsv 失败"; return 1; }
     cp -f "$tmp" "$f" 2>/dev/null; chmod 0666 "$f" 2>/dev/null; rm -f "$tmp"
+    # ★ v18.3.8：与 cmd_appfreqset 同一病因——只写表不推 QoS，用户侧表现为「设了没反应」。
+    #   若该包正在前台，立即按新档下发（守护兜底最长 120s，体感等于没生效）。
+    _sam_fg=$(_fg_pkg | head -1)
+    if [ -n "$_sam_fg" ] && [ "$_sam_fg" = "$pkg" ]; then
+        local _sam_cm; _sam_cm=$(active_mode); _sam_cm="${_sam_cm:-balance}"
+        if [ "$mode" != "$_sam_cm" ]; then
+            apply_mode_freq "$mode" >/dev/null 2>&1
+            log "webui: 前台 ${pkg} → app_assign 立即下发频率档[${mode}]（原全局 ${_sam_cm}）"
+        fi
+    fi
     # 线程不再由这里联动重建（v18.2.9：线程完全归舰长，档位由 WebUI 线程页单独设置）
     echo "OK 已把 ${pkg} 设为模块频率档「${mode}」"
 }
@@ -742,9 +964,14 @@ case "$1" in
   freqedit)      cmd_freqedit "$2" ;;
   appfreq)       cmd_appfreq ;;
   appfreqapps)   cmd_appfreqapps ;;
+  games)         cmd_games ;;
   appfreqset)    cmd_appfreqset "$2" "$3" ;;
   appfreqdel)    cmd_appfreqdel "$2" ;;
   appfreqbatch)  cmd_appfreqbatch "$2" ;;
+  appset)        cmd_appset "$2" "$3" "$4" ;;
+  appsetbatch)   cmd_appsetbatch "$2" "$3" ;;
+  appdel)        cmd_appdel "$2" "$3" ;;
+  gamefreq)      cmd_gamefreq ;;
   appmodes)      cmd_appmodes ;;
   setappmode)    shift; cmd_setappmode "$1" "$2" ;;
   fasxres)       cmd_fasxres ;;
