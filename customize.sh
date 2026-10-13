@@ -154,6 +154,20 @@ if sh "$MODPATH/Scripts/4+4+2/O3/o3lim.sh" boot 2>&1; then
 else
     ui_print "- ⚠ 线程规则生成失败（见模块日志 o3lim.log）"
 fi
+# ★ v19.0.7：安装收尾**再收敛一次**管理区（幂等，可重复执行）。
+#   现象：刷入后 applist.conf 1971 行、410 个包名重复（com.xingin.xhs 4 条），
+#   手动再跑一次 o3lim gen 才降到 1323 行 / 613 唯一包。
+#   成因：安装期 boot 与后续 ksud services（fix_pending.sh 里）会各触发一次
+#   cmd_gen，而 cmd_gen 的原子发布在「结果为空/计数异常」时保留旧 CONF
+#   （见 o3lim.sh 的 `[ -s .new ] && [ $total -gt 0 ]` 判据），叠加历史遗留的
+#   同包条目后即出现重复。去重逻辑本身有效（实测 409 重复 → 0），
+#   所以这里只需保证**最后一次写入是收敛后的结果**。
+#   ⚠ 重复条目的生效顺序 AppOpt 不保证 → 会让「改了档位不生效」的排查变困难，
+#     必须在安装期就铲干净，不能等用户手动跑。
+sh "$MODPATH/Scripts/4+4+2/O3/o3lim.sh" gen >/dev/null 2>&1
+_n_rules=$(grep -c '=' "$STATE_DIR/applist.conf" 2>/dev/null)
+_n_dup=$(grep '=' "$STATE_DIR/applist.conf" 2>/dev/null | grep -v '{' | awk -F'=' '{print $1}' | sort | uniq -c | awk '$1>1' | wc -l)
+ui_print "- 管理区已收敛：${_n_rules} 条规则（重复包 ${_n_dup} 个）"
 ui_print "- 线程精细规则请用 AppOpt 网页：http://127.0.0.1:8889（模块「执行」按钮直达）"
 
 # ---------- v18：模块自有初始化（不再与 调度App 交互）----------
