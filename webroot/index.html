@@ -1107,6 +1107,9 @@ function appfreqFiltered() {
   return (S.appList || []).filter(a => {
     // ★ v18.3.9：应用页不显示游戏（游戏在「游戏」页专属）
     if (S.games && S.games.has(a.pkg)) return false;
+    // ★ 带冒号子进程只在「微信/支付宝小程序」归并块展示，绝不作为独立行出现在主列表
+    //   （既防住后端偶发漏过滤的子进程，也杜绝列表里冒出一堆 `pkg:sub` 行导致卡顿）
+    if (a.pkg.indexOf(':') >= 0) return false;
     // ★ v18.4：小程序归并块的子进程（带冒号）不在主列表重复
     if (mergePkgs.has(a.pkg)) return false;
     // ★ v18.4.2：搜索走 Search.hit（匹配包名 + Meta 中文名），父包主进程不再被归并块排除，搜「微信/支付宝」可命中本体。
@@ -1434,6 +1437,8 @@ function buildMergeGroups(apps) {
     if (S.games && S.games.has(a.pkg)) return; // 游戏不归纳进小程序
     if (a.pkg.indexOf(':') < 0) return; // ★ v18.4.3：主包不归并，独立于主列表，可与小程序分开设置
     const key = a.pkg.split(':')[0];
+    // ★ 仅微信 / 支付宝小程序（用户要求：只接受这两种；其余 :xxx 子进程不当作小程序展示）
+    if (key !== 'com.tencent.mm' && key !== 'com.eg.android.AlipayGphone') return;
     (map[key] || (map[key] = [])).push(a);
   });
   const groups = [];

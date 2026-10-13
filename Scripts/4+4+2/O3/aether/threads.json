@@ -6012,31 +6012,6 @@
     }
 ,
     {
-      "friendly": "自定义·com.xingin.xhs",
-      "packages": ["com.xingin.xhs"],
-      "cpuset": {
-        "main_thread": "0-3",
-        "heaviest_thread": "RenderThread",
-        "heaviest_cores": "0-3",
-        "heavy_thread": "RenderThread",
-        "heavy_cores": "0-3",
-        "comm": {
-          "0-3": [
-            "Audio",
-            "AudioTrack",
-            "FMOD",
-            "Http",
-            "Socket",
-            "Download",
-            "GC",
-            "Pool",
-            "TAsync"
-          ]
-        },
-        "other": "0-3"
-      }
-    },
-    {
       "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process0",
       "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process0"],
       "cpuset": {

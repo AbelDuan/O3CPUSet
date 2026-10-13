@@ -366,14 +366,17 @@ cmd_appfreqapps() {
     local apps_f="${TMPD}/apps.list" sys_f="${TMPD}/apps.sys"
     mkdir -p "$TMPD" 2>/dev/null
 
-    # ① 主包集合：有界面的启动器应用
-    if has cmd; then
-        cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER 2>/dev/null \
-          | sed -n 's#^[[:space:]]*\([^/][^/]*\)/.*#\1#p' | sort -u > "$apps_f"
+    # ① 主包集合：已安装应用（pm list packages，快且稳定）
+    #    ⚠ 不再用 `cmd package query-activities`：部分 ROM 该命令极慢/挂起（界面卡死主因之一），
+    #      且其 launcher 输出可能带 `:sub` 子进程名，污染主列表、被误判成小程序。
+    if has pm; then
+        pm list packages 2>/dev/null | sed 's/^package://' > "$apps_f"
+    elif has cmd; then
+        cmd package list packages 2>/dev/null | sed 's/^package://' > "$apps_f"
     fi
-    if [ ! -s "$apps_f" ] && has pm; then
-        pm list packages 2>/dev/null | sed 's/^package://' | sort -u > "$apps_f"
-    fi
+    # 主包只保留「无冒号」（带冒号子进程不进主列表；小程序仅由步骤②按微信/支付宝口径提供）
+    grep -v ':' "$apps_f" 2>/dev/null | sort -u > "${apps_f}.m" 2>/dev/null
+    mv -f "${apps_f}.m" "$apps_f" 2>/dev/null
     # ② 子进程集合（仅微信 / 支付宝小程序，其余 :xxx 子进程不进列表）
     #    ⚠ v19 修复：① 用 shell 内建 read 逐 /proc 读取（零逐进程 fork —— 之前每个进程 spawn
     #       tr|head 两个子进程 → 列表卡死）；② 只收 com.tencent.mm: / com.eg.android.AlipayGphone:
@@ -614,8 +617,10 @@ cmd_log(){ tail -n "${1:-40}" "$LOG_FILE" 2>/dev/null; }
 cmd_daemonlog(){ local n="${1:-30}"; echo "--- guard.log（模块守护）---"; tail -n "$n" "$LOG_FILE" 2>/dev/null; }
 
 cmd_launchables() {
-    cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER 2>/dev/null \
-      | sed -n 's#^[[:space:]]*\([^/][^/]*\)/.*#\1#p' | sort -u
+    # ⚠ 不再用 `cmd package query-activities`：部分 ROM 极慢/挂起；pm list packages 快且稳定。
+    if has pm; then pm list packages 2>/dev/null | sed 's/^package://' | sort -u
+    elif has cmd; then cmd package list packages 2>/dev/null | sed 's/^package://' | sort -u
+    fi
 }
 cmd_apps() {
     if has cmd; then cmd package list packages 2>/dev/null | sed 's/^package://' | while read -r p; do
