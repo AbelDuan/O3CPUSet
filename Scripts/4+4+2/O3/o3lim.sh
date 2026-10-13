@@ -319,10 +319,10 @@ cmd_gen() {
   mv "${base}.t" "$base" 2>/dev/null
 
   # 段头插到最前：先暂存再拼接
+  #   ⚠ 只保留结构标记 MARK_BEGIN/END；不再写「# 说明：本段由模块自动生成」等描述性注释，
+  #      否则 AppOpt 8889 网页会把注释行当成规则条目显示出来（用户曾反馈看到「#说明 本模块自动生成」文字）。
   {
     echo "$MARK_BEGIN"
-    echo "# 说明：本段由模块自动生成，勿手改；自定义请用 AppOpt 网页(127.0.0.1:8889)或写在本段之外。"
-    echo "# 语义核心：e-core=小核(0-3) p-core=中核(4-7) hp-core=大核(8-9)"
     cat "$sec"
   } > "${sec}.h"
   mv -f "${sec}.h" "$sec" 2>/dev/null
@@ -516,13 +516,9 @@ cmd_gen() {
 cmd_boot() {
   if [ ! -f "$CONF" ]; then
     # ★ 原子创建（先写 .new 再 mv），避免 AppOpt 在写入中途读到空文件
-    {
-      echo "# AppOpt 线程规则（O3 适配）"
-      echo "# 格式：包名=核位 / 包名{线程名}=核位 / 包名=核位 { 线程名=核位 }"
-      echo "# 语义核心：e-core=小核(0-3) p-core=中核(4-7) hp-core=大核(8-9) all-core=全部"
-      echo "# 完整功能请打开 AppOpt 网页：http://127.0.0.1:8889"
-      echo ""
-    } > "${CONF}.new"
+    #   ⚠ 不写任何描述性注释头：AppOpt 8889 网页会把注释行当成规则条目显示，
+    #      曾有用户反馈看到「#说明 本模块自动生成」等字样。结构标记由 cmd_gen 写入。
+    : > "${CONF}.new"
     mv -f "${CONF}.new" "$CONF" 2>/dev/null
   fi
   cmd_gen
