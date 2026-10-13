@@ -24,7 +24,7 @@
                                    │
                     ┌──────────────▼───────────────┐
                     │  AppOpt 引擎（v2.2.6）        │
-                    │  mode=2 纯 /proc 模式          │
+                    │  mode=0 自动（eBPF 优先，回退 proc）│
                     │  -w 开自带网页 127.0.0.1:8889  │
                     └───────────────────────────────┘
                                    │ sched_setaffinity + cpuset
@@ -145,7 +145,7 @@ AppOpt 按 `cpufreq` 的 `cpuinfo_max_freq` 升序自动分档，**在 O3 上自
 | **段头丢失** | 每次 gen 重复累积、BEGIN 标记消失 | `gen_managed_section` 内部 `: > "$out"` 截断了先写好的段头 | 先调 `gen_managed_section`，**再**拼段头 |
 | **`__REMOVE__` 泄漏** | AppOpt 报「29 条规则格式无效」 | 去重 awk 逻辑没把「最后一条是 `__REMOVE__`」的包整条丢弃 | 重写去重：`lastline[p]==i && mark[i]=="K"` 才输出 |
 | **读到 0 条规则** | AppOpt 日志间歇出现「共加载 0 条规则」 | 非原子写盘，inotify 在写入中途读到空文件 | **原子发布**：写 `CONF.new` → 校验非空且含 `=` → `mv` 覆盖 |
-| **mode 被改回 1** | 设定 mode=2 后变 1 | AppOpt 运行时会**自行持久化** mode（内核支持 BTF 时 auto→eBPF） | 停引擎 → 写 `AppOpt.json` mode=2 → 重启 |
+| **mode 被自行改写** | 手动写 AppOpt.json 后开机发现值变了 | AppOpt 运行时会**自行持久化** mode（8889 页切换即写盘；内核支持 BTF 时 auto→eBPF） | 停引擎 → 写 `AppOpt.json` → 重启；v19.0.5 起模块不再开机覆盖该文件 |
 | **极速档不生效** | 设极速后规则仍在（`e-core,p-core`） | 删了 app_assign 记录 → 回落到 `apprules` 的历史规则 | 极速持久化 `fast` 记录压过历史 |
 | **★ 改配置后刷新回退默认** | 改应用档位 → 刷新/应用后变回旧值 | **三处断链**：①前端缺 `Api.appsetbatch` 方法（调用 undefined 静默失败）②后端缺 `gamefreq`/`appset`/`appdel` 命令 ③`appfreqapps` 读 `aether_ctl apps` 的**陈旧数据** | ①补齐 `Api` 方法 ②补齐后端命令 ③读回改走本模块自有真值（`app_freq.tsv`/`app_assign.tsv`） |
 | **★ 子进程不受管（省电应用仍上 8-9）** | 酷安设省电，主进程 0-3 但 `com.coolapk.market:xg_vip_service` 仍在 0-9/8-9 | AppOpt 包名**精确匹配**（`cfg.pkgs` 是 HashSet），配 `com.coolapk.market` **不会**作用到 `:xg_vip_service` → 子进程留在系统 `top-app`(0-9) | `o3lim gen` **子进程展开**：为每个已配包名的已知子进程补同核位规则（子进程来源 `/proc` + 配置文件） |
@@ -183,8 +183,8 @@ sh test_persist.sh
 | 文件 | 职责 |
 |---|---|
 | `Scripts/4+4+2/O3/AppOpt` | 引擎二进制（v2.2.6，arm64，892KB） |
-| `Scripts/4+4+2/O3/AppOpt-ebpf` | eBPF 程序（mode=2 时不使用，保留完整功能） |
-| `Scripts/4+4+2/O3/AppOpt.json` | 引擎设置：`mode:2`（纯 proc）、`web_enable:true`、`config_file`、`cpuset_name` |
+| `Scripts/4+4+2/O3/AppOpt-ebpf` | eBPF 程序（mode=0 自动且内核支持时由引擎加载；mode=2 纯 proc 时不使用） |
+| `Scripts/4+4+2/O3/AppOpt.json` | 引擎设置：`mode:0`（自动：eBPF 事件驱动优先，不可用回退 /proc 轮询）、`web_enable:true`、`config_file`、`cpuset_name` |
 | `Scripts/4+4+2/O3/o3lim.sh` | 配置生成器：维护 `applist.conf` 的**管理区段**（模式映射 + 默认档 + 8-9 闸门） |
 | `service.sh` | 开机拉起 AppOpt（`-w` 开网页）+ 频率接管 + 守护 |
 | `action.sh` | 模块「执行」按钮 → 拉起引擎 + 刷新管理区 + 打开 8889 |
@@ -197,7 +197,7 @@ sh test_persist.sh
 ## 7. 验证记录（真机 O3）
 
 ```
-AppOpt: 运行中 (proc 模式, mode=2)
+AppOpt: 运行中 (自动模式 mode=0 → 本机实测 eBPF 事件驱动)
 8889: LISTEN ✓
 /dev/cpuset/O3CPUSet/8-9/tasks = 0          ← 普通应用零 8-9 泄漏
 com.tencent.mm   = 4-7 (流畅)               ← 用户意图正确落实

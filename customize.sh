@@ -126,15 +126,19 @@ ui_print "---------- 线程引擎（AppOpt）----------"
 chmod 0755 "$MODPATH/Scripts/4+4+2/O3/AppOpt" 2>/dev/null
 chmod 0755 "$MODPATH/Scripts/4+4+2/O3/AppOpt-ebpf" 2>/dev/null
 chmod 0755 "$MODPATH/Scripts/4+4+2/O3/o3lim.sh" 2>/dev/null
-# AppOpt.json：mode=2 纯 /proc（无 eBPF 自作主张提核）、web_enable=true（自带网页 8889）
+# AppOpt.json：mode=0 自动（eBPF 事件驱动优先，不可用回退 /proc 轮询）、web_enable=true（自带网页 8889）
+#   ★ v19.0.5：默认工作模式由 mode=2（纯 /proc 轮询）改为 mode=0（自动）。
+#     纯 proc 模式每 2s 全量扫 /proc（本机 1 万+ 线程），既耗电又让 8889 页
+#     「四五千个线程」的数字虚高；自动模式在本机实测可用 eBPF（tracepoint
+#     fork/exec/exit 事件驱动，日志 "eBPF: 初始化成功"），不可用时引擎自行回退 proc。
 if [ ! -f "$MODPATH/Scripts/4+4+2/O3/AppOpt.json" ]; then
     cat > "$MODPATH/Scripts/4+4+2/O3/AppOpt.json" <<'AJSON'
 {
-  "config_file": "/data/adb/O3CPUSet/applist.conf",
   "check_interval": 2,
+  "config_file": "/data/adb/O3CPUSet/applist.conf",
   "cpuset_name": "O3CPUSet",
-  "web_enable": true,
-  "mode": 2
+  "mode": 0,
+  "web_enable": true
 }
 AJSON
 fi

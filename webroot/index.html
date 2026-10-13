@@ -1010,6 +1010,32 @@ function appFreqOf(pkg) {
   }
   return '';
 }
+// ★ v19.0.5：保存后**精准更新**某包的模式按钮 + 行内「同步 · 线程X」pill，
+//   不再整页重渲（应用页 ~198 行，旧逻辑每次保存要重渲 3~4 次，是「保存中要等很久」的主因之一）。
+//   有筛选/搜索时行集合会变，交由调用方回退到整页 renderAppFreq()。
+function refreshModeButtons(pkg) {
+  const cur = appFreqOf(pkg);
+  const cn = (APP_MODE_OPTS.find(o => o[0] === cur) || ['', '跟随全局'])[1];
+  const tplCn = { powersave: '省电', balance: '流畅', performance: '性能', fast: '不接管', '': '' }[cur] || '';
+  const q = pkg.replace(/["\\]/g, '\\$&');
+  document.querySelectorAll('[data-appset="' + q + '"]').forEach(b => { b.textContent = cn; b.dataset.cur = cur; });
+  document.querySelectorAll('[data-merge="' + q + '"]').forEach(b => { b.textContent = cn; b.dataset.cur = cur; });
+  document.querySelectorAll('.app-row').forEach(row => {
+    const b = row.querySelector('[data-appset],[data-merge]');
+    if (!b) return;
+    if ((b.dataset.appset || b.dataset.merge) !== pkg) return;
+    const tagrow = row.querySelector('.tagrow');
+    if (!tagrow) return;
+    let pill = tagrow.querySelector('.pill');
+    if (cur) {
+      if (!pill) { pill = document.createElement('span'); pill.className = 'pill ok'; tagrow.appendChild(pill); }
+      pill.className = 'pill ok'; pill.textContent = '同步 · 线程' + tplCn;
+    } else if (pill) {
+      pill.className = 'pill';
+      pill.textContent = b.dataset.merge ? ('含 ' + ((S.mergeGroups || []).find(g => g.key === b.dataset.merge) || { members: [] }).members.length + ' 个进程') : '';
+    }
+  });
+}
 async function loadAppList() {
   if (!S.appList) {
     try {
@@ -1260,7 +1286,11 @@ async function hydrateVisible(kind, force) {
   } else {
     const all = appfreqFiltered();
     const slice = all.slice(0, S.appShow || 40);
+    // ★ v19.0.5：没有新名字要补（缓存已全覆盖）时**直接返回** ——
+    //   旧逻辑此时仍整页重渲一次，纯属白烧（保存后又被触发一次，卡顿翻倍）。
+    const before = Object.keys(Meta.cache).length;
     await _loadMeta(slice);
+    if (!force && Object.keys(Meta.cache).length === before) return;
     renderAppFreq(true, true);
     observeIcons('appfreq-win');
   }
@@ -1861,19 +1891,29 @@ document.addEventListener('click', async (e) => {
     return;
   }
   // ★ v18.4.8：档位按钮（归并项 / 应用行 / 游戏行）——点开底部弹层，不再用原生 select
+  //  ★ v19.0.5：保存链路瘦身 ——
+  //    ① 「跟随全局」空选项真正生效（发 auto 触发后端移除自定义，旧版是空操作）；
+  //    ② 无筛选/搜索时不做整页重渲，只精准刷新涉及的按钮（应用页 ~198 行）；
+  //    ③ 保存成功后不再回读 appfreq/gamefreq（本地状态即真值，省两次 ksu.exec 往返）；
+  //    ④ 只有失败时才回读 + 整页渲染，保证界面反映后端真实状态。
   const mb = e.target.closest('[data-merge]');
   if (mb) {
     const key = mb.dataset.merge; const kind = mb.dataset.kind; const cur = mb.dataset.cur || '';
     const grp = (S.mergeGroups || []).find(g => g.key === key);
     if (!grp) return;
     openModeSheet(grp.label + '（' + grp.members.length + ' 个进程）', cur, async (val) => {
-      if (!val) { showToast('已选「跟随全局」：归并项不覆盖，进程按全局档运行'); await loadAppFreq(); renderAppFreq(); return; }
-      const rows = grp.members.map(p => p + '\t' + val);
-      grp.members.forEach(p => { if (S.appfreq) S.appfreq[p] = val; });
-      renderAppFreq();
+      const v = val || 'auto';   // 空 = 跟随全局 → auto（移除自定义）
+      const full = (S.appPresetFilter !== 'all') || !!(S.appSearch || '').trim();
+      grp.members.forEach(p => { if (S.appfreq) S.appfreq[p] = (v === 'auto' ? '' : v); });
+      if (full) renderAppFreq(); else grp.members.forEach(p => refreshModeButtons(p));
+      const rows = grp.members.map(p => p + '\t' + v);
       const r = await busy('保存中…', () => Api.appsetbatch(b64enc(rows.join('\n')), kind));
-      showToast(/OK/.test(r) ? ('已设「' + grp.label + '」→ ' + (MODE_CN[val] || val) + '（' + grp.members.length + ' 个进程同步）') : ('失败：' + (r || '').slice(0, 60)));
-      await loadAppFreq(); renderAppFreq();
+      if (/OK/.test(r)) {
+        showToast('已设「' + grp.label + '」→ ' + (v === 'auto' ? '跟随全局' : (MODE_CN[v] || v)) + '（' + grp.members.length + ' 个进程同步）');
+      } else {
+        showToast('失败：' + (r || '').slice(0, 60));
+        await loadAppFreq(); renderAppFreq();
+      }
     });
     return;
   }
@@ -1881,14 +1921,32 @@ document.addEventListener('click', async (e) => {
   if (ab) {
     const pkg = ab.dataset.appset; const kind = ab.dataset.kind; const cur = ab.dataset.cur || '';
     openModeSheet((kind === 'game' ? '游戏 · ' : '应用 · ') + pkg, cur, async (val) => {
-      if (!val) { showToast('已选「跟随全局」：该应用按全局档运行'); await loadAppFreq(); if (S.tab === 'game') renderGame(); else renderAppFreq(); return; }
-      if (kind === 'game') { if (S.gamefreq) S.gamefreq[pkg] = val; } else { if (S.appfreq) S.appfreq[pkg] = val; }
-      if (S.tab === 'game') renderGame(); else renderAppFreq();
-      const r = await busy('保存中…', () => Api.appsetbatch(b64enc(pkg + '\t' + val), kind));
-      const kindCn = kind === 'game' ? '游戏' : '应用';
-      showToast(/OK/.test(r) ? ('已设为' + kindCn + '[' + (MODE_CN[val] || val) + ']（频率+线程同步）') : ('失败：' + (r || '').slice(0, 60)));
-      await loadAppFreq(); await loadGameFreq();
-      if (S.tab === 'game') renderGame(); else renderAppFreq();
+      const v = val || 'auto';   // 空 = 跟随全局 → auto（移除自定义）
+      if (kind === 'game') {
+        // 游戏页：条目少，保留整页渲染（正确性优先）
+        if (S.gamefreq) S.gamefreq[pkg] = (v === 'auto' ? '' : v);
+        renderGame();
+        const r = await busy('保存中…', () => Api.appsetbatch(b64enc(pkg + '\t' + v), 'game'));
+        if (/OK/.test(r)) {
+          showToast('已设为游戏[' + (v === 'auto' ? '跟随全局' : (MODE_CN[v] || v)) + ']（频率+线程同步）');
+        } else {
+          showToast('失败：' + (r || '').slice(0, 60));
+        }
+        await loadGameFreq(); renderGame();
+        return;
+      }
+      // 应用页：精准更新，无筛选/搜索才走快路径
+      const full = (S.appPresetFilter !== 'all') || !!(S.appSearch || '').trim();
+      if (S.appfreq) S.appfreq[pkg] = (v === 'auto' ? '' : v);
+      if (full) renderAppFreq(); else refreshModeButtons(pkg);
+      const r = await busy('保存中…', () => Api.appsetbatch(b64enc(pkg + '\t' + v), 'app'));
+      if (/OK/.test(r)) {
+        showToast('已设为应用[' + (v === 'auto' ? '跟随全局' : (MODE_CN[v] || v)) + ']（频率+线程同步）');
+      } else {
+        showToast('失败：' + (r || '').slice(0, 60));
+        await loadAppFreq();
+        if (full) renderAppFreq(); else refreshModeButtons(pkg);
+      }
     });
     return;
   }

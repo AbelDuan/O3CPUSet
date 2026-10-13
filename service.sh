@@ -6,7 +6,7 @@
 #    · 唯一真值：$STATE_DIR/applist.conf（AppOpt 原生格式 + 语义核心）
 #    · o3lim.sh：只维护 applist.conf 的「管理区」段（应用→模式 + 默认档 + 8-9 闸门）
 #    · 精细线程规则（块语法/通配/游戏大核）由 AppOpt 网页(8889)全权管理
-#    · AppOpt.json：mode=2 纯 /proc 模式（无 eBPF 自作主张提核）、web_enable=true
+#    · AppOpt.json：mode=0 自动（eBPF 事件驱动优先，不可用回退 /proc 轮询）、web_enable=true
 #    · 语义核心按 O3(4+4+2) 自动映射：e-core=0-3 / p-core=4-7 / hp-core=8-9
 #    · 频率侧不变（apply_freq.sh / guard.sh 与线程引擎解耦）
 # ============================================================
@@ -65,9 +65,23 @@ if [ -f "$AETHER_DIR_SCRIPT" ]; then
     sh "$AETHER_DIR_SCRIPT" boot >> "$LOG_FILE" 2>&1
     log "· 线程配置已生成（o3lim boot，applist.conf 管理区）"
 fi
-# AppOpt.json 就位（若模块目录里的模板被改过，以模块目录为准；否则引擎自动落盘）
-if [ -f "$APPOPT_JSON" ]; then
-    cp -f "$APPOPT_JSON" "${MODDIR}/Scripts/4+4+2/O3/AppOpt.json" 2>/dev/null
+# AppOpt.json 就位（v19.0.5：只在**缺失**时补默认 mode=0）
+#   ⚠ 旧版这里是 `cp -f "$APPOPT_JSON" 自身路径`（src==dst 的空操作），本意想
+#     「以模块模板为准」，实际会把引擎运行时写入的工作模式（用户在 8889 页切的
+#     eBPF/Proc）在每次开机时打回模板值。现在：模块 zip 自带 mode=0 模板（新装/
+#     模块更新即自动=自动模式），运行期由引擎自行读写该文件，开机不覆盖。
+if [ ! -f "$APPOPT_JSON" ]; then
+    cat > "$APPOPT_JSON" <<'AJSON'
+{
+  "check_interval": 2,
+  "config_file": "/data/adb/O3CPUSet/applist.conf",
+  "cpuset_name": "O3CPUSet",
+  "mode": 0,
+  "web_enable": true
+}
+AJSON
+    chmod 0644 "$APPOPT_JSON" 2>/dev/null
+    log "· AppOpt.json 缺失 → 已补默认（mode=0 自动）"
 fi
 if [ -f "$APPOPT" ]; then
     chmod 0755 "$APPOPT" 2>/dev/null
