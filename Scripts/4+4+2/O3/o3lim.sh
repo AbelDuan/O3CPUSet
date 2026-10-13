@@ -461,12 +461,29 @@ cmd_gen() {
   [ -f "$STATE_DIR/webui/app_assign.tsv" ] && \
     awk -F'\t' 'NF>=2 && ($2=="fast"||$2=="none"){print $1}' "$STATE_DIR/webui/app_assign.tsv" >> "$rmf" 2>/dev/null
   local cntf="${STATE_DIR}/.o3lim.cnt"
-  awk -v RM="$rmf" -v NEW="${CONF}.new" -v CNT="$cntf" -v BASE="$base" '
+  # ★ v19.0.7：base（未管理段）里的同包规则必须剥离 —— 否则每次 gen 都会把
+  #   历史遗留的同名规则再叠加一遍，管理段出现「同包多条」（实测安装后 1971 行、
+  #   410 个包重复，xhs 出现 4 次；手动再跑一次 gen 才收敛到 1323 行 / 613 唯一包）。
+  #   成因：安装期 customize.sh → o3lim boot 生成的首版 CONF，其 base 段混入了
+  #   与后续管理段同包的条目（来源 threads.json / apprules 的历史值），
+  #   而 gen 只在 $sec 内部去重、不管 base，于是 base + sec 拼接后重复。
+  #   ⚠ 注意：AppOpt 按「后出现者生效」还是「先出现者生效」无保证 → 重复条目
+  #     会让「改了档位不生效」的排查再次变得困难，必须在生成期就铲干净。
+  awk -v RM="$rmf" -v NEW="${CONF}.new" -v CNT="$cntf" -v BASE="$base" -v SEC="$sec" '
     BEGIN {
       while ((getline r < RM) > 0) { gsub(/[ \t\r]/,"",r); if (r!="") rm[r]=1 } close(RM)
+      # 预载新管理段里出现过的包名，供 base 剥离判重
+      while ((getline s < SEC) > 0) {
+        if (s ~ /^[[:space:]]*#/ || s == "") continue
+        p = s; sub(/=.*$/, "", p); sub(/\{.*$/, "", p)
+        if (p != "") secpkg[p] = 1
+      }
+      close(SEC)
       nb=0
       while ((getline l < BASE) > 0) {
-        p=l; sub(/=.*$/,"",p); sub(/\{.*$/,"",p); if (p in rm) next
+        p=l; sub(/=.*$/,"",p); sub(/\{.*$/,"",p)
+        if (p in rm) continue                 # 不接管的包（WebUI 设 fast/none）
+        if (p in secpkg) continue             # ★ 新管理段已有同包 → 剥离，避免重复
         print l > NEW; if (index(l,"=")>0) n++; nb++
       }
       close(BASE)
