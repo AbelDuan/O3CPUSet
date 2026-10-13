@@ -149,6 +149,21 @@ AJSON
     chmod 0644 "$APPOPT_JSON" 2>/dev/null
     log "· AppOpt.json 缺失 → 已补默认（mode=0 自动）"
 fi
+# ★ v19.0.7：保证 8889 网页是开的。
+#   现象：刷完模块 AppOpt 在跑但 8889 不 LISTEN，模块「执行」按钮打开网页失败。
+#   根因：AppOpt 运行时会**自行持久化**工作模式到 AppOpt.json（在 8889 页切换
+#     即写盘），实测把 web_enable 写成了 false；而 v19.0.5 起 service.sh 不再
+#     覆盖该文件（为的是不把用户选的 mode 打回默认），于是 false 被永久保留。
+#   修法：只补 web_enable=true 这一项，mode / check_interval 一律不动 ——
+#     既保住用户对引擎模式的选择，又保证网页永远可达。
+if [ -f "$APPOPT_JSON" ] && ! grep -q '"web_enable"[[:space:]]*:[[:space:]]*true' "$APPOPT_JSON" 2>/dev/null; then
+    if grep -q '"web_enable"' "$APPOPT_JSON" 2>/dev/null; then
+        sed -i -E 's/"web_enable"[[:space:]]*:[[:space:]]*[^,}]*/"web_enable": true/' "$APPOPT_JSON" 2>/dev/null
+    else
+        sed -i -E 's/^([[:space:]]*)("[a-z_]+":)/\1"web_enable": true,\n\1\2/' "$APPOPT_JSON" 2>/dev/null
+    fi
+    log "· AppOpt.json 的 web_enable 已补为 true（8889 网页可达）"
+fi
 if [ -f "$APPOPT" ]; then
     chmod 0755 "$APPOPT" 2>/dev/null
     pkill -f AppOpt 2>/dev/null
