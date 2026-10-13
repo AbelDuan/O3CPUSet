@@ -191,6 +191,8 @@ cmd_status() {
     echo "AETHER_BIN=$([ -x "$MODDIR/Scripts/4+4+2/O3/AppOpt" ] && echo 1 || echo 0)"
     echo "AETHER_CFG_BYTES=$(wc -c < "$STATE_DIR/applist.conf" 2>/dev/null | tr -d ' ')"
     echo "APPOPT_WEB=http://127.0.0.1:8889"
+    # ★ v19.0.2：模块 WebUI 与 AppOpt 8889 网页共用同一份 applist.conf 真值，双向联动。
+    echo "SYNC=applist.conf（模块 WebUI ⇄ AppOpt 8889 共用真值，改动互相可见）"
 }
 
 # ============================================================
@@ -398,16 +400,48 @@ cmd_appfreqapps() {
     if has pm; then pm list packages -s 2>/dev/null | sed 's/^package://' | sort -u > "$sys_f"; fi
 
     # ③ ★ 单次 awk 完成全部拼装（避免逐包 fork → 界面卡死）
+    #    ★ v19.0.2 联动：一次性把 $conf（applist.conf，模块 WebUI 与 AppOpt 8889 网页共用真值）
+    #      里的「包级纯语义核心规则」读进 cmap（后写覆盖先写 = 与 AppOpt 引擎 last-wins 一致），
+    #      并记录哪些来自 8889 未管理段(umap)，用于「AppOpt网页」标签。
+    #      显示优先级：① 我方 tsv(m，模块 WebUI 权威) ② 否则 cmap(8889 网页写的)
+    #      —— 在 8889 网页里改了某应用的档位，模块 WebUI 立即能看到；反之亦然。
     [ -f "$mode_f" ]   || : > "$mode_f"
     [ -f "$assign_f" ] || : > "$assign_f"
-    awk -F'\t' -v MODEF="$mode_f" -v ASGF="$assign_f" -v APPSF="$apps_f" '
+    awk -F'\t' -v MODEF="$mode_f" -v ASGF="$assign_f" -v APPSF="$apps_f" -v CONF="$conf" '
+      function rev(v,   r){
+        if (v=="e-core") return "powersave"
+        if (v=="p-core") return "balance"
+        if (v=="e-core,p-core") return "performance"
+        if (v=="hp-core") return "performance"
+        if (v=="all-core") return ""
+        return ""
+      }
+      BEGIN {
+        mb=0
+        while ((getline l < CONF) > 0) {
+          if (l ~ /O3CPUSet-MANAGED-BEGIN/) { mb=1; continue }
+          if (l ~ /O3CPUSet-MANAGED-END/)   { mb=0; continue }
+          if (l ~ /^#/ || l ~ /\{/) continue
+          eq=index(l,"="); if (eq==0) continue
+          p=substr(l,1,eq-1); v=substr(l,eq+1)
+          gsub(/[ \t\r]/,"",p); gsub(/[ \t\r]/,"",v)
+          if (v ~ /^(e-core|p-core|hp-core|all-core)(,(e-core|p-core|hp-core|all-core))*$/) {
+            if (p=="") continue
+            cmap[p]=v                              # 后写覆盖先写 = 与 AppOpt 引擎一致
+            if (mb==0 && !(p in umap)) umap[p]=1   # 仅 8889 未管理段里的算「AppOpt网页」标记
+          }
+        }
+        close(CONF)
+      }
       FNR==NR { sys[$1]=1; next }                    # 第一遍：系统包集合
       FILENAME==MODEF { if (NF>=2 && $1!="") m[$1]=$2; next }
       FILENAME==ASGF  { if (NF>=2 && $1!="") { if (!($1 in m)) m[$1]=$2 } next }
       FILENAME==APPSF { p=$0; gsub(/[ \t\r]/,"",p); if (p=="") next
                         s = (p in sys) ? 1 : 0
-                        if (p in m) printf "APP=%s|%d|1|1|%s|自定义\n", p, s, m[p]
-                        else        printf "APP=%s|%d|0|0||\n", p, s }
+                        if (p in m)            { md=m[p]; cust=1; tag="自定义" }
+                        else if (p in cmap)   { md=rev(cmap[p]); cust=((p in umap)?1:0); tag=(cust?"AppOpt网页":"") }
+                        else                  { md=""; cust=0; tag="" }
+                        printf "APP=%s|%d|%d|%d|%s|%s\n", p, s, (p in m)?1:0, cust, md, tag }
     ' "$sys_f" "$mode_f" "$assign_f" "$apps_f"
     rm -f "$apps_f" "$sys_f"
 }

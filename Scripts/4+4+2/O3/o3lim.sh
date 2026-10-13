@@ -308,6 +308,16 @@ cmd_gen() {
   #   再写段头！否则段头会被它截断掉（曾因此丢了 BEGIN 标记 → 每次 gen 都重复累积）。
   gen_managed_section "$sec"
 
+  # ★ 联动：提前抽取「未管理段」（8889 网页写的规则，管理区标记之外的内容）到 $base，
+  #   供下方 ① 兜底 backfill 跳过已在 8889 配过的包、② 末尾组装时剥离「不接管」包在 8889 的同包规则。
+  local base="${STATE_DIR}/.o3lim.base"
+  : > "$base"
+  if [ -f "$CONF" ]; then
+    sed '/^# ==== O3CPUSet-MANAGED-BEGIN ====$/,/^# ==== O3CPUSet-MANAGED-END ====$/d' "$CONF" > "$base" 2>/dev/null
+  fi
+  awk 'NF{last=NR} {l[NR]=$0} END{for(i=1;i<=last;i++) print l[i]}' "$base" > "${base}.t" 2>/dev/null
+  mv "${base}.t" "$base" 2>/dev/null
+
   # 段头插到最前：先暂存再拼接
   {
     echo "$MARK_BEGIN"
@@ -332,6 +342,9 @@ cmd_gen() {
     grep -qF -- "${p}=" "$sec" 2>/dev/null </dev/null && continue
     grep -qF -- "${p}{" "$sec" 2>/dev/null </dev/null && continue
     [ -s "${sec}.rm" ] && grep -qxF -- "$p" "${sec}.rm" 2>/dev/null && continue
+    # ★ 联动：8889 未管理段里已存在的包规则（用户/AppOpt 网页手动设的）不补默认，
+    #   避免兜底 p-core 覆盖掉 8889 网页里设的 省电/性能 等档位。
+    grep -qF -- "${p}=" "$base" 2>/dev/null </dev/null && continue
     is_allowed "$p" && continue
     printf '%s=%s\n' "$p" "p-core" >> "$sec"
     n_def=$((n_def+1))
@@ -462,13 +475,22 @@ cmd_gen() {
 
   echo "$MARK_END" >> "$sec"
 
-  # 组装：把旧 CONF 里的管理区摘掉，再追加新段（段外保留）
-  #   用 sed 按 ASCII 标记行删除（不经过 awk -v，避免 UTF-8 值传参被 toybox 误处理）
-  local base="${STATE_DIR}/.o3lim.base"
-  : > "$base"
-  if [ -f "$CONF" ]; then
-    sed '/^# ==== O3CPUSet-MANAGED-BEGIN ====$/,/^# ==== O3CPUSet-MANAGED-END ====$/d' "$CONF" > "$base" 2>/dev/null
+  # 组装：把未管理段($base，已在 gen 开头从 $CONF 摘出管理区得到，此处复用，不再重读 $CONF)
+  #   里的「不接管」包同包规则剥离后，追加新管理段（段外保留）。
+  # ★ 联动：模块 WebUI 设「不接管(fast/none)」的包，连 8889 未管理段里的同包规则也一并移除，
+  #   否则 8889 的同包规则会盖过「不接管」（8889 段在文件前面、managed 段里该包无规则 → 引擎用 8889 的）。
+  #   模块 WebUI 设了具体档位的包无需剥离：managed 段（靠后）会盖过 8889 段，已生效。
+  local rmf="${STATE_DIR}/.o3lim.rmbase"; : > "$rmf"
+  if [ -f "$STATE_DIR/webui/app_assign.tsv" ]; then
+    awk -F'\t' 'NF>=2 && ($2=="fast"||$2=="none"){print $1}' "$STATE_DIR/webui/app_assign.tsv" >> "$rmf" 2>/dev/null
   fi
+  if [ -s "$rmf" ]; then
+    awk -v RM="$rmf" '
+      BEGIN { while((getline r < RM)>0){gsub(/[ \t\r]/,"",r); if(r!="") rm[r]=1} close(RM) }
+      { p=$0; sub(/=.*$/,"",p); sub(/\{.*$/,"",p); if (p in rm) next; print }
+    ' "$base" > "${base}.r" 2>/dev/null && mv -f "${base}.r" "$base" 2>/dev/null
+  fi
+  rm -f "$rmf"
   # 去掉 base 尾部多余空行后拼接
   awk 'NF{last=NR} {l[NR]=$0} END{for(i=1;i<=last;i++) print l[i]}' "$base" > "${base}.t" 2>/dev/null
   mv "${base}.t" "$base" 2>/dev/null
