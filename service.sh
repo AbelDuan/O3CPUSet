@@ -126,6 +126,10 @@ fi
 if [ -f "$AETHER_DIR_SCRIPT" ]; then
     sh "$AETHER_DIR_SCRIPT" boot >> "$LOG_FILE" 2>&1
     log "· 线程配置已生成（o3lim boot，applist.conf 管理区）"
+    # ★ v19.0.7：service 是开机/自愈的最后一棒，这里再收敛一次（gen 幂等）。
+    #   保证任何路径（安装 / 开机 / ksud services 重拉）结束时 applist.conf 都是
+    #   去重后的结果 —— 重复条目会让「改了档位不生效」的排查变困难。
+    sh "$AETHER_DIR_SCRIPT" gen >> "$LOG_FILE" 2>&1
 fi
 # AppOpt.json 就位（v19.0.5：只在**缺失**时补默认 mode=0）
 #   ⚠ 旧版这里是 `cp -f "$APPOPT_JSON" 自身路径`（src==dst 的空操作），本意想
