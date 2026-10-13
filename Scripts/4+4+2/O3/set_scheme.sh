@@ -14,8 +14,8 @@ QUIET="$2"
 
 # ---------- 修复：重建线程分配 + 重新下发频率 ----------
 if [ "$ACTION" = "repair" ]; then
-    out=$(sh "$MODDIR/Scripts/4+4+2/O3/aether/aether_ctl.sh" deploy 2>&1)
-    log "🔧 修复：线程重建 $out"
+    out=$(sh "$MODDIR/Scripts/4+4+2/O3/o3lim.sh" boot 2>&1)
+    log "🔧 修复：线程管理区重建 $out"
     current_mode_read 2>/dev/null
     sh "$MODDIR/Scripts/4+4+2/O3/apply_freq.sh" --mode "${CUR_MODE:-balance}" >/dev/null 2>&1
     [ -z "$QUIET" ] && echo "✅ 线程已重建 · 频率已按[${CUR_MODE:-balance}]下发"
@@ -62,8 +62,8 @@ if [ -f "$PC" ]; then
     log "  · powercfg.sh 已执行（方案 $SCHEME）"
 fi
 
-# 4) 按模块模板/分配重建线程（写到 Aether 配置）
-out=$(sh "$MODDIR/Scripts/4+4+2/O3/aether/aether_ctl.sh" deploy 2>&1)
+# 4) 按模块模板/分配重建线程（刷新 applist.conf 管理区，AppOpt 热重载）
+out=$(sh "$MODDIR/Scripts/4+4+2/O3/o3lim.sh" boot 2>&1)
 log "  · $out"
 
 log "✅ 方案 ${SCHEME} 已生效"

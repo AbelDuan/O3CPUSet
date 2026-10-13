@@ -7,7 +7,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="webui-version" content="v18.4.4">
+<meta name="webui-version" content="v18.4.8">
 <title>玄戒O3 · Abel 调度工具箱</title>
 <style>
 /* ============================================================
@@ -275,7 +275,23 @@ textarea.f { resize: vertical; line-height: 1.5; }
 .selbar { display: flex; align-items: center; gap: 8px; padding: 8px 0 4px; flex-wrap: wrap; }
 /* 模板直选行：勾选应用后点模板名即套用，不用二级菜单 */
 .tplrow { display: flex; flex-wrap: wrap; gap: 7px; padding: 9px 0 3px; }
+.tplrow-label { flex: 1 0 100%; font-size: 11.5px; color: var(--sub); padding: 0 0 5px; }
+.tplbtn:disabled { opacity: .4; cursor: not-allowed; }
 .tplbtn { flex: 1; min-width: 62px; text-align: center; }
+/* ---------- 档位选择：底部弹层（替代原生 select 的系统级全屏菜单） ---------- */
+.sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.42); opacity: 0; transition: opacity .22s; z-index: 80; }
+.sheet-bg.on { opacity: 1; }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg-elev); border-radius: 16px 16px 0 0;
+  transform: translateY(100%); transition: transform .26s cubic-bezier(.4,0,.2,1); z-index: 81; max-height: 72vh; display: flex; flex-direction: column; }
+.sheet.on { transform: translateY(0); }
+.sheet-h { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; border-bottom: 1px solid var(--line-soft); }
+.sheet-h .t { font-size: 15px; font-weight: 600; }
+.sheet-b { overflow-y: auto; padding: 6px 8px 14px; }
+.sheet-item { padding: 13px 12px; border-radius: 11px; cursor: pointer; }
+.sheet-item.on { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.sheet-item .si-n { font-size: 14.5px; }
+.sheet-item .si-s { font-size: 11.5px; color: var(--sub); margin-top: 2px; }
+.modebtn { width: auto; flex: none; min-width: 96px; font-size: 12.5px; padding: 6px 8px; }
 /* 搜索 + 预设筛选：一行两控件，等高对齐 */
 .toolrow { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .toolrow .f { flex: 1; min-width: 0; }
@@ -399,10 +415,12 @@ textarea.f { resize: vertical; line-height: 1.5; }
 
 <script>
 /* ============================================================
-   玄戒O3 · Abel 调度工具箱 —— WebUI 前端（全局频率 + 线程分配）
-     ① 全局：选方案 + 选全局模式 → 同步到 调度App（含启用，不再是自定义模式）
-     ② 线程分配：完全使用艇长的 Aether 引擎；按「本机有界面应用」展示
-        艇长已定义的线程、允许对未分配应用自定义、其余由艇长自动分配
+   玄戒O3 · Abel 调度工具箱 —— WebUI 前端（全局频率 + 应用 / 游戏）
+     ① 全局：选方案 + 选全局模式 → 频率下发
+     ② 应用：给应用设「频率档 + 线程档」（一次写 app_assign → applist.conf）
+     ③ 游戏：游戏固定走大核线程（hp-core），这里只选频率档
+     · 未定义配置的兜底：频率跟随全局、线程用「流畅」
+     · 精细线程规则（块语法/通配线程）→「全局」页按钮打开 AppOpt 网页 8889
    ============================================================ */
 'use strict';
 
@@ -592,6 +610,9 @@ const Api = {
   //   kind=app：频率写 app_freq，线程按 freq2tpl 映射（极速→不接管）。
   //   kind=game：频率写 game_assign，线程固定 game。
   async appset(pkg, mode, kind) { return await this.run('appset ' + this.shq(pkg) + ' ' + this.shq(mode) + ' ' + this.shq(kind)); },
+  // ★ 批量（「应用 / 游戏」页实际调用）：b64(pkg<TAB>mode 多行) + kind(app|game)
+  //   ⚠ 必须存在！前端多处调 Api.appsetbatch，缺了会静默失败 → 保存后刷新即回退。
+  async appsetbatch(b64, kind) { return await this.run('appsetbatch ' + this.shq(b64) + ' ' + this.shq(kind || 'app')); },
   async appdel(pkg, kind) { return await this.run('appdel ' + this.shq(pkg) + ' ' + this.shq(kind)); },
   async gamefreq() { return await this.run('gamefreq'); },
   async games() { return await this.run('games'); },
@@ -601,6 +622,8 @@ const Api = {
   async aetherapps() { return await this.run('aetherapps'); },
   async aetherset(pkg, tpl) { return await this.run('aetherset ' + this.shq(pkg) + ' ' + this.shq(tpl)); },
   async aetherdel(pkg) { return await this.run('aetherdel ' + this.shq(pkg)); },
+  // v19：Aether 特性开关已随引擎切换移除；保留空实现避免残留调用报错。
+  async aetherfeat(k, v) { return 'OK （特性开关已随引擎切换移除）'; },
   async aethersetbatch(b64) { return await this.run('aethersetbatch ' + this.shq(b64)); }
 };
 
@@ -733,10 +756,6 @@ async function viewFreq() {
       '<div class="card" id="调度App-card"><div class="kv-row"><span class="k">加载中…</span></div></div>' +
     '</div>' +
     '<div class="group">' +
-      '<div class="g-title rowhead">频率方案 <button class="btn btn-xs" data-act="scheme">更换</button></div>' +
-      '<div class="card" id="scheme-card"><div class="row"><div class="r-main"><div class="r-t">加载中…</div></div></div></div>' +
-    '</div>' +
-    '<div class="group">' +
       '<div class="g-title rowhead">各模式频率档位 <span class="pill" id="freq-pinned"></span></div>' +
       '<div class="g-foot" style="padding-bottom:8px">显示的是<b>已设定的频率范围</b>（非实时频率）。点标题展开可编辑三簇最低/最高；<b>保存</b>只存盘不下发，<b>应用</b>才会切到该档并立即下发。</div>' +
       '<div class="card" id="freq-card">加载中…</div>' +
@@ -746,10 +765,9 @@ async function viewFreq() {
     '</div>';
 
   try {
-    const [st, schemes, fv] = await Promise.all([Api.status(), Api.schemes(), Api.freqview()]);
-    S.status = st; S.schemes = schemes; S.freqview = fv;
+    const [st, fv] = await Promise.all([Api.status(), Api.freqview()]);
+    S.status = st; S.freqview = fv;
     renderSceneCard(st);
-    renderSchemeCard(st, schemes);
     renderFreqEditor(fv, st);
   } catch (e) { showToast('读取频率信息失败'); }
 }
@@ -758,7 +776,7 @@ function renderSceneCard(st) {
   const card = document.getElementById('调度App-card'); if (!card) return;
   const mode = st.MODE_CN || '—';
   const daemon = st.DAEMON === '1';
-  const aether = st.AETHER_RUNNING === '1';
+  const engine = st.ENGINE_RUNNING === '1';
   const pill = document.getElementById('调度App-pill');
   if (pill) { pill.textContent = '模块自有'; pill.className = 'pill ok'; }
   card.innerHTML =
@@ -766,23 +784,16 @@ function renderSceneCard(st) {
     '<div class="kv-row"><span class="k">全局模式</span><span class="v">' + esc(mode) + '</span></div>' +
     '<div class="kv-row"><span class="k">频率守护</span><span class="v">' + (daemon
       ? '<span class="pill ok">运行中</span>' : '<span class="pill warn">未运行</span>') + '</span></div>' +
-    '<div class="kv-row"><span class="k">线程引擎</span><span class="v">' + (aether
-      ? '<span class="pill ok">Aether 运行中</span>' : '<span class="pill warn">未运行</span>') + '</span></div>';
+    '<div class="kv-row"><span class="k">线程引擎</span><span class="v">' + (engine
+      ? '<span class="pill ok">AppOpt 运行中</span>' : '<span class="pill warn">未运行</span>') + '</span></div>' +
+    '<div style="padding:10px 0 2px">' +
+      '<button class="btn btn-block" id="engine-web-btn">🌐 打开 AppOpt 线程管理网页（127.0.0.1:8889）</button>' +
+      '<div class="g-foot" style="padding-top:8px">精细线程规则（块语法 / 通配线程 / 单线程绑定）在 AppOpt 网页里全权管理；本页负责频率档与「应用 / 游戏」的模式分配，两者共用同一份 applist.conf，保存即生效。</div>' +
+    '</div>';
+  const wb = document.getElementById('engine-web-btn');
+  if (wb) wb.addEventListener('click', () => { window.open('http://127.0.0.1:8889', '_blank'); });
 }
 
-function renderSchemeCard(st, schemes) {
-  const cur = st.SCHEME || 'sweet_bal';
-  const cn = SCHEME_CN[cur] || cur;
-  const card = document.getElementById('scheme-card'); if (!card) return;
-  card.innerHTML =
-    '<div class="row">' +
-      '<div class="r-main">' +
-        '<div class="r-t">当前方案 · ' + esc(cn) + '</div>' +
-        '<div class="r-s mono">' + esc(cur) + '</div>' +
-      '</div>' +
-      '<span class="pill accent">预设</span>' +
-    '</div>';
-}
 
 const CLUSTER_KEYS = [['L', '小核'], ['M', '中核'], ['P', '超大核']];
 const MODE_ORDER = ['powersave', 'balance', 'performance', 'fast'];
@@ -924,7 +935,7 @@ async function viewAppFreq() {
   v.innerHTML =
     '<div class="group">' +
       '<div class="g-title rowhead">应用 <span class="pill" id="appfreq-count"></span></div>' +
-      '<div class="g-foot" style="padding-bottom:8px">给应用指定一个档位，<b>频率与线程会一起同步</b>：选「省电 / 流畅 / 性能」两处同时切；选「极速」频率放开、线程改<b>不接管</b>。该应用在前台时用此档，切走即回全局。下方窗口可<b>滑动 / 搜索 / 按筛选</b>找应用，勾选后可<b>批量套用</b>。</div>' +
+      '<div class="g-foot" style="padding-bottom:8px">给应用指定一个档位，<b>频率与线程会一起同步</b>：选「省电 / 流畅 / 性能」两处同时切；选「极速」频率放开、线程改<b>不接管</b>。<b>未单独设置的进程走兜底：频率跟随全局、线程用「流畅」(p-core)</b>。该应用在前台时用此档，切走即回全局。下方窗口可<b>滑动 / 搜索 / 按筛选</b>找应用，勾选后可<b>批量套用</b>。</div>' +
       '<div class="card apptoolbar">' +
         '<div class="toolrow">' +
           '<input class="f" id="appfreq-search" placeholder="搜索应用（包名关键字）…">' +
@@ -944,15 +955,26 @@ async function viewAppFreq() {
           '<button class="btn btn-xs ghost" data-act="freqselclear">清空</button>' +
         '</div>' +
         '<div class="tplrow">' +
+          '<div class="tplrow-label">批量套用到「已勾选」应用（不会改全局）</div>' +
           APPFREQ_BATCH_OPTS.map(o => '<button class="btn btn-xs tplbtn" data-act="freqbatch" data-tpl="' + o[0] + '">' + o[1] + '</button>').join('') +
         '</div>' +
       '</div>' +
       '<div class="card"><div class="appwin" id="appfreq-win"><div class="row"><div class="r-main"><div class="r-t">加载中…</div></div></div></div></div>' +
     '</div>';
 
-  await loadAppFreq();
-  await loadAppList();
-  renderAppFreq();
+  // ★ 容错：任一环节抛错都要给出可见提示，绝不把界面留在「加载中…」
+  try {
+    await loadAppFreq();
+  } catch (e) { showToast('读取应用频率失败：' + (e && e.message || e)); }
+  try {
+    await loadAppList();
+  } catch (e) { showToast('读取应用列表失败：' + (e && e.message || e)); S.appList = S.appList || []; }
+  try {
+    renderAppFreq();
+  } catch (e) {
+    const win = document.getElementById('appfreq-win');
+    if (win) win.innerHTML = '<div class="empty">渲染失败：' + esc(String(e && e.message || e)) + '</div>';
+  }
 }
 
 async function loadAppFreq() {
@@ -961,14 +983,34 @@ async function loadAppFreq() {
     // 这里解析成 { pkg: mode } 对象，供 renderAppFreq 判定「已配置 / 当前档」。
     const t = await Api.appfreq();
     const m = {};
+    const wild = [];   // ★ v18.4.8：后端为压缩规则会把同前缀子进程合并成 `xxx*`（如 sandboxed_privilege_process*），
+                       //   前端若只用精确名查就会读不到、界面回显旧档。这里单独收集通配键用于前缀匹配。
     String(t).split('\n').forEach(l => {
       if (l.indexOf('AF_') === 0 && l.indexOf('=') > 3) {
         const i = l.indexOf('=');
-        m[l.slice(3, i)] = l.slice(i + 1).trim();
+        const k = l.slice(3, i);
+        const v = l.slice(i + 1).trim();
+        m[k] = v;
+        if (k.indexOf('*') >= 0) wild.push([k, v]);
       }
     });
     S.appfreq = m;
-  } catch (e) { S.appfreq = {}; }
+    S.appfreqWild = wild;
+  } catch (e) { S.appfreq = {}; S.appfreqWild = []; }
+}
+// ★ v18.4.8：取某包的生效频率档 = 精确优先，其次匹配后端通配符键（xxx*）。
+function appFreqOf(pkg) {
+  const m = S.appfreq || {};
+  if (m[pkg]) return m[pkg];
+  const wild = S.appfreqWild || [];
+  for (let i = 0; i < wild.length; i++) {
+    const k = wild[i][0];
+    const star = k.indexOf('*');
+    if (star < 0) continue;
+    const prefix = k.slice(0, star);
+    if (pkg.indexOf(prefix) === 0) return wild[i][1];
+  }
+  return '';
 }
 async function loadAppList() {
   if (!S.appList) {
@@ -1071,15 +1113,15 @@ function appfreqFiltered() {
     if (kw && !Search.hit(a.pkg, kw)) return false;
     // 按频率预设筛选：跟随全局=未设置；其余=已设为该档
     if (pf !== 'all') {
-      const cur = m[a.pkg] || '';
+      const cur = appFreqOf(a.pkg);
       if (pf === '__follow__') { if (cur) return false; }
       else if (cur !== pf) return false;
     }
     switch (S.appFilter) {
       case 'sys':   return a.sys === '1';
       case 'third': return a.sys !== '1';
-      case 'set':   return !!m[a.pkg];
-      case 'unset': return !m[a.pkg];
+      case 'set':   return !!appFreqOf(a.pkg);
+      case 'unset': return !appFreqOf(a.pkg);
       default:      return true;
     }
   });
@@ -1133,7 +1175,7 @@ function renderAppFreq(keepScroll, noHydrate) {
     }
     if (pf !== 'all') {
       const mainPkg = g.members.find(p => p === g.key) || g.members[0];
-      const cur = (S.appfreq || {})[mainPkg] || '';
+      const cur = appFreqOf(mainPkg);
       if (pf === '__follow__') { if (cur) return false; }
       else if (cur !== pf) return false;
     }
@@ -1142,22 +1184,22 @@ function renderAppFreq(keepScroll, noHydrate) {
   if (groups.length) {
     mergeHtml = groups.map(g => {
       const mainPkg = g.members.find(p => p === g.key) || g.members[0];
-      const cur = (S.appfreq || {})[mainPkg] || '';
-      const opts = APP_MODE_OPTS.map(o => '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('');
+      const cur = appFreqOf(mainPkg);
+      const curCn = (APP_MODE_OPTS.find(o => o[0] === cur) || ['', '跟随全局'])[1];
       const tplCn = { powersave: '省电', balance: '流畅', performance: '性能', fast: '不接管', '': '' }[cur] || '';
       const sync = cur ? '<span class="pill ok">同步 · 线程' + tplCn + '</span>' : '<span class="pill">含 ' + g.members.length + ' 个进程</span>';
       return '<div class="row app-row merge-row" style="display:flex;align-items:center;gap:10px">' +
         '<div class="ai-wrap merge-ico">⌬</div>' +
         '<div class="app-main"><div class="app-name">' + esc(g.label) + '</div>' +
         '<div class="tagrow"><span class="app-pkg mono">' + esc(g.key) + '</span>' + sync + '</div></div>' +
-        // ★ v18.4：移除「移除」按钮（用户要求删掉；配置即跟随全局，无需移除）。
-        '<select class="f" data-merge="' + esc(g.key) + '" data-kind="app" style="width:auto;flex:none;min-width:96px">' + opts + '</select>' +
+        // ★ v18.4.8：改用底部弹层按钮（不再用原生 select，避免点出系统级大菜单）
+        '<button class="f modebtn" data-merge="' + esc(g.key) + '" data-kind="app" data-cur="' + esc(cur) + '">' + esc(curCn) + '</button>' +
       '</div>';
     }).join('');
   }
   win.innerHTML = mergeHtml + list.map(p => {
-    const cur = m[p.pkg] || '';
-    const opts = APP_MODE_OPTS.map(o => '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('');
+    const cur = appFreqOf(p.pkg);
+    const curCn = (APP_MODE_OPTS.find(o => o[0] === cur) || ['', '跟随全局'])[1];
     // ★ v18.3.9：应用页频率与线程同步 —— 显示频率档 + 其映射的线程档（只读，避免用户忘了设线程）。
     const tplCn = { powersave: '省电', balance: '流畅', performance: '性能', fast: '不接管', '': '' }[cur] || '';
     const sync = cur ? '<span class="pill ok">同步 · 线程' + tplCn + '</span>' : '';
@@ -1166,7 +1208,7 @@ function renderAppFreq(keepScroll, noHydrate) {
     return '<div class="row app-row' + (sel ? ' sel' : '') + '" style="display:flex;align-items:center;gap:10px">' +
       '<input type="checkbox" class="app-sel" data-sel="' + esc(p.pkg) + '"' + checked + '>' +
       appMediaHtml(p, sync) +
-      '<select class="f" data-appset="' + esc(p.pkg) + '" data-kind="app" style="width:auto;flex:none;min-width:96px">' + opts + '</select>' +
+      '<button class="f modebtn" data-appset="' + esc(p.pkg) + '" data-kind="app" data-cur="' + esc(cur) + '">' + esc(curCn) + '</button>' +
     '</div>';
   }).join('');
   if (all.length > list.length) {
@@ -1238,7 +1280,7 @@ async function _loadMeta(slice) {
 // 线程角色档（行内下拉 / 套用）。v18.2.7：删除「极速 fast」——实测与「游戏 game」
 // 行为一致，历史 fast 已由后端自动迁移为 game；标签与分应用频率页统一为短标签。
 const TPL_OPTS = [
-  ['auto', '跟随艇长'],
+  ['auto', '跟随全局'],
   ['powersave', '省电'],
   ['balance', '流畅'],
   ['performance', '性能'],
@@ -1247,7 +1289,7 @@ const TPL_OPTS = [
 ];
 // 线程页「按预设筛选」选项
 const THREAD_PRESETS = [
-  ['all', '全部预设'], ['auto', '跟随艇长'], ['powersave', '省电'], ['balance', '流畅'],
+  ['all', '全部预设'], ['auto', '跟随全局'], ['powersave', '省电'], ['balance', '流畅'],
   ['performance', '性能'], ['game', '游戏'], ['none', '不接管']
 ];
 // 两页统一的「套用」下拉：★ v18.4 移除「跟随全局」批量项（移除功能已删除，避免误触发批量移除）。
@@ -1265,24 +1307,8 @@ async function viewGame() {
   S.appTplFilter = 'all';
   v.innerHTML =
     '<div class="group">' +
-      '<div class="card" id="aether-card">' +
-        '<div class="row">' +
-          '<div class="r-main"><div class="r-t">艇长线程引擎 (Aether)</div>' +
-          '<div class="r-s" id="aether-state">加载中…</div></div>' +
-          '<label class="sw"><input type="checkbox" id="aether-on" data-act="aetherswitch"><i></i></label>' +
-        '</div>' +
-        '<div class="kv-row"><span class="k">运行状态</span><span class="v" id="aether-run">—</span></div>' +
-        '<div class="kv-row"><span class="k">规则数</span><span class="v" id="aether-rules">—</span></div>' +
-        '<div class="kv-row"><span class="k">拓扑</span><span class="v mono" id="aether-topo">—</span></div>' +
-        '<div class="feat-block">' +
-          '<div class="feat-title">功能</div>' +
-          '<div class="feat-grid" id="aether-feats"></div>' +
-        '</div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="group">' +
       '<div class="g-title rowhead">游戏 <span class="pill" id="apps-count"></span></div>' +
-      '<div class="g-foot" style="padding-bottom:8px">游戏默认走<b>游戏线程（最优游戏调度）</b>，这里只需选<b>频率档</b>：省电 / 流畅 / 性能 / 极速。线程固定为游戏，无需单独设。下方窗口可<b>滑动 / 搜索 / 按筛选</b>找应用，勾选后可<b>批量套用频率档</b>。</div>' +
+      '<div class="g-foot" style="padding-bottom:8px">游戏默认走<b>游戏线程（大核 hp-core 8-9）</b>，这里只需选<b>频率档</b>：省电 / 流畅 / 性能 / 极速。线程固定为游戏，无需单独设。<b>未设置的进程走兜底：频率跟随全局、线程用「流畅」</b>。下方窗口可<b>滑动 / 搜索 / 按筛选</b>找应用，勾选后可<b>批量套用频率档</b>。</div>' +
       '<div class="card apptoolbar">' +
         '<div class="toolrow">' +
           '<input class="f" id="app-search" placeholder="搜索包名…">' +
@@ -1302,13 +1328,13 @@ async function viewGame() {
           '<button class="btn btn-xs ghost" data-act="appselclear">清空</button>' +
         '</div>' +
         '<div class="tplrow">' +
+          '<div class="tplrow-label">批量套用到「已勾选」游戏（不改全局、不改线程）</div>' +
           APPFREQ_BATCH_OPTS.map(o => '<button class="btn btn-xs tplbtn" data-act="gamebatch" data-tpl="' + o[0] + '">' + o[1] + '</button>').join('') +
         '</div>' +
       '</div>' +
       '<div class="card"><div class="appwin" id="apps-card"><div class="row"><div class="r-main"><div class="r-t">加载中…</div></div></div></div></div>' +
     '</div>';
 
-  await refreshAether();
   if (!S.appsLoaded) { await loadApps(); }
   await loadGameFreq();
   renderGame();
@@ -1538,14 +1564,14 @@ function renderGame(noHydrate) {
   if (!list.length) { card.innerHTML = '<div class="empty">没有匹配的应用<br>换个筛选或搜索词试试</div>'; return; }
   card.innerHTML = list.map(a => {
     const cur = (S.gamefreq || {})[a.pkg] || '';
-    const opts = APP_MODE_OPTS.map(o => '<option value="' + o[0] + '"' + (cur === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('');
+    const curCn = (APP_MODE_OPTS.find(o => o[0] === cur) || ['', '跟随全局'])[1];
     const gameTag = '<span class="pill ok">线程 · Aether 默认</span>';
     const sel = S.sel.has(a.pkg);
     const checked = sel ? ' checked' : '';
     return '<div class="row app-row' + (sel ? ' sel' : '') + '" style="display:flex;align-items:center;gap:10px">' +
       '<input type="checkbox" class="app-sel" data-sel="' + esc(a.pkg) + '"' + checked + '>' +
       appMediaHtml(a, gameTag) +
-      '<select class="f" data-appset="' + esc(a.pkg) + '" data-kind="game" style="width:auto;flex:none;min-width:96px">' + opts + '</select>' +
+      '<button class="f modebtn" data-appset="' + esc(a.pkg) + '" data-kind="game" data-cur="' + esc(cur) + '">' + esc(curCn) + '</button>' +
     '</div>';
   }).join('');
   if (all.length > list.length) {
@@ -1560,7 +1586,14 @@ function updateSelCounts() {
   const a = document.getElementById('apps-selcount');
   if (a) a.textContent = '已选 ' + S.sel.size;
   const b = document.getElementById('appfreq-selcount');
-  if (b) b.textContent = '已选 ' + (S.selSet ? S.selSet.size : 0);
+  const n = S.selSet ? S.selSet.size : 0;
+  if (b) b.textContent = '已选 ' + n;
+  // ★ v18.4.8：未勾选应用时，批量套用按钮置灰禁用（避免被误认成全局频率切换而误点）
+  document.querySelectorAll('[data-act="freqbatch"],[data-act="gamebatch"]').forEach(btn => {
+    const isGame = btn.dataset.act === 'gamebatch';
+    const cnt = isGame ? S.sel.size : n;
+    btn.disabled = (cnt === 0);
+  });
 }
 
 async function aetherSet(pkg, tpl) {
@@ -1620,7 +1653,7 @@ const ACTIONS = {
       if (S.tab === 'game') { await loadGameFreq(); renderGame(); showToast('已即时生效（游戏线程+频率）'); return; }
     } catch (e) { showToast('应用失败：' + (e.message || e)); }
   },
-  scheme: () => openSchemeSheet(),
+
   // —— 频率档位：展开/收起 + 应用 + 恢复默认 ——
   //  展开只是「看/改」，绝不切频率；只有点「应用」才切全局模式并下发。
   freqtoggle: (b) => {
@@ -1749,30 +1782,28 @@ const DEFAULT_TIERS = {
   fast:      '912000 3148800 1142400 3686400 2044800 4358400'
 };
 
-/* 方案选择弹层 */
-function openSchemeSheet() {
+
+/* ★ v18.4.8：档位选择底部弹层 —— 替代原生 select 的系统级全屏菜单，
+   点击后在底部展开轻量列表，选中即回落到按钮上（不再跳「很大的下拉菜单」）。 */
+function openModeSheet(title, cur, cb) {
   const bg = document.createElement('div'); bg.className = 'sheet-bg';
   const sheet = document.createElement('div'); sheet.className = 'sheet';
-  const items = (S.schemes.length ? S.schemes : ['sweet_eco|省电', 'sweet_bal|均衡', 'sweet_hq|高画质', 'sweet_perf|性能']).map(s => {
-    const i = s.indexOf('|'); const name = i > 0 ? s.slice(0, i) : s; const cn = i > 0 ? s.slice(i + 1) : '';
-    const cur = (S.status.SCHEME || 'sweet_bal') === name;
-    return '<div class="sheet-item' + (cur ? ' on' : '') + '" data-scheme="' + esc(name) + '">' +
-      '<div class="si-n">' + esc(cn || name) + (cur ? ' <span class="pill ok">当前</span>' : '') + '</div>' +
-      '<div class="si-s mono">' + esc(name) + '</div></div>';
+  const items = APP_MODE_OPTS.map(o => {
+    const on = (o[0] === cur);
+    return '<div class="sheet-item' + (on ? ' on' : '') + '" data-mode="' + esc(o[0]) + '">' +
+      '<div class="si-n">' + esc(o[1]) + (on ? ' <span class="pill ok">当前</span>' : '') + '</div>' +
+      (o[0] ? '<div class="si-s mono">' + esc(o[0]) + '</div>' : '') + '</div>';
   }).join('');
   sheet.innerHTML =
-    '<div class="sheet-h"><div class="t">选择频率方案</div><button class="btn btn-xs ghost" id="sheet-close">取消</button></div>' +
+    '<div class="sheet-h"><div class="t">' + esc(title) + '</div><button class="btn btn-xs ghost" id="sheet-close">取消</button></div>' +
     '<div class="sheet-b">' + items + '</div>';
   bg.appendChild(sheet); document.body.appendChild(bg);
   requestAnimationFrame(() => { bg.classList.add('on'); sheet.classList.add('on'); });
-  const close = () => { bg.classList.remove('on'); sheet.classList.remove('on'); setTimeout(() => bg.remove(), 250); };
+  const close = () => { bg.classList.remove('on'); sheet.classList.remove('on'); setTimeout(() => bg.remove(), 260); };
   bg.addEventListener('click', e => { if (e.target === bg) close(); });
-  sheet.querySelector('#sheet-close').addEventListener('click', close);
-  sheet.querySelectorAll('[data-scheme]').forEach(it => it.addEventListener('click', async () => {
-    const name = it.dataset.scheme; close();
-    const r = await busy('切换方案…', () => Api.scheme(name));
-    showToast(/OK/.test(r) ? ('已切换 ' + (SCHEME_CN[name] || name)) : ('失败：' + r.slice(0, 60)));
-    viewFreq();
+  const cb2 = sheet.querySelector('#sheet-close'); if (cb2) cb2.addEventListener('click', close);
+  sheet.querySelectorAll('[data-mode]').forEach(it => it.addEventListener('click', () => {
+    const v = it.dataset.mode; close(); if (cb) cb(v);
   }));
 }
 
@@ -1782,7 +1813,6 @@ function openSchemeSheet() {
 document.addEventListener('click', async (e) => {
   const act = e.target.closest('[data-act]');
   if (act) { const fn = ACTIONS[act.dataset.act]; if (fn) { await fn(act); return; } }
-  if (e.target.closest('[data-scheme]')) return;
   // 分应用频率 / 游戏页 的筛选 chips（两页结构一致，按当前 tab 选择渲染函数）
   const flt = e.target.closest('[data-flt]');
   if (flt) {
@@ -1827,6 +1857,38 @@ document.addEventListener('click', async (e) => {
     }
     return;
   }
+  // ★ v18.4.8：档位按钮（归并项 / 应用行 / 游戏行）——点开底部弹层，不再用原生 select
+  const mb = e.target.closest('[data-merge]');
+  if (mb) {
+    const key = mb.dataset.merge; const kind = mb.dataset.kind; const cur = mb.dataset.cur || '';
+    const grp = (S.mergeGroups || []).find(g => g.key === key);
+    if (!grp) return;
+    openModeSheet(grp.label + '（' + grp.members.length + ' 个进程）', cur, async (val) => {
+      if (!val) { showToast('已选「跟随全局」：归并项不覆盖，进程按全局档运行'); await loadAppFreq(); renderAppFreq(); return; }
+      const rows = grp.members.map(p => p + '\t' + val);
+      grp.members.forEach(p => { if (S.appfreq) S.appfreq[p] = val; });
+      renderAppFreq();
+      const r = await Api.appsetbatch(b64enc(rows.join('\n')), kind);
+      showToast(/OK/.test(r) ? ('已设「' + grp.label + '」→ ' + (MODE_CN[val] || val) + '（' + grp.members.length + ' 个进程同步）') : ('失败：' + (r || '').slice(0, 60)));
+      await loadAppFreq(); renderAppFreq();
+    });
+    return;
+  }
+  const ab = e.target.closest('[data-appset]');
+  if (ab) {
+    const pkg = ab.dataset.appset; const kind = ab.dataset.kind; const cur = ab.dataset.cur || '';
+    openModeSheet((kind === 'game' ? '游戏 · ' : '应用 · ') + pkg, cur, async (val) => {
+      if (!val) { showToast('已选「跟随全局」：该应用按全局档运行'); await loadAppFreq(); if (S.tab === 'game') renderGame(); else renderAppFreq(); return; }
+      if (kind === 'game') { if (S.gamefreq) S.gamefreq[pkg] = val; } else { if (S.appfreq) S.appfreq[pkg] = val; }
+      if (S.tab === 'game') renderGame(); else renderAppFreq();
+      const r = await Api.appsetbatch(b64enc(pkg + '\t' + val), kind);
+      const kindCn = kind === 'game' ? '游戏' : '应用';
+      showToast(/OK/.test(r) ? ('已设为' + kindCn + '[' + (MODE_CN[val] || val) + ']（频率+线程同步）') : ('失败：' + (r || '').slice(0, 60)));
+      await loadAppFreq(); await loadGameFreq();
+      if (S.tab === 'game') renderGame(); else renderAppFreq();
+    });
+    return;
+  }
   const tab = e.target.closest('[data-tab]');
   if (tab) { S.tab = tab.dataset.tab; render(); return; }
 });
@@ -1846,38 +1908,6 @@ document.addEventListener('change', async (e) => {
     const row = sel.closest('.app-row');
     if (row) row.classList.toggle('sel', sel.checked);
     updateSelCounts();
-    return;
-  }
-  // ★ v18.4：小程序归并项（一个下拉批量设父包下所有进程）——走批量通道，只 deploy 一次，「无感」。
-  const mg = e.target.closest('[data-merge]');
-  if (mg) {
-    const key = mg.dataset.merge; const kind = mg.dataset.kind; const val = mg.value;
-    const grp = (S.mergeGroups || []).find(g => g.key === key);
-    if (!grp) return;
-    if (!val) { showToast('已选「跟随全局」：归并项不覆盖，进程按全局档运行'); await loadAppFreq(); renderAppFreq(); return; }
-    // 乐观更新：先改界面，再后台批量下发
-    const rows = grp.members.map(p => p + '\t' + val);
-    grp.members.forEach(p => { if (S.appfreq) S.appfreq[p] = val; });
-    renderAppFreq();
-    const b64 = b64enc(rows.join('\n'));
-    const r = await Api.appsetbatch(b64, kind);
-    showToast(/OK/.test(r) ? ('已设「' + grp.label + '」→ ' + (MODE_CN[val] || val) + '（' + grp.members.length + ' 个进程同步）') : ('失败：' + (r || '').slice(0, 60)));
-    await loadAppFreq(); renderAppFreq();
-    return;
-  }
-  // ★ v18.4：应用/游戏 统一下拉（一个下拉同步写频率 + 线程）——走批量通道，「无感」。
-  const as = e.target.closest('[data-appset]');
-  if (as) {
-    const pkg = as.dataset.appset; const kind = as.dataset.kind; const val = as.value;
-    if (!val) { showToast('已选「跟随全局」：该应用按全局档运行'); await loadAppFreq(); if (S.tab === 'game') renderGame(); else renderAppFreq(); return; }
-    // 乐观更新
-    if (kind === 'game') { if (S.gamefreq) S.gamefreq[pkg] = val; } else { if (S.appfreq) S.appfreq[pkg] = val; }
-    if (S.tab === 'game') renderGame(); else renderAppFreq();
-    const r = await Api.appsetbatch(b64enc(pkg + '\t' + val), kind);
-    const kindCn = kind === 'game' ? '游戏' : '应用';
-    showToast(/OK/.test(r) ? ('已设为' + kindCn + '[' + (MODE_CN[val] || val) + ']（频率+线程同步）') : ('失败：' + (r || '').slice(0, 60)));
-    await loadAppFreq(); await loadGameFreq();
-    if (S.tab === 'game') renderGame(); else renderAppFreq();
     return;
   }
   const feat = e.target.closest('[data-feat]');
@@ -1929,7 +1959,7 @@ function bindAppwinScroll(id, moreAct) {
   const ver = document.getElementById('ver');
   if (ver) ver.textContent = (S.status.VER || '17.12').replace(/^\S+\s/, '').trim() || '17.12';
   // ★ v18.4.2：防 WebView 缓存——版本戳变化则提示刷新，避免旧 index.html 静默生效
-  const WV = 'v18.4.4';
+  const WV = 'v18.4.8';
   try {
     const old = localStorage.getItem('webui_ver');
     if (old && old !== WV) {

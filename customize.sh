@@ -109,24 +109,37 @@ fi
 #    若从旧版升级，顺手清掉它们。
 rm -f "${STATE_DIR}/locked" "${STATE_DIR}/unlocked" 2>/dev/null
 
-# ---------- 艇长线程引擎（Aether）：部署二进制 + 展开拓扑配置 ----------
+# ---------- 线程引擎（AppOpt v2.2.6 · 纯规则驱动 + 自带网页）----------
 ui_print " "
-ui_print "---------- 线程引擎（艇长 Aether）----------"
-chmod 0755 "$MODPATH/Scripts/4+4+2/O3/aether/aether_ctl.sh" 2>/dev/null
-chmod 0755 "$MODPATH/Scripts/4+4+2/O3/aether/aether-optext" 2>/dev/null
-# 默认开启艇长线程引擎（用户要求：线程核心分配直接用艇长的方案）
-if [ ! -f "${STATE_DIR}/aether.on" ]; then
-    touch "${STATE_DIR}/aether.on" 2>/dev/null
-    ui_print "- 默认启用艇长线程引擎"
-else
-    ui_print "- 保留原设置：艇长线程引擎 $([ -f "${STATE_DIR}/aether.on" ] && echo 开 || echo 关)"
+ui_print "---------- 线程引擎（AppOpt）----------"
+chmod 0755 "$MODPATH/Scripts/4+4+2/O3/AppOpt" 2>/dev/null
+chmod 0755 "$MODPATH/Scripts/4+4+2/O3/AppOpt-ebpf" 2>/dev/null
+chmod 0755 "$MODPATH/Scripts/4+4+2/O3/o3lim.sh" 2>/dev/null
+# AppOpt.json：mode=2 纯 /proc（无 eBPF 自作主张提核）、web_enable=true（自带网页 8889）
+if [ ! -f "$MODPATH/Scripts/4+4+2/O3/AppOpt.json" ]; then
+    cat > "$MODPATH/Scripts/4+4+2/O3/AppOpt.json" <<'AJSON'
+{
+  "config_file": "/data/adb/O3CPUSet/applist.conf",
+  "check_interval": 2,
+  "cpuset_name": "O3CPUSet",
+  "web_enable": true,
+  "mode": 2
+}
+AJSON
 fi
-# 按本机拓扑把语义占位符展开 → /sdcard/Android/Aether/threads.json
-if sh "$MODPATH/Scripts/4+4+2/O3/aether/aether_ctl.sh" deploy 2>&1; then
-    ui_print "- 艇长线程配置已按本机拓扑部署"
+# 二进制校验
+if "$MODPATH/Scripts/4+4+2/O3/AppOpt" -v >/dev/null 2>&1; then
+    ui_print "- AppOpt 引擎校验通过（$(  "$MODPATH/Scripts/4+4+2/O3/AppOpt" -v 2>/dev/null | head -1)）"
 else
-    ui_print "- ⚠ 艇长线程配置部署失败（见上方原因）"
+    ui_print "- ⚠ AppOpt 引擎校验失败（可能架构不符）"
 fi
+# 生成 applist.conf 管理区（按 O3 拓扑展开语义核心）
+if sh "$MODPATH/Scripts/4+4+2/O3/o3lim.sh" boot 2>&1; then
+    ui_print "- 线程规则已生成（applist.conf · 语义核心按 O3 4+4+2 展开）"
+else
+    ui_print "- ⚠ 线程规则生成失败（见模块日志 o3lim.log）"
+fi
+ui_print "- 线程精细规则请用 AppOpt 网页：http://127.0.0.1:8889（模块「执行」按钮直达）"
 
 # ---------- v18：模块自有初始化（不再与 调度App 交互）----------
 #  频率 / 调度器 / 线程全部由本模块定义。安装时只做几件模块自己的事：
@@ -160,8 +173,8 @@ if [ -f "$_PC" ]; then
     ui_print "- powercfg.sh 已执行（方案 $SCHEME_INST）"
 fi
 
-# 线程分配已交由艇长引擎（Aether）处理
-ui_print "- 线程分配：已交由艇长引擎（Aether）处理"
+# 线程分配已交由 AppOpt 引擎处理
+ui_print "- 线程分配：已交由 AppOpt 引擎（纯规则驱动，8-9 仅游戏）"
 
 # ---------- 自我保护：把 KSU 的「待重启生效」就地做掉（本机不能重启）----------
 #
@@ -329,12 +342,12 @@ ui_print "  （日志：/data/adb/O3CPUSet/fix_pending.log）"
 
 ui_print " "
 ui_print "✅ 安装完成"
-ui_print "ℹ 玄戒O3 调度工具箱（v18 · 模块自有，不依赖 调度App）= 三块"
+ui_print "ℹ 玄戒O3 调度工具箱（v19 · 模块自有，不依赖 调度App）= 三块"
 ui_print "   ① CPU 频率 —— 模块 PM QoS 接管（全局 + 按 app 模式）"
-ui_print "   ② 线程分配 —— 艇长(Aether)引擎，WebUI 可开关与自定义"
+ui_print "   ② 线程分配 —— AppOpt 引擎（纯规则驱动；精细规则用 8889 网页）"
 ui_print "   ③ 调度器   —— 方案 powercfg.sh（平台 sysfs 调优）"
-ui_print "👉 模块 WebUI = 频率 / 线程 / 调度 三大块"
-ui_print "👉 线程引擎默认开启（艇长的方案）；如需关闭在 WebUI「线程」页翻开关"
-ui_print "👉 全局模式在 WebUI「模式」页切换；应用/游戏档位在「应用/游戏」页设置"
+ui_print "👉 模块 WebUI（网页按钮）= 频率 / 模式 / 调度"
+ui_print "👉 线程规则（核心分配）= 模块「执行」按钮 → AppOpt 网页 127.0.0.1:8889"
+ui_print "👉 两者联动同一份 applist.conf，改一处即生效（无需重启）"
 ui_print " "
 ui_print "ℹ 频率完全由本模块下发（调度App 在玄戒O3 上不适配，已不再依赖）"

@@ -2,13 +2,15 @@
   "features": {
     "ebpf": true,
     "auto-for-none": true,
-    "foreground": true,
-    "load_aware": true,
+    "foreground": false,
+    "load_aware": false,
     "notify_scheduler": true,
     "blacklist": [],
-    "render_guard": true,
+    "render_guard": false,
     "min_cpus": 4,
-    "lagrange": { "enable": true }
+    "lagrange": {
+      "enable": true
+    }
   },
   "rules": [
     {
@@ -18,9 +20,9 @@
         "com.hero.sm.android.hero"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -33,17 +35,17 @@
         "com.hottagames.yh.laohu"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "RHIThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "GameThread",
             "Render Thread",
             "Foregro-rker*"
           ],
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "TaskGraphNP *"
           ]
@@ -57,9 +59,9 @@
         "com.tencent.tmgp.mhxy.sqsy"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Transaction*"
           ]
         }
@@ -71,9 +73,9 @@
         "com.jiguang.dldl.sy37"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GLThread*"
           ]
         }
@@ -85,9 +87,9 @@
         "com.shenlan.m.reverse1999"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ]
         }
@@ -99,18 +101,18 @@
         "com.neowizgames.game.browndust2"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core},{hp_core}": [
+          "4-7,8-9": [
             "Thread-*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW"
           ],
-          "{e_core}": [
+          "0-3": [
             "Job*"
           ]
         }
@@ -123,9 +125,9 @@
         "com.minitech.miniworld.TMobile.mi"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "MiniRainbowMain",
             "MiniRenderThrea"
           ]
@@ -138,9 +140,9 @@
         "com.xd.xdt"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ]
         }
@@ -152,9 +154,9 @@
         "com.bilibili.fatego"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -167,9 +169,9 @@
         "com.hermes.mk"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ]
         }
@@ -181,9 +183,9 @@
         "com.hykb.qplm"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -196,13 +198,13 @@
         "com.Sunborn.SnqxExilium"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Job.[Ww]orker*",
             "Thread-*"
@@ -216,12 +218,12 @@
         "com.tencent.tmgp.djsy"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ],
-          "{p_core}": [
+          "4-7": [
             "ncent.tmgp.djsy",
             "MainThread"
           ]
@@ -234,9 +236,9 @@
         "com.qqgame.hlddz"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ]
         }
@@ -248,9 +250,9 @@
         "com.xuejing.smallfish.official"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ]
         }
@@ -262,9 +264,9 @@
         "com.garena.game.kgtw"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ]
         }
@@ -276,9 +278,9 @@
         "com.turbochilli.rollingsky"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -293,9 +295,9 @@
         "com.netease.yzs"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -308,9 +310,9 @@
         "com.RoamingStar.BlueArchive"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -323,9 +325,9 @@
         "com.humble.SlayTheSpire"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread*"
           ]
         }
@@ -337,9 +339,9 @@
         "com.lanjing.yanyu.aligames"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GLThread*"
           ]
         }
@@ -351,9 +353,9 @@
         "com.yinhan.hunter.tx"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GLThread*"
           ]
         }
@@ -365,9 +367,9 @@
         "com.sqw.cc.sgdbz_ta"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GLThread*"
           ]
         }
@@ -379,13 +381,13 @@
         "com.proximabeta.mf.uamo"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "RenderThread*",
             "GameThread"
           ],
-          "{e_core}": [
+          "0-3": [
             "RHIThread"
           ]
         }
@@ -397,12 +399,12 @@
         "com.guigugame.guigubahuang"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{e_core}": [
+          "0-3": [
             "UnityGfxDeviceW"
           ]
         }
@@ -418,9 +420,9 @@
         "com.netease.x19"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "MINECRAFT*",
             "Rendering*",
             "MINECRAFT MAIN",
@@ -438,9 +440,9 @@
         "com.netease.yhtj.4399"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Game*"
           ]
         }
@@ -452,9 +454,9 @@
         "com.lilithgames.hgame.cn"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GLThread*"
           ]
         }
@@ -466,9 +468,9 @@
         "com.gameloft.android.ANMP.GloftA9HM"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ]
         }
@@ -480,12 +482,12 @@
         "com.pi.czrxdfirst"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{e_core}": [
+          "0-3": [
             "UnityGfxDeviceW"
           ]
         }
@@ -497,9 +499,9 @@
         "com.netease.allstar"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ]
         }
@@ -511,13 +513,13 @@
         "com.netease.pes"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread",
             "RenderThread*"
           ],
-          "{e_core}": [
+          "0-3": [
             "RHIThread"
           ]
         }
@@ -529,9 +531,9 @@
         "com.chillyroom.zhmr.yw"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -544,9 +546,9 @@
         "com.netease.newspike"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ]
         }
@@ -560,9 +562,9 @@
         "com.netease.mrzh.nearme.gamecenter"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ]
         }
@@ -574,12 +576,12 @@
         "com.gamamobi.nikke"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "UnityChoreograp",
             "FMOD*"
@@ -595,13 +597,13 @@
         "com.hermes.p6game.aligames"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread",
             "RenderThread*"
           ],
-          "{e_core}": [
+          "0-3": [
             "RHIThread"
           ]
         }
@@ -613,13 +615,13 @@
         "com.tencent.tmgp.codev"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread",
             "RenderThread*"
           ],
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "NativeThread"
           ]
@@ -632,9 +634,9 @@
         "com.idreamsky.klbqm"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ]
         }
@@ -648,13 +650,13 @@
         "com.blizzard.wtcg.hearthstone.cn.dashen"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ],
-          "{e_core}": [
+          "0-3": [
             "NativeThread"
           ]
         }
@@ -666,13 +668,13 @@
         "com.papegames.infinitynikki"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread",
             "RenderThread*"
           ],
-          "{e_core}": [
+          "0-3": [
             "RHIThread"
           ]
         }
@@ -684,13 +686,13 @@
         "com.tencent.tmgp.gnyx"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-[0-5][0-9]",
             "Render*"
           ],
-          "{e_core}": [
+          "0-3": [
             "RHIThread"
           ]
         }
@@ -705,13 +707,13 @@
         "com.hottagames.hotta.mi"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread",
             "RenderThread*"
           ],
-          "{e_core}": [
+          "0-3": [
             "RHIThread"
           ]
         }
@@ -724,18 +726,18 @@
         "com.supercell.brawlstars"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Mainloop",
             "Mainloop"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "FMOD_mixer_thre",
             "Thread-*"
           ],
-          "{e_core}": [
+          "0-3": [
             "mali-event-hand"
           ]
         }
@@ -747,9 +749,9 @@
         "com.dfjz.moba"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -762,9 +764,9 @@
         "com.mingzhou.blackbeacon"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -777,9 +779,9 @@
         "com.yongshi.tenojo.ys"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ]
@@ -792,12 +794,12 @@
         "com.gof.china"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{e_core}": [
+          "0-3": [
             "UnityGfxDeviceW"
           ]
         }
@@ -813,9 +815,9 @@
         "com.yingxiong.hero.vivo"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityGfxDeviceW"
           ]
         }
@@ -827,12 +829,12 @@
         "com.tencent.tmgp.NBA"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{e_core}": [
+          "0-3": [
             "FMOD mixer thre",
             "Worker Thread"
           ]
@@ -845,16 +847,16 @@
         "com.tencent.tmgp.supercell.clashroyale"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Mainloop"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "FMOD_mixer_thre"
           ],
-          "{e_core}": [
+          "0-3": [
             "FMOD mixer thre"
           ]
         }
@@ -866,12 +868,12 @@
         "com.ztgame.yyzy"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{e_core}": [
+          "0-3": [
             "UnityGfxDeviceW",
             "CoreThread",
             "NativeThread"
@@ -886,13 +888,13 @@
         "com.kurogame.haru.hero"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ],
-          "{e_core}": [
+          "0-3": [
             "NativeThread",
             "core",
             "WebView"
@@ -906,18 +908,18 @@
         "com.tencent.tmgp.sgame"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Thread*",
             "Job.worker*",
             "CoreThread"
           ],
-          "{e_core}": [
+          "0-3": [
             "Job.*",
             "NativeThread"
           ]
@@ -932,9 +934,9 @@
         "com.netease.dwrg.mi"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ]
         }
@@ -948,12 +950,12 @@
         "com.netease.l22.mi"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{e_core}": [
+          "0-3": [
             "UnityGfxDeviceW",
             "Job.*",
             "NativeThread"
@@ -967,17 +969,17 @@
         "com.netease.yyslscn"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread*",
             "Thread-*"
           ],
-          "{p_core}": [
+          "4-7": [
             "Compute_w*",
             "NativeThread"
           ],
-          "{e_core}": [
+          "0-3": [
             "Compute_w_*"
           ]
         }
@@ -989,12 +991,12 @@
         "com.tencent.mf.uam"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RenderThread*",
             "RHIThread",
             "com.tencent.mf.uam"
@@ -1010,9 +1012,9 @@
         "com.tencent.tmgp.coslegend"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GLThread*"
           ]
         }
@@ -1024,12 +1026,12 @@
         "com.tencent.jkchess"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "LogicThread"
           ]
@@ -1042,19 +1044,19 @@
         "com.miHoYo.hkrpg"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*",
             "UnityMain",
             "UnityGfxDeviceW"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
           ],
-          "{e_core}": [
+          "0-3": [
             "NativeThread"
           ]
         }
@@ -1069,13 +1071,13 @@
         "com.miHoYo.bh3.bilibili"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ],
-          "{e_core}": [
+          "0-3": [
             "NativeThread"
           ]
         }
@@ -1087,19 +1089,19 @@
         "com.miHoYo.Yuanshen"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*",
             "UnityMain",
             "UnityGfxDeviceW"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
           ],
-          "{e_core}": [
+          "0-3": [
             "UnityMulti*",
             "NativeThread"
           ]
@@ -1112,7 +1114,7 @@
         "com.oplus.nas"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1121,7 +1123,7 @@
         "com.baidu.input_oppo"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1130,7 +1132,7 @@
         "com.tencent.wetype:play"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1139,7 +1141,7 @@
         "com.kugou.android.lite:support"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1148,7 +1150,7 @@
         "com.tencent.mm:push"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1157,7 +1159,7 @@
         "com.oplus.onetrace"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1166,7 +1168,7 @@
         "scene-daemon"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1175,7 +1177,7 @@
         "touchDaemon"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1184,7 +1186,7 @@
         "surfaceflinger"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1193,7 +1195,7 @@
         "com.heytap.mcs"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1202,7 +1204,7 @@
         "com.coloros.smartsidebar:edgepanel"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1211,7 +1213,7 @@
         "top.hookvip.pro"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1220,7 +1222,7 @@
         "com.oplus.consumerIRApp"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1229,7 +1231,7 @@
         "com.oplus.screenshot"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1238,7 +1240,7 @@
         "mtio"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1247,7 +1249,7 @@
         "com.ss.android.ugc.livepro"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1256,7 +1258,7 @@
         "com.quark.browser:channel"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1265,7 +1267,7 @@
         "com.quark.browser:push"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1274,16 +1276,27 @@
         "com.quark.browser:sandboxed_privilege_process0"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
-      "friendly": "com.tencent.mm:appbrand1",
+      "friendly": "微信小程序",
       "packages": [
-        "com.tencent.mm:appbrand1"
+        "com.tencent.mm:*"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}"
+        "main_thread": "0-9",
+        "other": "0-9"
+      }
+    },
+    {
+      "friendly": "支付宝小程序",
+      "packages": [
+        "com.eg.android.AlipayGphone:*"
+      ],
+      "cpuset": {
+        "main_thread": "0-9",
+        "other": "0-9"
       }
     },
     {
@@ -1292,7 +1305,7 @@
         "com.taobao.idlefish:channel"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1301,7 +1314,7 @@
         "com.phoenix.read:push"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1310,7 +1323,7 @@
         "com.sina.weibolite:lelinkps"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1319,7 +1332,7 @@
         "com.sina.weibolite:remote"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1328,7 +1341,7 @@
         "com.netease.cloudmusic:play"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1337,7 +1350,7 @@
         "com.tencent.qqmusic:QQPlayerService"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -1346,9 +1359,9 @@
         "com.oplus.melody"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.melody:fg"
           ]
@@ -1361,9 +1374,9 @@
         "com.oplus.melody:fg"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.melody:fg"
           ]
@@ -1376,9 +1389,9 @@
         "com.android.launcher"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "*.launcher",
             "binder*"
@@ -1392,13 +1405,9 @@
         "com.miui.home"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{e_core},{p_core}": [
-            "com.miui.home",
-            "binder*"
-          ],
-          "{e_core},{p_core}": [
+          "4-7": [
             "RenderThread"
           ]
         }
@@ -1410,9 +1419,9 @@
         "com.miui.gallery"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.gallery"
           ]
@@ -1425,8 +1434,8 @@
         "com.android.camera"
       ],
       "cpuset": {
-        "main_thread": "{all_core}",
-        "other": "{all_core}"
+        "main_thread": "0-9",
+        "other": "0-9"
       }
     },
     {
@@ -1435,9 +1444,9 @@
         "com.oplus.camera"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*camera"
           ]
@@ -1450,9 +1459,9 @@
         "com.android.thememanager"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.thememanager"
           ]
@@ -1465,9 +1474,9 @@
         "com.miui.weather2"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.weather2"
           ]
@@ -1480,9 +1489,9 @@
         "com.miui.mediaeditor"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.mediaeditor",
             "RenderThread"
           ]
@@ -1495,9 +1504,9 @@
         "com.miui.personalassistant"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.personalassistant"
           ]
@@ -1510,9 +1519,9 @@
         "com.android.browser"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "android.browser"
           ]
@@ -1525,9 +1534,9 @@
         "com.xiaomi.scanner"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             ".xiaomi.scanner"
           ]
@@ -1540,9 +1549,9 @@
         "com.android.quicksearchbox"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             ".quicksearchbox"
           ]
@@ -1555,9 +1564,9 @@
         "com.miui.voiceassist"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.voiceassist"
           ]
@@ -1570,9 +1579,9 @@
         "com.heytap.market"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "hwui*"
           ]
         }
@@ -1584,9 +1593,9 @@
         "com.huawei.smarthome"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.smarthome"
           ]
@@ -1599,9 +1608,9 @@
         "com.coloros.gallery3d"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "loros.gallery3d",
             "RenderThread"
           ]
@@ -1615,9 +1624,9 @@
         "com.miui.securitycenter.remote"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.securitycenter",
             "RenderThread"
           ]
@@ -1630,9 +1639,9 @@
         "com.heytap.browser"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.browser"
           ]
@@ -1645,9 +1654,9 @@
         "com.coloros.note"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.note"
           ]
@@ -1660,9 +1669,9 @@
         "com.coloros.smartsidebar:ui"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "smartsidebar:ui"
           ]
@@ -1675,9 +1684,9 @@
         "com.oplus.games"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.games"
           ]
@@ -1690,9 +1699,9 @@
         "com.heytap.headset"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.heytap.headset"
           ]
@@ -1708,9 +1717,9 @@
         "com.android.mms"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.phone",
             "*.contacts",
@@ -1726,9 +1735,9 @@
         "com.sohu.inputmethod.sogouoem"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.sogouoem"
           ]
@@ -1741,9 +1750,9 @@
         "com.sohu.inputmethod.sogou.xiaomi"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.xiaomi"
           ]
@@ -1756,9 +1765,9 @@
         "com.android.settings"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.settings"
           ]
@@ -1771,9 +1780,9 @@
         "com.miui.video"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.video"
           ]
@@ -1786,9 +1795,9 @@
         "com.miui.mediaviewer"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.mediaviewer"
           ]
@@ -1801,9 +1810,9 @@
         "com.miui.notes"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.notes"
           ]
@@ -1816,9 +1825,9 @@
         "com.miui.player"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.player"
           ]
@@ -1831,49 +1840,11 @@
         "com.apple.android.music"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "*.music",
             "RenderThread"
-          ]
-        }
-      }
-    },
-    {
-      "friendly": "微信",
-      "packages": [
-        "com.tencent.mm"
-      ],
-      "cpuset": {
-        "other": "{e_core},{p_core}",
-        "comm": {
-          "{p_core}": [
-            "RenderThread",
-            "com.tencent.mm",
-            "default_matrix_",
-            "binder:*"
-          ],
-          "{e_core}": [
-            "*.tencent.mm"
-          ]
-        }
-      }
-    },
-    {
-      "friendly": "微信小程序",
-      "packages": [
-        "com.tencent.mm:appbrand0"
-      ],
-      "cpuset": {
-        "other": "{e_core},{p_core}",
-        "comm": {
-          "{p_core}": [
-            "*Re"
-          ],
-          "1-7": [
-            "*appbrand0",
-            "JSR*"
           ]
         }
       }
@@ -1884,9 +1855,9 @@
         "com.tencent.mobileqq"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "MediaCodec_loop",
             "encent.mobileqq"
@@ -1900,31 +1871,15 @@
         "com.tencent.tim"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "com.tencent.tim",
             "RenderThread",
             "HeapTaskDaemon"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.tim"
-          ]
-        }
-      }
-    },
-    {
-      "friendly": "支付宝",
-      "packages": [
-        "com.eg.android.AlipayGphone"
-      ],
-      "cpuset": {
-        "other": "{e_core},{p_core}",
-        "comm": {
-          "{p_core}": [
-            "RenderThread",
-            "crv-worker-thre",
-            "id.AlipayGphone"
           ]
         }
       }
@@ -1935,14 +1890,14 @@
         "com.alibaba.android.rimet"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "a.android.rimet",
             "Doraemon-Proces"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.android.rimet"
           ]
         }
@@ -1954,9 +1909,9 @@
         "cn.soulapp.android"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.android"
           ]
@@ -1969,14 +1924,14 @@
         "org.telegram.messenger"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "RenderThread",
             "egram.messenger"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.messenger"
           ]
         }
@@ -1988,14 +1943,14 @@
         "nu.gpu.nagram"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "RenderThread",
             "nu.gpu.nagram"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.nagram"
           ]
         }
@@ -2007,16 +1962,16 @@
         "tv.danmaku.bili"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "Thread*",
             "IJK_External_Re",
             "tv.danmaku.bili",
             "MediaCodec_loop"
           ],
-          "{e_core}": [
+          "0-3": [
             "ijkservice"
           ]
         }
@@ -2028,9 +1983,9 @@
         "com.bilibili.app.in"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "Thread*",
             "IJK_External_Re",
@@ -2046,9 +2001,9 @@
         "com.ss.android.ugc.aweme"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "*Thread",
             "VDecod2-*",
             "HeapTaskDaemon",
@@ -2056,7 +2011,7 @@
             "droid.ugc.aweme",
             "#pty-wqp-*"
           ],
-          "{e_core}": [
+          "0-3": [
             "RenderThread"
           ]
         }
@@ -2068,16 +2023,16 @@
         "com.ss.android.ugc.aweme.lite"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "*Thread",
             "VDecod2-*",
             "HeapTaskDaemon",
             "danmaku-driver",
             ".ugc.aweme.lite"
           ],
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.aweme.lite"
           ]
@@ -2090,9 +2045,9 @@
         "com.ss.android.ugc.livelite"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.ugc.livelite"
           ]
@@ -2105,9 +2060,9 @@
         "com.zhiliaoapp.musically"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.musically"
           ]
@@ -2120,14 +2075,14 @@
         "com.smile.gifmaker"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "smile.gifmaker",
             "MediaCodec_*"
           ],
-          "{e_core}": [
+          "0-3": [
             ".smile.gifmaker"
           ]
         }
@@ -2139,15 +2094,15 @@
         "com.kuaishou.nebula"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "kuaishou.nebula",
             "thread*",
             "*ffmpeg*"
           ],
-          "{e_core}": [
+          "0-3": [
             "Media*",
             "ffmpeg*",
             "Heap*"
@@ -2164,7 +2119,7 @@
         "com.smile.gifmaker:mini0"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -2173,9 +2128,9 @@
         "com.ss.android.yumme.video"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "oid.yumme.video",
             "MediaCodec_loop",
@@ -2191,14 +2146,14 @@
         "com.sina.weibo"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "Thread-*",
             "com.sina.weibo"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.weibo"
           ]
         }
@@ -2210,9 +2165,9 @@
         "com.weico.international"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.international"
           ]
@@ -2225,25 +2180,10 @@
         "com.sina.weibolite"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "Heap*"
-          ]
-        }
-      }
-    },
-    {
-      "friendly": "小红书",
-      "packages": [
-        "com.xingin.xhs"
-      ],
-      "cpuset": {
-        "other": "{e_core}",
-        "comm": {
-          "{e_core}": [
-            "RenderThread",
-            "*.xhs"
           ]
         }
       }
@@ -2254,9 +2194,9 @@
         "com.duowan.kiwi"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.kiwi"
           ]
@@ -2269,9 +2209,9 @@
         "air.tv.douyu.android"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.android"
           ]
@@ -2284,9 +2224,9 @@
         "com.tencent.qqlive"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.qqlive"
           ]
@@ -2299,16 +2239,16 @@
         "com.qiyi.video"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "PLAYER_INFLATE_",
             "RenderThread",
             "DanmakuGLThread",
             "com.qiyi.video",
             "PumaPlyrVEgn"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.video"
           ]
         }
@@ -2320,9 +2260,9 @@
         "com.hunantv.imgo.activity"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.activity"
           ]
@@ -2335,9 +2275,9 @@
         "com.ss.android.article.video"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.video",
             "RenderThread"
           ]
@@ -2350,9 +2290,9 @@
         "com.sup.android.superb"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.superb"
           ]
@@ -2365,9 +2305,9 @@
         "com.douban.frodo"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.frodo"
           ]
@@ -2380,9 +2320,9 @@
         "com.ss.android.article.news"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.article.news"
           ]
@@ -2395,9 +2335,9 @@
         "com.tencent.news"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.news",
             "RenderThread"
           ]
@@ -2410,13 +2350,13 @@
         "com.zhihu.android"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "m.zhihu.android"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.android"
           ]
         }
@@ -2428,31 +2368,14 @@
         "com.baidu.tieba"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "com.baidu.tieba"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.tieba"
-          ]
-        }
-      }
-    },
-    {
-      "friendly": "酷安",
-      "packages": [
-        "com.coolapk.market"
-      ],
-      "cpuset": {
-        "other": "{e_core},{p_core}",
-        "comm": {
-          "{p_core}": [
-            "RenderThread",
-            "Thread-*",
-            "binder:*",
-            ".coolapk.market"
           ]
         }
       }
@@ -2463,9 +2386,9 @@
         "com.hupu.games"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.games",
             "RenderThread"
           ]
@@ -2478,9 +2401,9 @@
         "com.dongqiudi.news"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.news",
             "RenderThread"
           ]
@@ -2493,15 +2416,15 @@
         "com.taobao.taobao"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "WeexJSBridgeTh",
             "HeapTaskDaemon",
             "m.taobao.taobao",
             "8RYPVI8EZKhJUU"
           ],
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.taobao"
           ]
@@ -2514,9 +2437,9 @@
         "com.jingdong.app.mall"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "pool-15-thread-",
             "RunnerWrapper_8",
@@ -2532,15 +2455,15 @@
         "com.xunmeng.pinduoduo"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "Chat#Single-Syn",
             "Startup#RTDispa",
             "nmeng.pinduoduo"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.pinduoduo"
           ]
         }
@@ -2552,20 +2475,14 @@
         "com.taobao.idlefish"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
-            "RenderThread",
-            "1.ui",
-            "taobao.idlefish",
-            "1.raster"
-          ],
-          "{p_core}": [
+          "4-7": [
             "*.idlefish",
             "*.ui",
             "*.raster"
           ],
-          "{e_core}": [
+          "0-3": [
             "Heap*",
             "Phenix*"
           ]
@@ -2578,14 +2495,9 @@
         "com.sankuai.meituan"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
-            "RenderThread",
-            "sankuai.meituan",
-            "TTE-keyAgreemen"
-          ],
-          "{p_core}": [
+          "4-7": [
             "*.meituan"
           ]
         }
@@ -2597,9 +2509,9 @@
         "com.shizhuang.duapp"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "shizhuang.duapp"
           ]
@@ -2612,9 +2524,9 @@
         "com.wuba"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.wuba"
           ]
@@ -2627,9 +2539,9 @@
         "com.dianping.v1"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.v1"
           ]
@@ -2642,9 +2554,9 @@
         "com.tianyancha.skyeye"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.skyeye",
             "RenderThread"
           ]
@@ -2657,9 +2569,9 @@
         "com.tencent.qq.qc"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.qq.qc"
           ]
@@ -2672,9 +2584,9 @@
         "com.autonavi.minimap"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "utonavi.minimap",
             "RenderThread"
           ]
@@ -2687,15 +2599,15 @@
         "com.baidu.BaiduMap"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "31.1_0223536945",
             ".31.1_062565145",
             ".baidu.BaiduMap",
             "*Thread"
           ],
-          "{e_core}": [
+          "0-3": [
             "RenderThread"
           ]
         }
@@ -2707,9 +2619,9 @@
         "com.sdu.didi.psnger"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.psnger",
             "RenderThread"
           ]
@@ -2722,9 +2634,9 @@
         "com.jingyao.easybike"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.easybike",
             "RenderThread"
           ]
@@ -2737,9 +2649,9 @@
         "com.lalamove.huolala.client"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.client",
             "RenderThread"
           ]
@@ -2752,9 +2664,9 @@
         "com.sgs.next"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "GuardService",
             "SfPushService",
             "core"
@@ -2768,9 +2680,9 @@
         "com.cainiao.wireless"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.wireless"
           ]
@@ -2783,9 +2695,9 @@
         "ctrip.android.view"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.view"
           ]
@@ -2798,13 +2710,13 @@
         "com.MobileTicket"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "om.MobileTicket",
             "RenderThread"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.MobileTicket"
           ]
         }
@@ -2816,9 +2728,9 @@
         "com.anjuke.android.app"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.android.app"
           ]
@@ -2831,9 +2743,9 @@
         "com.lianjia.beike"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.beike"
           ]
@@ -2846,9 +2758,9 @@
         "com.ss.android.auto"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.auto"
           ]
@@ -2861,9 +2773,9 @@
         "com.autohome.main"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.main"
           ]
@@ -2876,9 +2788,9 @@
         "com.tencent.gamehelper.smoba"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.smoba"
           ]
@@ -2891,9 +2803,9 @@
         "com.tencent.qqmusic"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.qqmusic"
           ]
@@ -2906,14 +2818,14 @@
         "com.netease.cloudmusic"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "ease.cloudmusic",
             "LooperTracer"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.cloudmusic"
           ]
         }
@@ -2925,9 +2837,9 @@
         "com.kugou.android"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.android"
           ]
@@ -2940,9 +2852,9 @@
         "com.kugou.android.lite"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "ou.android.lite",
             "RenderThread"
           ]
@@ -2955,15 +2867,15 @@
         "cn.kuwo.player"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "dMessageHandler",
             "RenderThread",
             "cdn.kuwo.cn*",
             "cn.kuwo.player"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.player"
           ]
         }
@@ -2975,9 +2887,9 @@
         "com.luna.music"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "*.music",
             "RenderThread"
           ]
@@ -2990,13 +2902,13 @@
         "com.salt.music"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "com.salt.music",
             "RenderThread"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.music"
           ]
         }
@@ -3008,9 +2920,9 @@
         "com.ximalaya.ting.android"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "ya.ting.android",
             "RenderThread"
           ]
@@ -3023,9 +2935,9 @@
         "com.tencent.karaoke"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.karaoke"
           ]
@@ -3038,9 +2950,9 @@
         "com.github.eprendre.tingshu"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.tingshu"
           ]
@@ -3053,14 +2965,14 @@
         "com.dragon.read"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "HeapTaskDaemon",
             "com.dragon.read"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.read"
           ]
         }
@@ -3072,9 +2984,9 @@
         "com.qidian.QDReader"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "*.QDReader",
             "RenderThread"
           ]
@@ -3087,9 +2999,9 @@
         "com.kmxs.reader"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "*.reader",
             "RenderThread"
           ]
@@ -3102,9 +3014,9 @@
         "com.duokan.reader"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.reader"
           ]
@@ -3117,9 +3029,9 @@
         "com.kuaikan.comic"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.comic"
           ]
@@ -3132,9 +3044,9 @@
         "com.qq.ac.android"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.android"
           ]
@@ -3147,9 +3059,9 @@
         "com.bilibili.comic"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.comic",
             "RenderThread"
           ]
@@ -3163,14 +3075,14 @@
         "io.legado.play.release"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "ado.app.release",
             "RenderThread",
             "binder*"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.release"
           ]
         }
@@ -3182,14 +3094,14 @@
         "com.phoenix.read"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "om.phoenix.read",
             "RenderThread",
             "Thread*"
           ],
-          "{e_core}": [
+          "0-3": [
             "*phoenix.read"
           ]
         }
@@ -3204,13 +3116,13 @@
         "com.chrome.beta"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             ".android.chrome"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.chrome",
             "*.dev",
             "*.canary",
@@ -3228,16 +3140,16 @@
         "com.microsoft.emmx.beta"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             ".microsoft.emmx",
             "Thread-*",
             "NetworkService",
             "hwuiTask*"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.emmx.dev"
           ]
         }
@@ -3249,9 +3161,9 @@
         "com.tencent.mtt"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "com.tencent.mtt"
           ]
@@ -3264,9 +3176,9 @@
         "com.UCMobile"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.raster",
             "*.ui"
           ]
@@ -3279,12 +3191,12 @@
         "com.quark.browser"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "Heap*"
           ],
-          "{p_core}": [
+          "4-7": [
             "*.ui",
             "*.raster"
           ]
@@ -3298,9 +3210,9 @@
         "org.mozilla.firefox"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.fenix",
             "*.firefox"
@@ -3314,13 +3226,13 @@
         "mark.via"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "mark.via",
             "RenderThread"
           ],
-          "{e_core}": [
+          "0-3": [
             "pool*"
           ]
         }
@@ -3332,9 +3244,9 @@
         "alook.browser"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.browser"
           ]
@@ -3347,9 +3259,9 @@
         "com.baidu.netdisk"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.netdisk"
           ]
@@ -3362,9 +3274,9 @@
         "com.chinamobile.mcloud"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.mcloud"
           ]
@@ -3377,9 +3289,9 @@
         "com.mfcloudcalculate.networkdisk"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "?.ui",
             "?.raster"
           ]
@@ -3392,9 +3304,9 @@
         "com.xunlei.downloadprovider"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*vider"
           ]
@@ -3407,9 +3319,9 @@
         "cn.wps.moffice_eng"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.moffice_eng"
           ]
@@ -3422,9 +3334,9 @@
         "com.tencent.docs"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.docs"
           ]
@@ -3437,9 +3349,9 @@
         "bin.mt.plus"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "bin.mt.plus",
             "RenderThread"
           ]
@@ -3452,9 +3364,9 @@
         "com.estrongs.android.pop"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.android.pop"
           ]
@@ -3467,9 +3379,9 @@
         "com.intsig.camscanner"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.camscanner"
           ]
@@ -3482,9 +3394,9 @@
         "com.cjtec.uncompress"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "jtec.uncompress"
           ]
@@ -3497,9 +3409,9 @@
         "com.icbc"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.icbc",
             "RenderThread"
           ]
@@ -3512,9 +3424,9 @@
         "cmb.pb"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.pb",
             "RenderThread"
           ]
@@ -3527,9 +3439,9 @@
         "com.chinamworld.main"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "hinamworld.main",
             "RenderThread"
           ]
@@ -3542,9 +3454,9 @@
         "com.psbc.psbc3"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.psbc3"
           ]
@@ -3557,9 +3469,9 @@
         "cn.gov.tax.its"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.tax.its",
             "RenderThread"
           ]
@@ -3572,9 +3484,9 @@
         "cn.gov.pbc.dcep"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.dcep"
           ]
@@ -3587,9 +3499,9 @@
         "com.eastmoney.android.fund"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.fund"
           ]
@@ -3602,14 +3514,14 @@
         "com.hexin.plat.android"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "in.plat.android",
             "RenderThread",
             "Thread*"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.android"
           ]
         }
@@ -3621,14 +3533,14 @@
         "com.larus.nova"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "com.larus.nova",
             "MediaLoad"
           ],
-          "{e_core}": [
+          "0-3": [
             "*.nova"
           ]
         }
@@ -3640,9 +3552,9 @@
         "com.aliyun.tongyi"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.tongyi"
           ]
@@ -3655,9 +3567,9 @@
         "com.deepseek.chat"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "m.deepseek.chat",
             "RenderThread"
           ]
@@ -3670,9 +3582,9 @@
         "ai.x.grok"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.grok"
           ]
@@ -3685,9 +3597,9 @@
         "com.rifsxd.ksunext"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             ".rifsxd.ksunext"
           ]
@@ -3700,9 +3612,9 @@
         "github.tornaco.android.thanos"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.thanos"
           ]
@@ -3715,9 +3627,9 @@
         "cn.myflv.noactive"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             ".myflv.noactive",
             "RenderThread"
           ]
@@ -3730,9 +3642,9 @@
         "xzr.konabess"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.konabess"
           ]
@@ -3745,9 +3657,9 @@
         "io.github.MoWei.Frozen"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.Frozen"
           ]
@@ -3760,9 +3672,9 @@
         "com.houvven.guise"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.guise"
           ]
@@ -3775,9 +3687,9 @@
         "com.sukisu.ultra"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.ultra"
           ]
@@ -3790,9 +3702,9 @@
         "com.lab.hxaudio"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "com.lab.hxaudio"
           ]
         }
@@ -3804,9 +3716,9 @@
         "com.huluxia.gametools"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.gametools"
           ]
@@ -3819,9 +3731,9 @@
         "info.muge.appshare"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.appshare"
           ]
@@ -3834,9 +3746,9 @@
         "com.github.pacalini.pica_comic"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "*.ui",
             "*.raster",
             "RenderThread",
@@ -3851,9 +3763,9 @@
         "com.moriafly.note"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "m.moriafly.note"
           ]
@@ -3866,9 +3778,9 @@
         "com.tencent.wemeet.app"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.wemeet.app"
           ]
@@ -3881,9 +3793,9 @@
         "com.realmecomm.app"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*realmecomm.app"
           ]
@@ -3896,9 +3808,9 @@
         "com.hpbr.bosszhipin"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.bosszhipin"
           ]
@@ -3911,9 +3823,9 @@
         "cn.xuexi.android"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.android"
           ]
@@ -3926,9 +3838,9 @@
         "com.chaoxing.mobile"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.mobile"
           ]
@@ -3941,9 +3853,9 @@
         "com.zuoyebang.zuoyebang"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.zuoyebang"
           ]
@@ -3956,9 +3868,9 @@
         "com.microsoft.translator"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "soft.translator"
           ]
@@ -3971,9 +3883,9 @@
         "com.llmm.huiyuanuxiang"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.huiyuanuxiang"
           ]
@@ -3986,9 +3898,9 @@
         "com.julanling.piece"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.piece"
           ]
@@ -4001,9 +3913,9 @@
         "com.microsoft.office.outlook"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.office.outlook"
           ]
@@ -4016,9 +3928,9 @@
         "com.tencent.androidqqmail"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.androidqqmail"
           ]
@@ -4031,9 +3943,9 @@
         "com.netease.mail"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*netease.mail"
           ]
@@ -4046,9 +3958,9 @@
         "com.unionpay"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "com.unionpay"
           ]
@@ -4061,9 +3973,9 @@
         "com.ctfile"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.ctfile"
           ]
@@ -4076,14 +3988,14 @@
         "com.youku.phone"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "NDK MediaCodec",
             "Thread*",
             "com.youku.phone"
           ],
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.phone"
           ]
@@ -4096,9 +4008,9 @@
         "com.netease.gl"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "com.netease.gl"
           ]
@@ -4111,9 +4023,9 @@
         "com.coloros.weather2"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.weather2"
           ]
@@ -4126,9 +4038,9 @@
         "com.oneplus.bbs"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.bbs"
           ]
@@ -4141,9 +4053,9 @@
         "com.heytap.themestore"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.themestore"
           ]
@@ -4156,9 +4068,9 @@
         "com.tingfeng.tool"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.tool"
           ]
@@ -4171,9 +4083,9 @@
         "com.wuba.zhuanzhuan"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "wuba.zhuanzhuan"
           ]
@@ -4186,9 +4098,9 @@
         "eu.kanade.tachiyomi.yokai"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "tachiyomi.yokai",
             "RenderThread"
           ]
@@ -4201,9 +4113,9 @@
         "andes.oplus.documentsreader"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.documentsreader"
           ]
@@ -4216,9 +4128,9 @@
         "com.xycz.simple_live"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "ycz.simple_live",
             "RenderThread"
           ]
@@ -4231,9 +4143,9 @@
         "com.wandoujia.phoenix2"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "RenderThread",
             "*.phoenix2"
           ]
@@ -4246,13 +4158,13 @@
         "com.miHoYo.abccbtest"
       ],
       "cpuset": {
-        "other": "{e_core}",
+        "other": "0-3",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "UnityGfxDeviceW"
           ],
-          "{e_core}": [
+          "0-3": [
             "UnityMulti*",
             "NativeThread"
           ]
@@ -4265,12 +4177,12 @@
         "com.levelinfinite.sgameGlobal.midaspay"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Thread*",
             "Job.worker*",
@@ -4285,15 +4197,15 @@
         "com.tencent.tmgp.pubgmhd"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ],
-          "{p_core},{hp_core}": [
+          "4-7,8-9": [
             "RHIThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "TaskGraphNP*",
             "RenderThread*"
           ]
@@ -4306,12 +4218,12 @@
         "com.tencent.ig"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UEGameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RHIThread",
             "TaskGraphNP*",
             "MainThread-UE4"
@@ -4325,12 +4237,12 @@
         "com.tencent.igce"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UEGameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RHIThread",
             "TaskGraphNP*",
             "MainThread-UE4"
@@ -4344,12 +4256,12 @@
         "com.rekoo.pubgm"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UEGameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RHIThread",
             "TaskGraphNP*",
             "MainThread-UE4"
@@ -4363,12 +4275,12 @@
         "com.pubg.krmobile"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UEGameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RenderThread*",
             "TaskGraphNP*"
           ]
@@ -4381,12 +4293,12 @@
         "com.tencent.tmgp.cod"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*",
@@ -4401,12 +4313,12 @@
         "com.garena.game.codm"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Thread*"
           ]
@@ -4419,12 +4331,12 @@
         "com.tencent.lolm"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "LogicThread",
             "Thread-*",
             "NativeThread"
@@ -4438,17 +4350,17 @@
         "com.hypergryph.arknights"
       ],
       "cpuset": {
-        "other": "{p_core}",
+        "other": "4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
           ],
-          "{e_core},{p_core}": [
+          "0-3,4-7": [
             "Audio*"
           ]
         }
@@ -4460,17 +4372,17 @@
         "com.hypergryph.arknights.bilibili"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
           ],
-          "{e_core},{p_core}": [
+          "0-3,4-7": [
             "Audio*"
           ]
         }
@@ -4482,12 +4394,12 @@
         "com.miHoYo.GenshinImpact"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
@@ -4501,12 +4413,12 @@
         "com.miHoYo.ys.bilibili"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
@@ -4520,12 +4432,12 @@
         "com.miHoYo.ys.mi"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
@@ -4539,12 +4451,12 @@
         "com.miHoYo.hkrpg.bilibili"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
@@ -4558,12 +4470,12 @@
         "com.HoYoverse.hkrpgoversea"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfx*",
             "Thread-*",
             "Job.worker*"
@@ -4577,12 +4489,12 @@
         "com.miHoYo.Nap"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*",
             "NativeThread",
@@ -4597,12 +4509,12 @@
         "com.HoYoverse.Nap"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*",
             "NativeThread",
@@ -4617,12 +4529,12 @@
         "com.mihoyo.nap.bilibili"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*",
             "NativeThread",
@@ -4637,12 +4549,12 @@
         "com.kurogame.mingchao"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RHIThread",
             "RenderThread*",
             "NativeThread"
@@ -4656,12 +4568,12 @@
         "com.kurogame.wutheringwaves.global"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RHIThread",
             "RenderThread*",
             "NativeThread"
@@ -4675,12 +4587,12 @@
         "com.tencent.tmgp.cf"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Thread-*"
           ]
@@ -4693,12 +4605,12 @@
         "com.tencent.KiHan"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*"
           ]
@@ -4711,12 +4623,12 @@
         "com.tencent.tmgp.dfm"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "RenderThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "GameThread",
             "TaskGraphNP 0",
             "NativeThread"
@@ -4730,12 +4642,12 @@
         "com.proxima.dfm"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "RenderThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "GameThread",
             "TaskGraphNP 0",
             "NativeThread"
@@ -4749,12 +4661,12 @@
         "com.tencent.nikke"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "UnityChoreograp"
           ]
@@ -4767,12 +4679,12 @@
         "com.proximabeta.nikke"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "UnityChoreograp",
             "FMOD*"
@@ -4786,12 +4698,12 @@
         "com.nexon.bluearchive"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "xon.bluearchive"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityMain",
             "UnityGfxDeviceW10",
             "UnityChoreograp"
@@ -4805,15 +4717,15 @@
         "com.tencent.tmgp.dnf"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{e_core},{p_core}": [
+          "0-3,4-7": [
             "Thread-[0-9]*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityChoreograp",
             "UnityGfxDeviceW"
           ]
@@ -4826,12 +4738,12 @@
         "com.dragonli.projectsnow.lhm"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "RHIThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RenderThread*",
             "GameThread"
           ]
@@ -4844,12 +4756,12 @@
         "com.netease.race"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "RHIThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "GameThread",
             "RenderThread",
             "Thread-*"
@@ -4863,15 +4775,15 @@
         "com.tencent.tmgp.speedmobile"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{e_core},{p_core}": [
+          "0-3,4-7": [
             "Thread-*"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxRenderS",
             "Job.Worker*"
           ]
@@ -4884,15 +4796,15 @@
         "com.soulgamechst.majsoul"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "Thread-??"
           ],
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "Job.Worker*"
           ]
         }
@@ -4904,12 +4816,12 @@
         "com.miHoYo.enterprise.NGHSoD"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "NativeThread"
           ]
@@ -4922,12 +4834,12 @@
         "com.k7k7.goujihd.huawei"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GLThread*"
           ],
-          "{p_core}": [
+          "4-7": [
             "AudioTrack",
             "binder*",
             "Thread*"
@@ -4941,12 +4853,12 @@
         "com.duoyi.m2m1"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker",
             "NativeThread ",
@@ -4961,12 +4873,12 @@
         "com.supercell.clashroyale"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Mainloop"
           ],
-          "{p_core}": [
+          "4-7": [
             "FMOD mixer thre",
             "Thread*",
             "Binder*",
@@ -4981,16 +4893,16 @@
         "abc.ningban.gameloades"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "gban.gameloades"
           ],
-          "{p_core}": [
+          "4-7": [
             ".NET_Long_Runni",
             "AudioTrack"
           ],
-          "{e_core}": [
+          "0-3": [
             "Thread-*"
           ]
         }
@@ -5002,13 +4914,13 @@
         "com.tencent.nrc"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread",
             "GameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RHIThread",
             "RenderThread*",
             "TaskGraphHP*",
@@ -5025,12 +4937,12 @@
         "com.dfjz.moba.kuaishou"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "dfp-1-thread-4",
             "Thread*",
             "*Thread"
@@ -5044,13 +4956,13 @@
         "com.sofunny.sausage"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain",
             "Job.Worker*"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread*"
           ]
         }
@@ -5062,12 +4974,12 @@
         "com.tencent.tmgp.nz"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "TaskGraphNP",
             "Thread*"
@@ -5081,12 +4993,12 @@
         "com.hypergryph.endfield"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*",
             "Thread*"
@@ -5100,12 +5012,12 @@
         "com.gaijingames.wtm"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core},{hp_core}": [
+          "4-7,8-9": [
             "gaijingames.wtm"
           ],
-          "{p_core}": [
+          "4-7": [
             "AudioTrack"
           ]
         }
@@ -5117,12 +5029,12 @@
         "com.tencent.rmcn"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Thread*",
             "AudioTrack"
@@ -5136,12 +5048,12 @@
         "com.LoongCharm.infinityworld"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GLThread*"
           ],
-          "{p_core}": [
+          "4-7": [
             "V8 DefaultWorke",
             "m.infinityworld"
           ]
@@ -5154,15 +5066,15 @@
         "com.minitech.miniworld.m4399"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{e_core}": [
+          "0-3": [
             "Thread*"
           ],
-          "{hp_core}": [
+          "8-9": [
             "MiniRainbowMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "MiniRenderThrea",
             "miniworld.m4399"
           ]
@@ -5175,12 +5087,12 @@
         "com.roblox.client"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ],
-          "{p_core}": [
+          "4-7": [
             "RBX Worker A",
             "RBX Worker B"
           ]
@@ -5193,12 +5105,12 @@
         "com.seayoo.ggd"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "liteav_audio_pr"
           ]
@@ -5211,12 +5123,12 @@
         "com.netease.yhtj"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Game*"
           ],
-          "{p_core}": [
+          "4-7": [
             "ALooperThread",
             "om.netease.yhtj",
             "MainThread*"
@@ -5230,12 +5142,12 @@
         "com.tencent.ngr"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "RHIThread",
             "RenderThread",
             "TaskGraphHP*"
@@ -5249,12 +5161,12 @@
         "com.LanPiaoPiao.PlantsVsZombiesRH"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*"
           ]
@@ -5267,12 +5179,12 @@
         "com.tencent.shootgame"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*",
             "Thread*"
@@ -5286,12 +5198,12 @@
         "com.android1939.kards"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "RenderThread*"
           ]
@@ -5304,12 +5216,12 @@
         "com.android1939.kardsapk"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "GameThread"
           ],
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "RenderThread*"
           ]
@@ -5322,12 +5234,12 @@
         "com.mojang.minecraftpe"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Rendering Pool*"
           ],
-          "{p_core}": [
+          "4-7": [
             "MINECRAFT MAIN",
             "Thread-*"
           ]
@@ -5340,12 +5252,12 @@
         "com.netease.x19"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "MINECRAFT MAIN"
           ],
-          "{p_core}": [
+          "4-7": [
             "AsyncTask*",
             "RenderThread"
           ]
@@ -5358,12 +5270,12 @@
         "com.netease.dwrg"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-*"
           ],
-          "{p_core}": [
+          "4-7": [
             "NativeThread",
             "om.netease.dwrg"
           ]
@@ -5376,12 +5288,12 @@
         "com.WandaSoftware.TruckersofEurope3"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*"
           ]
@@ -5394,12 +5306,12 @@
         "com.axlebolt.standoff2"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "UnityMain"
           ],
-          "{p_core}": [
+          "4-7": [
             "UnityGfxDeviceW",
             "Job.Worker*"
           ]
@@ -5412,12 +5324,12 @@
         "com.netease.ywzh"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core},{hp_core}": [
+          "4-7,8-9": [
             "Thread*"
           ],
-          "{p_core}": [
+          "4-7": [
             "om.netease.ywzh"
           ]
         }
@@ -5429,9 +5341,9 @@
         "tw.nekomimi.nekogram"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "files_database_",
             "searchQueue",
@@ -5446,9 +5358,9 @@
         "org.telegram.group"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "RenderThread",
             ".telegram.group"
@@ -5462,9 +5374,9 @@
         "xyz.nextalone.nagram"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "extalone.nagram",
             "stageQueue",
@@ -5479,9 +5391,9 @@
         "com.radolyn.ayugram"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "radolyn.ayugram",
             "SpoilerEffectBi",
@@ -5496,9 +5408,9 @@
         "com.sankuai.meituan.takeoutnew"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "tuan.takeoutnew",
             "J*"
@@ -5512,12 +5424,9 @@
         "me.ele"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
-            "me.ele"
-          ],
-          "{p_core}": [
+          "4-7": [
             "dp2ndk",
             "Xxdn-Worker",
             "1.raster",
@@ -5532,9 +5441,9 @@
         "com.example.piliplus"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "xample.piliplus",
             "MediaCodec_loop",
@@ -5550,9 +5459,9 @@
         "com.yishu.ylxsp"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "com.yishu.ylxsp",
             "MediaCodec_loop",
             "1.raster"
@@ -5566,9 +5475,9 @@
         "app.komikku.beta"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "pp.komikku.beta",
             "*thread*",
             "RenderThread",
@@ -5583,9 +5492,9 @@
         "org.skepsun.kototoro"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "kepsun.kototoro",
             "DefaultDispatch"
@@ -5599,9 +5508,9 @@
         "com.bilingify.readest"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "lingify.readest",
             "RenderThread",
             "Chrome InProcGp"
@@ -5615,9 +5524,9 @@
         "com.mystyle.purelive"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "1.raster",
             "ystyle.purelive",
             "Thread-*"
@@ -5631,9 +5540,9 @@
         "gov.pianzong.androidnga"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "zong.androidnga",
             "RenderThread",
             "Thread*"
@@ -5647,9 +5556,9 @@
         "com.max.xiaoheihe"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "glide-animation",
             "m.max.xiaoheihe"
@@ -5663,9 +5572,9 @@
         "com.uu898.uuhavequality:core"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "8.uuhavequality",
             "RenderThread",
             "BR-LagTrace-Thr"
@@ -5679,9 +5588,9 @@
         "com.inspur.mobilefsp"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "nspur.mobilefsp"
           ]
@@ -5694,9 +5603,9 @@
         "com.inspur.mobilefsp:jse"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "nspur.mobilefsp"
           ]
@@ -5709,9 +5618,9 @@
         "com.twitter.android"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "twitter.android",
             "RenderThread",
             "MediaCodec_loop"
@@ -5725,9 +5634,9 @@
         "com.google.android.youtube"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "android.youtube",
             "RenderThread",
             "ExoPlayer:Playb",
@@ -5742,9 +5651,9 @@
         "com.facebook.katana"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "facebook.katana",
             "RenderThread",
             "ComponentLavout"
@@ -5758,9 +5667,9 @@
         "com.discord"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "com.discord",
             "pool-10-thread-*",
             "RenderThread",
@@ -5775,9 +5684,9 @@
         "com.shizi.tool.p3"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "imore.wallpaper",
             "glide-disk-cach"
@@ -5791,9 +5700,9 @@
         "com.hjmore.wallpaper"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "imore.wallpaper",
             "RenderThread",
             "HeapTaskDaemon"
@@ -5807,9 +5716,9 @@
         "com.xuzly.hy.lanerc.app"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "Thread-*",
             "1.ui",
             "mpv/demux",
@@ -5824,9 +5733,9 @@
         "com.fenbi.android.solar"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "i.android.solar",
             "RenderThread",
             "VizWebView",
@@ -5841,9 +5750,9 @@
         "com.kuaiduizuoye.scan"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "aiduizuoye.scan",
             "RenderThread",
             "Chrome_IOThread"
@@ -5857,9 +5766,9 @@
         "com.xt.retouch"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "Signal Catcher",
             "perfetto_hprof_",
             "Jit thread pool"
@@ -5873,12 +5782,12 @@
         "com.futuremark.dmandroid.application"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{hp_core}": [
+          "8-9": [
             "Thread-??"
           ],
-          "{p_core}": [
+          "4-7": [
             "*binder"
           ]
         }
@@ -5890,9 +5799,9 @@
         "com.sfexpress.knight"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "fexpress.knight",
             "RenderThread",
             "binder"
@@ -5906,9 +5815,9 @@
         "com.qihoo.contents"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             ".qihoo.contents",
             "RenderThread",
             "Thread-*",
@@ -5923,9 +5832,9 @@
         "org.breezyweather"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "g.breezyweather",
             "Binder:*"
@@ -5939,13 +5848,9 @@
         "com.xhey.xcamera"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
-            "om.xhey.xcamera",
-            "Algorithm-"
-          ],
-          "{p_core}": [
+          "4-7": [
             "RxCachedThreadS"
           ]
         }
@@ -5957,7 +5862,7 @@
         "com.kugou.android.support"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -5966,7 +5871,7 @@
         "com.kugou.android.message"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -5975,7 +5880,7 @@
         "com.luna.music:push"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -5984,7 +5889,7 @@
         "com.ss.android.ugc.aweme.mobile:push"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -5993,7 +5898,7 @@
         "com.bilibili.app.in:pushservice"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -6002,7 +5907,7 @@
         "tv.danmaku.bilibilihd:pushservice"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -6011,7 +5916,7 @@
         "tv.danmaku.bili:pushservice"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -6020,7 +5925,7 @@
         "com.tencent.mobileqq:MSF"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -6029,7 +5934,7 @@
         "com.tencent.tim:MSF"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -6038,7 +5943,7 @@
         "com.alibaba.android.rimet:push"
       ],
       "cpuset": {
-        "other": "{e_core}"
+        "other": "0-3"
       }
     },
     {
@@ -6047,9 +5952,9 @@
         "com.google.android.apps.nexuslauncher"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "s.nexuslauncher",
             "binder*"
@@ -6063,9 +5968,9 @@
         "com.android.launcher3"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "*.launcher3",
             "binder*"
@@ -6079,9 +5984,9 @@
         "com.sec.android.app.launcher"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             "RenderThread",
             "id.app.launcher",
             "binder*"
@@ -6095,14 +6000,844 @@
         "com.meizu.flyme.launcher"
       ],
       "cpuset": {
-        "other": "{e_core},{p_core}",
+        "other": "0-3,4-7",
         "comm": {
-          "{p_core}": [
+          "4-7": [
             ".flyme.launcher",
             "binder*",
             "RenderThread"
           ]
         }
+      }
+    }
+,
+    {
+      "friendly": "自定义·com.xingin.xhs",
+      "packages": ["com.xingin.xhs"],
+      "cpuset": {
+        "main_thread": "0-3",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "0-3",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "0-3",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process0",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process0"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process1",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process1"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process2",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process2"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process3",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process3"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process4",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process4"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:tools",
+      "packages": ["com.eg.android.AlipayGphone:tools"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone",
+      "packages": ["com.eg.android.AlipayGphone"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand",
+      "packages": ["com.tencent.mm:appbrand"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.coolapk.market",
+      "packages": ["com.coolapk.market"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Worker",
+            "Job",
+            "Async",
+            "Pool",
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm",
+      "packages": ["com.tencent.mm"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Worker",
+            "Job",
+            "Async",
+            "Pool",
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand0",
+      "packages": ["com.tencent.mm:appbrand0"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand1",
+      "packages": ["com.tencent.mm:appbrand1"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand2",
+      "packages": ["com.tencent.mm:appbrand2"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand3",
+      "packages": ["com.tencent.mm:appbrand3"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand4",
+      "packages": ["com.tencent.mm:appbrand4"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand5",
+      "packages": ["com.tencent.mm:appbrand5"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand6",
+      "packages": ["com.tencent.mm:appbrand6"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand7",
+      "packages": ["com.tencent.mm:appbrand7"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand8",
+      "packages": ["com.tencent.mm:appbrand8"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand9",
+      "packages": ["com.tencent.mm:appbrand9"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand10",
+      "packages": ["com.tencent.mm:appbrand10"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand11",
+      "packages": ["com.tencent.mm:appbrand11"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand12",
+      "packages": ["com.tencent.mm:appbrand12"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:toolsmp",
+      "packages": ["com.tencent.mm:toolsmp"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Worker",
+            "Job",
+            "Async",
+            "Pool",
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download"
+          ]
+        },
+        "other": "0-3"
       }
     }
   ]

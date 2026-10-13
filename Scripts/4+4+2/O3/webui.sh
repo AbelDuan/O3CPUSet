@@ -57,34 +57,6 @@ selfheal_pending_update
 
 has(){ command -v "$1" >/dev/null 2>&1; }
 
-# ---------- 当前前台包名 ----------
-#   与 guard.sh 的 fg_pkg 完全同源（原样移植，逻辑不许分叉）：
-#   两边判定前台必须一致，否则会出现「守护认得、WebUI 认不得」——
-#   结果就是 WebUI 认为不在前台、不做即时下发，而守护又在 120s 后才补，
-#   用户侧依旧是「设了没反应」。
-#   注：guard.sh 里的同名函数只在那一个脚本内定义，webui.sh 不会自动继承，
-#   所以这里必须自带一份；判空一律走空输出，绝不 echo 噪声。
-_fg_pkg() {
-    local l pkg fg=""
-    fg=$(dumpsys window 2>/dev/null | {
-        while IFS= read -r l; do
-            case "$l" in
-              *"mCurrentFocus="*)
-                case "$l" in *"=null"*) continue ;; esac
-                printf '%s' "$l"; break
-                ;;
-            esac
-        done
-    })
-    case "$fg" in
-      *"Window{"*)
-        pkg="${fg##* }"; pkg="${pkg%%/*}"; pkg="${pkg##* }"
-        case "$pkg" in *.*) printf '%s' "$pkg" ;; *) printf '' ;; esac
-        ;;
-      *) printf '' ;;
-    esac
-}
-
 # ---------- 文件 ID → 真实路径（白名单，v18 只含模块自有配置）----------
 path_of() {
     case "$1" in
@@ -178,6 +150,15 @@ cmd_status() {
     settings_load
     echo "DEBUG=${SET_DEBUG:-1}"
     pgrep -f "O3/guard\.sh" >/dev/null 2>&1 && echo "DAEMON=1" || echo "DAEMON=0"
+    # 线程引擎（AppOpt）运行状态：v19 前端「全局」页显示
+    if pgrep -f 'AppOpt' >/dev/null 2>&1; then
+        echo "ENGINE_RUNNING=1"
+        echo "ENGINE_PID=$(pgrep -f 'AppOpt' 2>/dev/null | tr '\n' ',' | sed 's/,$//')"
+    else
+        echo "ENGINE_RUNNING=0"; echo "ENGINE_PID="
+    fi
+    echo "ENGINE_URL=http://127.0.0.1:8889"
+    echo "ENGINE_RULES=$(grep -c '=' "$STATE_DIR/applist.conf" 2>/dev/null)"
     # 调度守护
     pgrep -f scene-daemon >/dev/null 2>&1 && echo "app_DAEMON=1" || echo "app_DAEMON=0"
     # 三簇频率 + 温度：一次 awk 批量读（原来 17 次 cat fork ≈ 400ms，切页卡顿主因）
@@ -197,16 +178,19 @@ cmd_status() {
         echo "MODE_${m}=${cn}|${af}|${inf}"
     done
     echo "KSU_UPDATE_MARK=$([ -e "$MODDIR/update" ] && echo 1 || echo 0)"
-    # —— 艇长线程引擎 ——
-    #   ⚠ 必须按本模块自己的二进制路径判定「是否运行中」：设备上存在另一个同名
-    #      KSU 模块 aether-optext，其进程 cmdline 也含 aether-optext，用裸露
-    #      pgrep -f "aether-optext" 会误命中它 →「启用后仍显示未运行 / 误判运行中」。
-    echo "AETHER_ON=$(sh "$AETHER_CTL" ison 2>/dev/null)"
-    local _apids; _apids=$(pgrep -f "$AETHER_BIN_RE" 2>/dev/null | tr '\n' ',' | sed 's/,$//')
-    if [ -n "$_apids" ]; then echo "AETHER_RUNNING=1"; echo "AETHER_PID=$_apids"; else echo "AETHER_RUNNING=0"; echo "AETHER_PID="; fi
-    echo "AETHER_RULES=$(grep -c '\"friendly\"' "$AETHER_CFG" 2>/dev/null)"
-    echo "AETHER_BIN=$([ -x "$AETHER_BIN_PATH" ] && echo 1 || echo 0)"
-    echo "AETHER_CFG_BYTES=$(wc -c < "$AETHER_CFG" 2>/dev/null | tr -d ' ')"
+    # —— 线程引擎 AppOpt（v19）——
+    #   前端仍读 AETHER_* 键名（保持兼容）；底层已换成 AppOpt 引擎 + 自带网页 8889。
+    #   ⚠ 设备上存在另一个同名兄弟模块，pgrep 用 "AppOpt" 片段即可（AppOpt 是独有名）。
+    if pgrep -f 'AppOpt' >/dev/null 2>&1; then
+        echo "AETHER_ON=1"; echo "AETHER_RUNNING=1"
+        echo "AETHER_PID=$(pgrep -f 'AppOpt' 2>/dev/null | tr '\n' ',' | sed 's/,$//')"
+    else
+        echo "AETHER_ON=0"; echo "AETHER_RUNNING=0"; echo "AETHER_PID="
+    fi
+    echo "AETHER_RULES=$(grep -c '=' "$STATE_DIR/applist.conf" 2>/dev/null)"
+    echo "AETHER_BIN=$([ -x "$MODDIR/Scripts/4+4+2/O3/AppOpt" ] && echo 1 || echo 0)"
+    echo "AETHER_CFG_BYTES=$(wc -c < "$STATE_DIR/applist.conf" 2>/dev/null | tr -d ' ')"
+    echo "APPOPT_WEB=http://127.0.0.1:8889"
 }
 
 # ============================================================
@@ -231,15 +215,14 @@ cmd_schemes() {
 cmd_scheme(){ sh "$MODDIR/Scripts/4+4+2/O3/set_scheme.sh" "$1"; }
 cmd_restore(){ sh "$MODDIR/Scripts/4+4+2/O3/set_scheme.sh" restore; }
 cmd_apply() {
-    # v18：不再与外部调度App 无障碍服务交互。改为「立即应用模块配置」：
+    # v19：不再与外部调度App 无障碍服务交互。改为「立即应用模块配置」：
     #   · 按当前全局模式下发 PM QoS 频率；
-    #   · 让舰长引擎按最新配置重载（线程配置由 aether_ctl deploy 自持）。
+    #   · 刷新 applist.conf 管理区（AppOpt inotify 热重载线程规则）。
     log "webui: 应用模块配置（频率 + 线程）"
     local m; m=$(active_mode)
     sh "$MODDIR/Scripts/4+4+2/O3/apply_freq.sh" --mode "$m" >/dev/null 2>&1
-    [ -x "$AETHER_CTL" ] && sh "$AETHER_CTL" deploy >/dev/null 2>&1
-    [ -f "$STATE_DIR/aether.on" ] && [ -x "$AETHER_CTL" ] && sh "$AETHER_CTL" restart >/dev/null 2>&1
-    echo "OK 已应用模块配置（频率[${m}] + 舰长线程已重载）"
+    o3lim_sync
+    echo "OK 已应用模块配置（频率[${m}] + AppOpt 线程规则已刷新）"
 }
 
 cmd_mode() {
@@ -364,202 +347,89 @@ cmd_appfreq() {
     echo "AF_N=$(awk -F"\t" 'NF>=2 && $1!="" && $1!~/^#/' "$APP_FREQ_FILE" 2>/dev/null | wc -l | tr -d ' ')"
 }
 
-# ---------- 游戏频率（每应用一个模式档，写 game_assign.tsv，优先级高于 app_assign）----------
-GAME_FREQ_FILE="${WEBUI_DIR}/game_assign.tsv"
-cmd_gamefreq() {
-    if [ -s "$GAME_FREQ_FILE" ]; then
-        awk -F'\t' 'NF>=2 && $1!="" && $1!~/^#/ { print "GF_"$1"="$2 }' "$GAME_FREQ_FILE" 2>/dev/null
-    fi
-    echo "GF_N=$(awk -F"\t" 'NF>=2 && $1!="" && $1!~/^#/' "$GAME_FREQ_FILE" 2>/dev/null | wc -l | tr -d ' ')"
-}
-
-# ---------- 频率档 → 线程角色档（应用页同步用）----------
-#   用户语义：应用页选一个档，频率与线程一起切。
-#   省电→powersave / 流畅→balance / 性能→performance / 极速→不接管(none)。
-#   游戏页不调此映射（线程固定 game）。
-freq2tpl() {
-    case "$1" in
-      powersave)   printf 'powersave' ;;
-      balance)     printf 'balance' ;;
-      performance) printf 'performance' ;;
-      fast)        printf 'none' ;;   # ★ v18.3.9：极速 → 不接管
-      *)           return 1 ;;
-    esac
-}
-
-# ---------- 统一设置（应用页/游戏页 共用，原子写 频率 + 线程）----------
-#   $1=pkg  $2=mode(powersave|balance|performance|fast)  $3=kind(app|game)
-#   kind=app：频率写 app_freq.tsv，线程按 freq2tpl 映射（极速→none）
-#   kind=game：频率写 game_assign.tsv（优先级高于 app），线程固定 game
-#   两处写入 + 即时下发一次性完成，避免「只设了频率没设线程」的半同步（用户踩过的坑）。
-cmd_appset() {
-    local pkg="$1" mode="$2" kind="$3"
-    [ -n "$pkg" ] || { echo "ERR 缺少包名"; return 1; }
-    mode_valid "$mode" || { echo "ERR 未知模式: $mode"; return 1; }
-    case "$kind" in app|game) ;; *) echo "ERR 未知类型: $kind"; return 1 ;; esac
-    # ★ v18.3.9：允许子进程通配符 `*`（如 com.tencent.mm:appbrand*），与 aether_ctl set 一致；
-    #   否则小程序/沙箱进程无法被接管 → 省电落不到小程序，仍跑中/大核。
-    case "$pkg" in *[!A-Za-z0-9._:\*]*) echo "ERR 包名非法"; return 1 ;; esac
-
-    local FREQ_FILE TPL_ROLE
-    if [ "$kind" = "game" ]; then
-        FREQ_FILE="$GAME_FREQ_FILE"; TPL_ROLE="game"
-    else
-        FREQ_FILE="$APP_FREQ_FILE"
-        TPL_ROLE="$(freq2tpl "$mode")" || { echo "ERR 无法映射线程档: $mode"; return 1; }
-    fi
-
-    # ① 写频率表（upsert）
-    mkdir -p "$WEBUI_DIR" 2>/dev/null
-    local ftmp="${TMPD}/appset_freq.new"; : > "$ftmp"
-    [ -s "$FREQ_FILE" ] && awk -F'\t' -v P="$pkg" '!($1==P)' "$FREQ_FILE" >> "$ftmp" 2>/dev/null
-    printf '%s\t%s\n' "$pkg" "$mode" >> "$ftmp"
-    cp -f "$ftmp" "$FREQ_FILE" 2>/dev/null; chmod 0666 "$FREQ_FILE" 2>/dev/null; rm -f "$ftmp"
-
-    # ② 写线程角色档（aether_ctl set，自带 deploy；失败即回滚频率表并报错）
-    local ares
-    ares=$(sh "$AETHER_CTL" set "$pkg" "$TPL_ROLE" 2>&1)
-    case "$ares" in *"ERR"*)
-        # 回滚：把刚写的频率表那一行删掉，避免半同步残留
-        local rtmp="${TMPD}/appset_rollback.new"; : > "$rtmp"
-        [ -s "$FREQ_FILE" ] && awk -F'\t' -v P="$pkg" '!($1==P)' "$FREQ_FILE" >> "$rtmp" 2>/dev/null
-        cp -f "$rtmp" "$FREQ_FILE" 2>/dev/null; chmod 0666 "$FREQ_FILE" 2>/dev/null; rm -f "$rtmp"
-        echo "ERR 线程设置失败（已回滚频率）: $ares"; return 1
-        ;;
-    esac
-
-    # ③ 即时下发频率（前台时按新档推 QoS；非前台交给守护在前台变化轮应用）
-    local _as_fg; _as_fg=$(_fg_pkg | head -1)
-    if [ -n "$_as_fg" ] && [ "$_as_fg" = "$pkg" ]; then
-        local _cm; _cm=$(active_mode); _cm="${_cm:-balance}"
-        if [ "$mode" != "$_cm" ]; then
-            apply_mode_freq "$mode" >/dev/null 2>&1
-            log "webui: 前台 ${pkg} → 立即下发频率档[${mode}]（原全局 ${_cm}）"
-        fi
-    fi
-
-    local kind_cn; [ "$kind" = "game" ] && kind_cn="游戏" || kind_cn="应用"
-    local tpl_cn; case "$TPL_ROLE" in powersave) tpl_cn=省电;; balance) tpl_cn=流畅;; performance) tpl_cn=性能;; game) tpl_cn=游戏;; none) tpl_cn=不接管;; *) tpl_cn="$TPL_ROLE";; esac
-    echo "OK ${pkg} 已设为${kind_cn}[${mode}]（频率+线程同步：${tpl_cn}）"
-}
-
-# ---------- 统一移除（应用页/游戏页 共用）----------
-#   $1=pkg  $2=kind(app|game)。频率表移除对应行 + 线程恢复 auto（aether del）。
-cmd_appdel() {
-    local pkg="$1" kind="$2"
-    [ -n "$pkg" ] || { echo "ERR 缺少包名"; return 1; }
-    case "$kind" in app|game) ;; *) echo "ERR 未知类型: $kind"; return 1 ;; esac
-    local FREQ_FILE; [ "$kind" = "game" ] && FREQ_FILE="$GAME_FREQ_FILE" || FREQ_FILE="$APP_FREQ_FILE"
-    [ -s "$FREQ_FILE" ] || { echo "OK 无此配置"; return 0; }
-    local ftmp="${TMPD}/appdel_freq.new"
-    awk -F'\t' -v P="$pkg" '!($1==P)' "$FREQ_FILE" > "$ftmp" 2>/dev/null
-    cp -f "$ftmp" "$FREQ_FILE" 2>/dev/null; chmod 0666 "$FREQ_FILE" 2>/dev/null; rm -f "$ftmp"
-    # 线程恢复 auto
-    local ares; ares=$(sh "$AETHER_CTL" del "$pkg" 2>&1)
-    case "$ares" in *"ERR"*) echo "ERR 线程恢复失败: $ares"; return 1 ;; esac
-    # 若被删的正是当前前台覆盖档，立刻回落全局模式
-    local cm; cm=$(active_mode); cm="${cm:-balance}"
-    local _del_fg; _del_fg=$(_fg_pkg | head -1)
-    if [ -n "$_del_fg" ] && [ "$_del_fg" = "$pkg" ]; then
-        apply_mode_freq "$cm" >/dev/null 2>&1
-        log "webui: 前台 ${pkg} 移除覆盖 → 回落全局模式[${cm}]"
-    fi
-    echo "OK 已移除 ${pkg}（频率 + 线程均已恢复全局/自动）"
-}
-
-# 列出设备上的应用（供「分应用频率 / 线程」的搜索添加用）
-#   ⚠ v18.2.x 修正：原版只走 aether_ctl apps，若它因任何原因返回空（如 cmd 不可用、
-#      线程引擎未启用等）就会「读不出有界面的 app」。改为：
-#        1) aether_ctl apps 可用且非空 → 直接用它（含 系统/第三方 标记 + 艇长配置状态）；
-#        2) 否则退回「完整 UI 应用清单」(cmd package query-activities)；
-#        3) 再不行退回 pm list packages（含第三方，标 sys=0）。
-#      三档兜底保证搜索框始终能列出本机应用。
+# 列出设备上的应用（供「应用 / 游戏」页展示与添加用）
+#
+#  ⚠ v19：不再读 aether_ctl apps（已停用引擎的陈旧数据）。
+#    但 **必须包含子进程（:xxx）**，否则：
+#      ① 前端「小程序归并组」失效（它靠同一父包的多个子进程识别）
+#      ② 子进程不会被写规则 → 仍跑在系统 top-app(0-9) → 省电应用照样上 8-9
+#    子进程来源（并集）：
+#      a) /proc 运行中进程的 cmdline（含 : 的）
+#      b) app_freq.tsv / app_assign.tsv / applist.conf 里已出现的 : 进程（历史持久）
+#    输出格式：APP=<pkg>|<sys 0/1>|<defined>|<custom>|<mode>|<标签>
 cmd_appfreqapps() {
-    local ctl="$MODDIR/Scripts/4+4+2/O3/aether/aether_ctl.sh"
-    local out=""
-    [ -f "$ctl" ] && out=$(sh "$ctl" apps 2>/dev/null)
-    if [ -n "$out" ]; then
-        printf '%s\n' "$out"
-        return 0
-    fi
-    # 兜底 2：完整启动器应用清单
+    local mode_f="$WEBUI_DIR/app_freq.tsv"
+    local assign_f="$WEBUI_DIR/app_assign.tsv"
+    local conf="$STATE_DIR/applist.conf"
+    local apps_f="${TMPD}/apps.list" sys_f="${TMPD}/apps.sys"
+    mkdir -p "$TMPD" 2>/dev/null
+
+    # ① 主包集合：有界面的启动器应用
     if has cmd; then
-        out=$(cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER 2>/dev/null \
-              | sed -n 's#^[[:space:]]*\([^/][^/]*\)/.*#APP=\1|0#p' | sort -u)
-        [ -n "$out" ] && { printf '%s\n' "$out"; return 0; }
+        cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER 2>/dev/null \
+          | sed -n 's#^[[:space:]]*\([^/][^/]*\)/.*#\1#p' | sort -u > "$apps_f"
     fi
-    # 兜底 3：全部包（第三方优先标 0）
-    if has pm; then
-        out=$(pm list packages 2>/dev/null | sed 's/^package://' | while IFS= read -r p; do
-            [ -n "$p" ] && printf 'APP=%s|0\n' "$p"
-        done)
-        [ -n "$out" ] && { printf '%s\n' "$out"; return 0; }
+    if [ ! -s "$apps_f" ] && has pm; then
+        pm list packages 2>/dev/null | sed 's/^package://' | sort -u > "$apps_f"
     fi
-    echo ""
+    # ② 子进程集合（并集）—— 追加到 apps_f
+    {
+        # a) /proc 运行中的（cmdline 首段含 : ）
+        for d in /proc/[0-9]*; do
+            [ -r "$d/cmdline" ] || continue
+            n=$(tr '\0' '\n' < "$d/cmdline" 2>/dev/null | head -1)
+            case "$n" in *:*) printf '%s\n' "$n" ;; esac
+        done 2>/dev/null
+        # b) 我方配置文件里已有的
+        for f in "$mode_f" "$assign_f" "$conf"; do
+            [ -f "$f" ] && awk -F'[=\t]' '$1 ~ /:/{print $1}' "$f" 2>/dev/null
+        done
+    # ⚠ 过滤含 * 的通配伪包名（如 `pkg:sub*`、`pkg:*`）：不是真进程名，只造成脏数据
+    } | grep -v '^[[:space:]]*$' | grep -v '\*' | sort -u >> "$apps_f"
+    sort -u "$apps_f" -o "$apps_f" 2>/dev/null
+
+    : > "$sys_f"
+    if has pm; then pm list packages -s 2>/dev/null | sed 's/^package://' | sort -u > "$sys_f"; fi
+
+    # ③ ★ 单次 awk 完成全部拼装（避免逐包 fork → 界面卡死）
+    [ -f "$mode_f" ]   || : > "$mode_f"
+    [ -f "$assign_f" ] || : > "$assign_f"
+    awk -F'\t' -v MODEF="$mode_f" -v ASGF="$assign_f" -v APPSF="$apps_f" '
+      FNR==NR { sys[$1]=1; next }                    # 第一遍：系统包集合
+      FILENAME==MODEF { if (NF>=2 && $1!="") m[$1]=$2; next }
+      FILENAME==ASGF  { if (NF>=2 && $1!="") { if (!($1 in m)) m[$1]=$2 } next }
+      FILENAME==APPSF { p=$0; gsub(/[ \t\r]/,"",p); if (p=="") next
+                        s = (p in sys) ? 1 : 0
+                        if (p in m) printf "APP=%s|%d|1|1|%s|自定义\n", p, s, m[p]
+                        else        printf "APP=%s|%d|0|0||\n", p, s }
+    ' "$sys_f" "$mode_f" "$assign_f" "$apps_f"
+    rm -f "$apps_f" "$sys_f"
 }
 
-# ★ v18.3.9→v18.4：游戏页只显示「已安装的游戏」。
-#   游戏清单取「艇长 aether 默认 gamelist」（多位置回退，优先级：模块自带 > 已部署副本），
-#   输出 GAME=<pkg> 全集；前端取 gamelist ∩ 已安装 = 已装游戏。
-#   —— 直接复用 aether_ctl 的权威清单，不再自行维护，避免与上游 aether 漂移。
+# ---------- games：输出本机「游戏」包集合（前端「游戏」页 + 「应用」页互斥用）----------
+#  来源（并集）：
+#    ① $STATE_DIR/gamelist 与 /sdcard/Android/Aether/gamelist（用户/历史的游戏名单）
+#    ② $STATE_DIR/threads_games.json（调度App 侧游戏表，若存在）
+#    ③ webui/game_assign.tsv（我方 WebUI 已归为游戏的）
+#    ④ apprules.tsv 里核位含 8/9 的（历史视为游戏）
+#  输出格式：GAME=<包名>（每行一条），与前端解析一致。
 cmd_games() {
-    local gl=""
-    for cand in \
-        "$MODDIR/Scripts/4+4+2/O3/aether/gamelist" \
-        "/sdcard/Android/Aether/gamelist" \
-        "$STATE_DIR/gamelist"; do
-        if [ -s "$cand" ]; then gl="$cand"; break; fi
-    done
-    [ -n "$gl" ] || { echo "ERR 找不到游戏清单（已尝试模块自带 / 已部署副本）"; return 1; }
-    while IFS= read -r p; do
-        [ -n "$p" ] && echo "GAME=$p"
-    done < "$gl"
-}
-
-# ★ v18.4：批量设置（应用/游戏 通用）——「无感切换」核心。
-#   $1 = base64 编码的 TSV（每行 pkg\tmode，mode ∈ powersave|balance|performance|fast）。
-#   ① 频率表（APP_FREQ_FILE/GAME_FREQ_FILE）批量 upsert 一次重写（纯文件，开销极小）。
-#   ② 线程：仅 kind=app 才调 aether_ctl setbatch（一次 deploy）。
-#      kind=game 不碰线程——游戏线程完全交给艇长 Aether 默认配置，WebUI 只调 CPU 频率。
-#   → N 个进程/小程序也只 deploy 一次，消除逐个 appset 的卡顿。
-cmd_appsetbatch() {
-    local b64="$1" kind="$2"
-    case "$kind" in app|game) ;; *) echo "ERR 未知类型: $kind"; return 1 ;; esac
-    local FREQ_FILE; [ "$kind" = "game" ] && FREQ_FILE="$GAME_FREQ_FILE" || FREQ_FILE="$APP_FREQ_FILE"
-    local tsv; tsv=$(printf '%s' "$b64" | base64 -d 2>/dev/null)
-    [ -n "$tsv" ] || { echo "ERR 解码批量输入失败"; return 1; }
-    mkdir -p "$WEBUI_DIR" 2>/dev/null
-    # ① 频率表：收集本次涉及的 mode 类 pkg，批量去重重写（纯文件，开销极小）
-    local remf="${TMPD}/batch_rem.txt"; : > "$remf"
-    printf '%s\n' "$tsv" | while IFS= read -r line; do
-        [ -z "$line" ] && continue
-        p=$(printf '%s' "$line" | cut -f1)
-        r=$(printf '%s' "$line" | cut -f2- | tr -d ' \r')
-        case "$r" in powersave|balance|performance|fast) [ -n "$p" ] && echo "$p" >> "$remf" ;; esac
-    done
-    local ftmp="${TMPD}/batch_freq.new"; : > "$ftmp"
-    [ -s "$FREQ_FILE" ] && [ -s "$remf" ] && awk -F'\t' 'NR==FNR{rem[$1]=1;next} !($1 in rem)' "$remf" "$FREQ_FILE" >> "$ftmp" 2>/dev/null
-    [ -s "$FREQ_FILE" ] && [ ! -s "$remf" ] && cat "$FREQ_FILE" >> "$ftmp" 2>/dev/null
-    printf '%s\n' "$tsv" | while IFS= read -r line; do
-        [ -z "$line" ] && continue
-        p=$(printf '%s' "$line" | cut -f1)
-        r=$(printf '%s' "$line" | cut -f2- | tr -d ' \r')
-        case "$r" in powersave|balance|performance|fast) [ -n "$p" ] && printf '%s\t%s\n' "$p" "$r" >> "$ftmp" ;; esac
-    done
-    cp -f "$ftmp" "$FREQ_FILE" 2>/dev/null; chmod 0666 "$FREQ_FILE" 2>/dev/null; rm -f "$ftmp"
-    # ② 线程：仅应用需要同步线程角色；游戏线程交由 Aether 默认，不动。
-    if [ "$kind" = "app" ]; then
-        printf '%s\n' "$tsv" | sh "$AETHER_CTL" setbatch
-    else
-        echo "OK 游戏仅更新频率档（线程保持 Aether 默认）"
-    fi
+    local gl
+    {
+        for gl in "$STATE_DIR/gamelist" /sdcard/Android/Aether/gamelist; do
+            [ -f "$gl" ] && grep -v '^[[:space:]]*$' "$gl" 2>/dev/null | grep -v '^#'
+        done
+        [ -f "$STATE_DIR/webui/game_assign.tsv" ] && cut -f1 "$STATE_DIR/webui/game_assign.tsv" 2>/dev/null
+        [ -f "$STATE_DIR/apprules.tsv" ] && awk -F'\t' 'NF>=2 && $2 ~ /[89]/{print $1}' "$STATE_DIR/apprules.tsv" 2>/dev/null
+        [ -f "$STATE_DIR/threads_games.json" ] && grep -oE '"[a-zA-Z0-9._]+"' "$STATE_DIR/threads_games.json" 2>/dev/null | tr -d '"'
+    } 2>/dev/null | grep -v '^[[:space:]]*$' | grep -v '^#' | sort -u | sed 's/^/GAME=/'
 }
 
 cmd_appfreqset() {
     local pkg="$1" md="$2"
     [ -n "$pkg" ] || { echo "ERR 缺少包名"; return 1; }
     mode_valid "$md" || { echo "ERR 未知模式: $md"; return 1; }
-    case "$pkg" in *[!A-Za-z0-9._:\*]*) echo "ERR 包名非法"; return 1 ;; esac
+    case "$pkg" in *[!A-Za-z0-9._:-]*) echo "ERR 包名非法"; return 1 ;; esac
     mkdir -p "$WEBUI_DIR" 2>/dev/null
     local tmp="${TMPD}/app_freq.new"
     : > "$tmp"
@@ -568,20 +438,6 @@ cmd_appfreqset() {
     fi
     printf '%s\t%s\n' "$pkg" "$md" >> "$tmp"
     cp -f "$tmp" "$APP_FREQ_FILE" 2>/dev/null; chmod 0666 "$APP_FREQ_FILE" 2>/dev/null; rm -f "$tmp"
-    # ★ v18.3.8 修复「设了不生效」：写表后**立即下发**，不再等守护兜底。
-    #   旧行为：只写 app_freq.tsv 就返回 OK，实际下发要等 guard.sh 的 WORK 轮——
-    #   而 WORK 仅在前台包名变化或每 24 轮(≈120s) 才成立（guard.sh:187），
-    #   于是「给正在前台的酷安设省电」看起来毫无反应，最长要熬 2 分钟。
-    #   现在：若该包当前正处于前台且新档≠全局档，立刻按新档推 PM QoS。
-    #   非前台包不必下发（切过去时守护会在前台变化那一轮立刻应用）。
-    _aft_fg=$(_fg_pkg | head -1)
-    if [ -n "$_aft_fg" ] && [ "$_aft_fg" = "$pkg" ]; then
-        local _cm; _cm=$(active_mode); _cm="${_cm:-balance}"
-        if [ "$md" != "$_cm" ]; then
-            apply_mode_freq "$md" >/dev/null 2>&1
-            log "webui: 前台 ${pkg} → 立即下发频率档[${md}]（原全局 ${_cm}）"
-        fi
-    fi
     echo "OK 已为 ${pkg} 设置 ${md}"
 }
 
@@ -593,19 +449,61 @@ cmd_appfreqdel() {
     awk -F'\t' -v P="$pkg" '!($1==P)' "$APP_FREQ_FILE" > "$tmp" 2>/dev/null
     cp -f "$tmp" "$APP_FREQ_FILE" 2>/dev/null; chmod 0666 "$APP_FREQ_FILE" 2>/dev/null; rm -f "$tmp"
     # 若被删的正是当前前台覆盖档，立刻回落全局模式
-    # ★ v18.3.8：原先走 apply_mode_freq_bg（后台异步），WebUI 先返回 OK、
-    #   实际写入可能在用户切走页面后才跑完。这里改为同步下发一次并回显档位，
-    #   保证「移除」也有确定反馈（后台保底路径仍由守护兜底）。
-    local cm; cm=$(active_mode); cm="${cm:-balance}"
-    local _del_fg; _del_fg=$(_fg_pkg | head -1)
-    if [ -n "$_del_fg" ] && [ "$_del_fg" = "$pkg" ]; then
-        apply_mode_freq "$cm" >/dev/null 2>&1
-        log "webui: 前台 ${pkg} 移除覆盖 → 回落全局模式[${cm}]"
-        echo "OK 已移除 ${pkg}（已回落全局模式 ${cm}）"
-        return 0
-    fi
-    apply_mode_freq_bg "${cm}"
+    local cm; cm=$(active_mode)
+    apply_mode_freq_bg "${cm:-balance}"
     echo "OK 已移除 ${pkg}"
+}
+
+# ---------- 频率档 ↔ 线程角色档 双向联动 ----------
+#  ⚠ 仅对「应用」生效；游戏包（命中 game_assign）不参与——
+#    游戏线程由 aether 默认规则定死、不通过 WebUI 修改；游戏频率档(game_assign)独立。
+# ============================================================
+#  v19：线程引擎已切换为 AppOpt（唯一真值 $STATE_DIR/applist.conf）
+#  · 我方 WebUI 只维护 app_assign.tsv（pkg<TAB>mode）/ game_assign.tsv
+#  · o3lim.sh gen 把这两张表 + 默认档 + 8-9 闸门 → applist.conf 的「管理区」段
+#  · 精细线程规则（块语法/通配/游戏大核）由 AppOpt 自带网页(8889)全权管理
+# ============================================================
+O3LIM="$MODDIR/Scripts/4+4+2/O3/o3lim.sh"
+# 触发 AppOpt 配置刷新（写管理区；AppOpt inotify 热重载，无需重启引擎）
+o3lim_sync() { [ -f "$O3LIM" ] && sh "$O3LIM" gen >/dev/null 2>&1; return 0; }
+_is_game_pkg() { local p="$1"; [ -s "$GAME_ASSIGN_FILE" ] && awk -F'\t' -v P="$p" '$1==P{exit 0} END{exit 1}' "$GAME_ASSIGN_FILE" 2>/dev/null; }
+# 频率档 → 线程「应用分配」档（写入 app_assign.tsv；极速/none = 不接管，移除该行）
+#  ⚠ 普通应用 fast(极速) → 不写规则（交系统调度，含 8-9 但引擎不强制）。
+#    游戏 fast 在 cmd_appsetbatch 的 kind=game 分支单独处理（线程定死 hp-core，不进此函数）。
+APP_ASSIGN="${WEBUI_DIR}/app_assign.tsv"
+_assign_write() {   # $1=pkg $2=mode|"" (""=移除)
+  local pkg="$1" md="$2"
+  [ -z "$pkg" ] && return 0
+  mkdir -p "$WEBUI_DIR" 2>/dev/null
+  local tmp="${TMPD}/assign.link.tmp"
+  if [ -s "$APP_ASSIGN" ]; then awk -F'\t' -v P="$pkg" '$1!=P' "$APP_ASSIGN" > "$tmp" 2>/dev/null; else : > "$tmp"; fi
+  [ -n "$md" ] && printf '%s\t%s\n' "$pkg" "$md" >> "$tmp" 2>/dev/null
+  cp -f "$tmp" "$APP_ASSIGN" 2>/dev/null; chmod 0666 "$APP_ASSIGN" 2>/dev/null; rm -f "$tmp"
+}
+sync_ovr_from_appfreq() {
+  local pkg="$1" md="$2"; [ -z "$pkg" ] && return 0
+  _is_game_pkg "$pkg" && return 0
+  case "$md" in
+    powersave|balance|performance) _assign_write "$pkg" "$md" ;;
+    fast|none|"")                  _assign_write "$pkg" "fast" ;;   # 保留「不接管」标记
+    *) return 0 ;;
+  esac
+  o3lim_sync
+}
+# 线程角色档 → 频率档（写入 app_freq.tsv；none 则移除频率档行）
+sync_appfreq_from_ovr() {
+  local pkg="$1" role="$2"; [ -z "$pkg" ] && return 0
+  _is_game_pkg "$pkg" && return 0
+  local md
+  case "$role" in powersave) md=powersave ;; balance) md=balance ;; performance) md=performance ;; game) md=fast ;; none) md="" ;; *) return 0 ;; esac
+  if [ -z "$md" ]; then
+    [ -s "$APP_FREQ_FILE" ] || return 0
+    local tmp="${TMPD}/af.link.tmp"
+    awk -F'\t' -v P="$pkg" '$1!=P' "$APP_FREQ_FILE" > "$tmp" 2>/dev/null
+    cp -f "$tmp" "$APP_FREQ_FILE" 2>/dev/null; chmod 0666 "$APP_FREQ_FILE" 2>/dev/null; rm -f "$tmp"
+  else
+    cmd_appfreqset "$pkg" "$md" >/dev/null 2>&1
+  fi
 }
 
 cmd_appfreqbatch() {
@@ -621,8 +519,9 @@ cmd_appfreqbatch() {
     printf '%s\n' "$lines" | while IFS='	' read -r p m; do
         [ -z "$p" ] && continue
         cmd_appfreqset "$p" "$m" >/dev/null 2>&1 && n=$((n+1))
+        sync_ovr_from_appfreq "$p" "$m"
     done
-    echo "OK 批量设置完成"
+    echo "OK 批量设置完成（频率档已联动线程角色档）"
 }
 
 cmd_freqs() {
@@ -662,16 +561,6 @@ cmd_setappmode() {
     fi
     [ -s "$tmp" ] || { rm -f "$tmp"; echo "ERR 生成 app_assign.tsv 失败"; return 1; }
     cp -f "$tmp" "$f" 2>/dev/null; chmod 0666 "$f" 2>/dev/null; rm -f "$tmp"
-    # ★ v18.3.8：与 cmd_appfreqset 同一病因——只写表不推 QoS，用户侧表现为「设了没反应」。
-    #   若该包正在前台，立即按新档下发（守护兜底最长 120s，体感等于没生效）。
-    _sam_fg=$(_fg_pkg | head -1)
-    if [ -n "$_sam_fg" ] && [ "$_sam_fg" = "$pkg" ]; then
-        local _sam_cm; _sam_cm=$(active_mode); _sam_cm="${_sam_cm:-balance}"
-        if [ "$mode" != "$_sam_cm" ]; then
-            apply_mode_freq "$mode" >/dev/null 2>&1
-            log "webui: 前台 ${pkg} → app_assign 立即下发频率档[${mode}]（原全局 ${_sam_cm}）"
-        fi
-    fi
     # 线程不再由这里联动重建（v18.2.9：线程完全归舰长，档位由 WebUI 线程页单独设置）
     echo "OK 已把 ${pkg} 设为模块频率档「${mode}」"
 }
@@ -842,10 +731,18 @@ EOF
 #     主线程 / 最重线程 / 重线程 / 按线程名 comm 路由 / 其余 五层。
 # ============================================================
 cmd_aether() {
-    sh "$AETHER_CTL" status 2>&1
+    # v19：线程引擎 = AppOpt。输出 ON/RUNNING/PID/RULES 供前端卡片显示。
+    if pgrep -f 'AppOpt' >/dev/null 2>&1; then
+        echo "ON=on"
+        echo "RUNNING=1"
+        echo "PID=$(pgrep -f 'AppOpt' 2>/dev/null | tr '\n' ',' | sed 's/,$//')"
+    else
+        echo "ON=off"; echo "RUNNING=0"; echo "PID="
+    fi
+    echo "RULES=$(grep -c '=' "$STATE_DIR/applist.conf" 2>/dev/null)"
+    echo "CONF=$STATE_DIR/applist.conf"
+    echo "WEB=http://127.0.0.1:8889"
     emit_topo
-    sh "$AETHER_CTL" featlist 2>&1
-    sh "$AETHER_CTL" rules 2>&1
 }
 
 # 真实 CPU 拓扑：从 /sys cpufreq policy 读出各簇核区间，按 cpuinfo_max_freq 由低到高
@@ -887,12 +784,22 @@ emit_topo() {
     echo "TOPO_CLUSTERS=$i"
 }
 cmd_aetherswitch() {
+    # v19：控制 AppOpt 线程引擎（前端仍叫 aetherswitch，保持兼容）
+    local APPDIR="$MODDIR/Scripts/4+4+2/O3"
     case "$1" in
-      on)  touch "$STATE_DIR/aether.on" 2>/dev/null; sh "$AETHER_CTL" start 2>&1; update_module_desc >/dev/null 2>&1 ;;
-      off) rm -f "$STATE_DIR/aether.on" 2>/dev/null; sh "$AETHER_CTL" stop 2>&1; update_module_desc >/dev/null 2>&1 ;;
+      on)
+        if ! pgrep -f 'AppOpt' >/dev/null 2>&1; then
+            sh "$MODDIR/Scripts/4+4+2/O3/o3lim.sh" boot >/dev/null 2>&1
+            ( cd "$APPDIR" && nohup ./AppOpt -w -c "$STATE_DIR/applist.conf" -b O3CPUSet -s 2 </dev/null >> "$LOG_FILE" 2>&1 & )
+            sleep 1
+        fi
+        update_module_desc >/dev/null 2>&1 ;;
+      off)
+        pkill -f 'AppOpt' 2>/dev/null
+        update_module_desc >/dev/null 2>&1 ;;
       *) echo "ERR 用法: aetherswitch on|off"; return 1 ;;
     esac
-    echo "OK 艇长线程引擎已${1}（免重启生效）"
+    echo "OK 线程引擎(AppOpt)已${1}（免重启生效）"
 }
 cmd_aetherfeat() {
     sh "$AETHER_CTL" feat "$1" "$2" 2>&1
@@ -918,7 +825,7 @@ EOF
 }
 
 # ---------- 应用级线程档位（角色档，不是单簇核位）----------
-cmd_aetherapps() { sh "$AETHER_CTL" apps 2>&1; }
+cmd_aetherapps() { cmd_appfreqapps 2>&1; }
 cmd_aetherset() {
     [ -n "$2" ] || { echo "ERR 用法: aetherset <包名> <角色档>"; return 1; }
     sh "$AETHER_CTL" set "$2" "$3" 2>&1
@@ -927,17 +834,134 @@ cmd_aetherdel() {
     [ -n "$2" ] || { echo "ERR 用法: aetherdel <包名>"; return 1; }
     sh "$AETHER_CTL" del "$2" 2>&1
 }
-cmd_aethersetbatch() {
-    # 入参两种：① 标准输入 pkg<TAB>role（多行）；② 单个位置参数 base64(同上)
-    # role=auto 表示移除该包自定义
-    if [ -n "$1" ]; then
-        has base64 || { echo "ERR 缺少 base64"; return 1; }
-        local d="${TMPD}/aetherbatch.b64"
-        printf '%s' "$1" > "$d"
-        base64 -d "$d" 2>/dev/null | sh "$AETHER_CTL" setbatch 2>&1
-    else
-        sh "$AETHER_CTL" setbatch 2>&1
+# ---------- 应用/游戏 统一设置（一次写 频率 + 线程）----------
+#   前端「应用」界面调：appsetbatch <b64(pkg<TAB>mode 多行)> <kind>
+#   kind=app：频率写 app_freq.tsv；线程按 mode 写 app_assign.tsv → o3lim gen → applist.conf 管理区
+#             （powersave→powersave / balance→balance / performance→performance / fast→none 不接管）
+#   kind=game：频率写 game_assign.tsv；线程由 aether 默认规则定死（不写 OVR）
+#   行内 auto/空档表示移除该包自定义
+cmd_appsetbatch() {
+    local b64="$1" kind="$2"
+    [ -n "$b64" ] || { echo "ERR 缺少输入"; return 1; }
+    has base64 || { echo "ERR 缺少 base64"; return 1; }
+    local d="${TMPD}/appsetbatch.b64" lines p m n=0
+    printf '%s' "$b64" > "$d"
+    lines=$(base64 -d "$d" 2>/dev/null)
+    rm -f "$d"
+    [ -n "$lines" ] || { echo "ERR 解码为空"; return 1; }
+    local GAME_FILE="$GAME_ASSIGN_FILE"
+    printf '%s\n' "$lines" | while IFS='	' read -r p m; do
+        [ -z "$p" ] && continue
+        case "$m" in auto|"")  # 移除该包自定义
+            [ -s "$APP_FREQ_FILE" ] && awk -F'\t' -v P="$p" '$1!=P' "$APP_FREQ_FILE" > "${APP_FREQ_FILE}.t" 2>/dev/null && mv -f "${APP_FREQ_FILE}.t" "$APP_FREQ_FILE" 2>/dev/null
+            _assign_write "$p" ""
+            [ -s "$GAME_FILE" ] && awk -F'\t' -v P="$p" '$1!=P' "$GAME_FILE" > "${GAME_FILE}.t" 2>/dev/null && mv -f "${GAME_FILE}.t" "$GAME_FILE" 2>/dev/null
+            continue ;;
+        esac
+        mode_valid "$m" || { echo "ERR 未知模式: $m"; continue; }
+        if [ "$kind" = "game" ]; then
+            # 游戏：频率写 game_assign；线程由 o3lim 映射 hp-core（8-9 定死大核）
+            mkdir -p "$WEBUI_DIR" 2>/dev/null
+            local gt="${TMPD}/game_assign.new"
+            if [ -f "$GAME_FILE" ] && grep -q "^${p}	" "$GAME_FILE" 2>/dev/null; then
+                awk -F'\t' -v P="$p" -v M="$m" 'BEGIN{OFS="	"} $1==P{$2=M} {print}' "$GAME_FILE" > "$gt" 2>/dev/null
+            else
+                [ -f "$GAME_FILE" ] && cp -f "$GAME_FILE" "$gt" 2>/dev/null
+                printf '%s\t%s\n' "$p" "$m" >> "$gt" 2>/dev/null
+            fi
+            [ -s "$gt" ] && { cp -f "$gt" "$GAME_FILE" 2>/dev/null; chmod 0666 "$GAME_FILE" 2>/dev/null; }
+            rm -f "$gt"
+        else
+            # 应用：频率写 app_freq；线程写 app_assign
+            #  ⚠ 极速/none 要**保留**一条 fast 记录（而不是删行）：这样 o3lim 的最高优先
+            #    来源能看到「不接管」，从而压过 apprules/threads 里的历史规则 → 真的不落核。
+            cmd_appfreqset "$p" "$m" >/dev/null 2>&1 && n=$((n+1))
+            case "$m" in
+              powersave|balance|performance) _assign_write "$p" "$m" ;;
+              fast|none)                     _assign_write "$p" "fast" ;;
+            esac
+        fi
+    done
+    o3lim_sync
+    echo "OK 批量设置完成（频率已存 + 线程已写入 AppOpt 管理区，kind=${kind:-app}）"
+}
+
+# ---------- 游戏页读取：GF_<pkg>=<mode>（前端 loadGameFreq 解析格式）----------
+cmd_gamefreq() {
+    if [ -s "$GAME_ASSIGN_FILE" ]; then
+        awk -F'\t' 'NF>=2 && $1!="" && $1!~/^#/{print "GF_"$1"="$2}' "$GAME_ASSIGN_FILE" 2>/dev/null </dev/null
     fi
+}
+
+# ---------- 单应用设置/删除（「应用 / 游戏」页调用，等同 appsetbatch 的单条）----------
+cmd_appset() {
+    local pkg="$1" mode="$2" kind="$3"
+    [ -n "$pkg" ] || { echo "ERR 缺少包名"; return 1; }
+    [ -n "$mode" ] || mode=auto
+    local b64
+    b64=$(printf '%s\t%s' "$pkg" "$mode" | base64 2>/dev/null | tr -d '\n')
+    [ -n "$b64" ] || { echo "ERR base64 失败"; return 1; }
+    cmd_appsetbatch "$b64" "${kind:-app}"
+}
+cmd_appdel() {
+    local pkg="$1" kind="$2"
+    [ -n "$pkg" ] || { echo "ERR 缺少包名"; return 1; }
+    local b64
+    b64=$(printf '%s\tauto' "$pkg" | base64 2>/dev/null | tr -d '\n')
+    [ -n "$b64" ] || { echo "ERR base64 失败"; return 1; }
+    cmd_appsetbatch "$b64" "${kind:-app}"
+}
+
+cmd_aethersetbatch() {    # v19「线程档位」页：role（省电/流畅/性能/游戏/不接管）直接驱动 AppOpt 管理区。
+    #   入参：base64(pkg<TAB>role 多行)；role=auto 表示移除该包自定义。
+    #   · role=game → 写 game_assign.tsv（o3lim 映射 hp-core 8-9）
+    #   · role=powersave|balance|performance → 写 app_assign.tsv（映射 e-core/p-core/e-core,p-core）
+    #   · role=none|auto → 移除线程规则（交系统调度）
+    #   同时反向联动频率档（角色档 → app_freq.tsv）。
+    [ -n "$1" ] || { echo "ERR 缺少输入"; return 1; }
+    has base64 || { echo "ERR 缺少 base64"; return 1; }
+    local d="${TMPD}/aetherbatch.b64" lines p r
+    printf '%s' "$1" > "$d"
+    lines=$(base64 -d "$d" 2>/dev/null)
+    rm -f "$d"
+    [ -n "$lines" ] || { echo "ERR 解码为空"; return 1; }
+    local GF="$GAME_ASSIGN_FILE"
+    printf '%s\n' "$lines" | while IFS='	' read -r p r; do
+        [ -z "$p" ] && continue
+        case "$r" in
+          game)
+            _assign_write "$p" ""
+            mkdir -p "$WEBUI_DIR" 2>/dev/null
+            local gt="${TMPD}/g.new"
+            if [ -f "$GF" ] && grep -q "^${p}	" "$GF" 2>/dev/null; then
+                awk -F'\t' -v P="$p" 'BEGIN{OFS="	"} $1==P{$2="performance"} {print}' "$GF" > "$gt" 2>/dev/null
+            else
+                [ -f "$GF" ] && cp -f "$GF" "$gt" 2>/dev/null
+                printf '%s\t%s\n' "$p" "performance" >> "$gt" 2>/dev/null
+            fi
+            [ -s "$gt" ] && { cp -f "$gt" "$GF" 2>/dev/null; chmod 0666 "$GF" 2>/dev/null; }
+            rm -f "$gt"
+            ;;
+          powersave|balance|performance)
+            _assign_write "$p" "$r"
+            [ -s "$GF" ] && awk -F'\t' -v P="$p" '$1!=P' "$GF" > "${GF}.t" 2>/dev/null && mv -f "${GF}.t" "$GF" 2>/dev/null
+            ;;
+          none)
+            # 不接管：持久化 fast 标记（压过历史规则）
+            _assign_write "$p" "fast"
+            [ -s "$GF" ] && awk -F'\t' -v P="$p" '$1!=P' "$GF" > "${GF}.t" 2>/dev/null && mv -f "${GF}.t" "$GF" 2>/dev/null
+            ;;
+          auto|"")
+            # 跟随默认：移除本包记录（回落默认流畅档）
+            _assign_write "$p" ""
+            [ -s "$GF" ] && awk -F'\t' -v P="$p" '$1!=P' "$GF" > "${GF}.t" 2>/dev/null && mv -f "${GF}.t" "$GF" 2>/dev/null
+            ;;
+          *) echo "ERR 未知档位: $r"; continue ;;
+        esac
+        sync_appfreq_from_ovr "$p" "$r"
+    done
+    o3lim_sync
+    echo "OK 线程档位已写入 AppOpt 管理区（applist.conf，AppOpt 热重载）"
 }
 
 # ============================================================
@@ -968,10 +992,6 @@ case "$1" in
   appfreqset)    cmd_appfreqset "$2" "$3" ;;
   appfreqdel)    cmd_appfreqdel "$2" ;;
   appfreqbatch)  cmd_appfreqbatch "$2" ;;
-  appset)        cmd_appset "$2" "$3" "$4" ;;
-  appsetbatch)   cmd_appsetbatch "$2" "$3" ;;
-  appdel)        cmd_appdel "$2" "$3" ;;
-  gamefreq)      cmd_gamefreq ;;
   appmodes)      cmd_appmodes ;;
   setappmode)    shift; cmd_setappmode "$1" "$2" ;;
   fasxres)       cmd_fasxres ;;
@@ -994,5 +1014,9 @@ case "$1" in
   aetherset)     cmd_aetherset "$1" "$2" "$3" ;;
   aetherdel)     cmd_aetherdel "$1" "$2" ;;
   aethersetbatch) cmd_aethersetbatch "$2" ;;
+  appsetbatch)   cmd_appsetbatch "$2" "$3" ;;
+  appset)        cmd_appset "$2" "$3" "$4" ;;
+  appdel)        cmd_appdel "$2" "$3" ;;
+  gamefreq)      cmd_gamefreq ;;
   *) echo "err: unknown command '$1'"; exit 1 ;;
 esac

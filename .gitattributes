@@ -6,5 +6,8 @@
 *.db binary
 *.so binary
 # aether 调度引擎（ELF 二进制，无扩展名）——必须显式标 binary，
-# 否则 `* text eol=lf` 会在 git add 时剥离内部 0x0D，损坏成 1189035 字节。
+# 否则 `* text eol=lf` 会在 git add 时剥除内部 0x0D，损坏二进制。
 aether-optext binary
+# AppOpt 引擎二进制（Rust, arm64, 892KB）——同样必须显式标 binary。
+Scripts/4+4+2/O3/AppOpt binary
+Scripts/4+4+2/O3/AppOpt-ebpf binary

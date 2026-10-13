@@ -1,7 +1,7 @@
 id=O3CPUSet
 name=O3 CPU Set
-version=18.4.4 (2026-10-12)
-versionCode=2026101204
+version=19.0.0 (2026-10-13)
+versionCode=2026101301
 author=Abel Duan
-description=功能状态｜频率 模块QoS(balance) · 线程 AppOpt · 调度器 powercfg · 守护 运行中 · 日志 开
+description=功能状态｜频率 模块QoS(balance) · 线程 AppOpt(8889网页) · 调度器 powercfg · 守护 运行中 · 日志 开
 action=action.sh

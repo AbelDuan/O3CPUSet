@@ -145,6 +145,9 @@ cmd_deploy() {
   fi
   # ② 合并 base + 用户自定义覆盖 → 设备 CFG（Aether 真正读取的文件）
   merge_overrides
+  # ②b 生成「允许用超大核 8-9 的包名表」→ 供 bigcore_lock.sh 运行时查表
+  #     （bigcore_lock 在热路径上跑，绝不能逐块解析 CFG；这里 deploy 时算一次）
+  gen_bigcore_allow
   # ③ 生成应用→核位映射（WebUI 图形展示用）
   gen_apprules
   echo "OK 已部署（艇长基准 $(grep -c '\"friendly\"' "$BASE" 2>/dev/null) 条 + 自定义 $(grep -c . "$OVR" 2>/dev/null || echo 0) 条 → CFG $(grep -c '\"friendly\"' "$CFG" 2>/dev/null) 条）"
@@ -341,6 +344,48 @@ tpl_cpuset() {
     *)
       _tpl5 "$E" "" "" "" "" "" "" "$E" ;;
   esac
+}
+
+# ---------- 生成「允许大核 8-9」的包名表（bigcore_lock 运行时查表用）----------
+#   收录 CFG 里「cpuset 明确含 8-9 / 0-9」的规则所对应的包名。
+#   典型：相机的「不接管」= main_thread/other = 0-9；游戏规则 = 8-9/4-9。
+#   消费方：Scripts/4+4+2/O3/bigcore_lock.sh（常态锁 0-7，仅本表内的包放行）
+gen_bigcore_allow() {
+  local out="$STATE_DIR/bigcore_allow.txt"
+  awk '
+    function flush(){
+      if (inb && got) {
+        n = split(buf, L, "\n")
+        inp = 0
+        for (i = 1; i <= n; i++) {
+          if (L[i] ~ /"packages"[[:space:]]*:[[:space:]]*\[/) inp = 1
+          if (inp) {
+            s = L[i]
+            while (match(s, /"[a-zA-Z][a-zA-Z0-9._:]*"/)) {
+              p = substr(s, RSTART + 1, RLENGTH - 2)
+              if (p ~ /\./) print p
+              s = substr(s, RSTART + RLENGTH)
+            }
+            if (L[i] ~ /\]/) inp = 0
+          }
+        }
+      }
+      inb = 0; incs = 0; got = 0; buf = ""
+    }
+    # ⚠ 每个规则块开始必须重置 got/incs —— 否则「某块含 0-9」会污染后续块，
+    #   把 other="0-3,4-7" 这种无大核规则也误收进允许表（实测桌面/美团被误放行）。
+    /^    \{[[:space:]]*$/ { flush(); inb = 1; got = 0; incs = 0; buf = $0; next }
+    inb {
+      buf = buf "\n" $0
+      if ($0 ~ /"cpuset"/) incs = 1
+      if (incs && $0 ~ /(8-9|4-9|0-9|\{hp_core\}|\{all_core\})/) got = 1
+      if ($0 ~ /^    \},?[[:space:]]*$/) flush()
+      next
+    }
+    END { flush() }
+  ' "$CFG" 2>/dev/null | sort -u > "$out" 2>/dev/null
+  chmod 0666 "$out" 2>/dev/null
+  echo "OK 允许大核包名表：$(grep -c . "$out" 2>/dev/null || echo 0) 个包"
 }
 
 # ---------- 由 base 生成 应用→核位 映射（艇长已定义的线程分配）----------

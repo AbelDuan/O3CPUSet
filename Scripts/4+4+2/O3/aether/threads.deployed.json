@@ -1,0 +1,6844 @@
+{
+  "features": {
+    "ebpf": true,
+    "auto-for-none": true,
+    "foreground": false,
+    "load_aware": false,
+    "notify_scheduler": true,
+    "blacklist": [],
+    "render_guard": false,
+    "min_cpus": 4,
+    "lagrange": {
+      "enable": true
+    }
+  },
+  "rules": [
+    {
+      "friendly": "创造与魔法",
+      "packages": [
+        "com.hero.sm.bz",
+        "com.hero.sm.android.hero"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "异环",
+      "packages": [
+        "com.hottagames.yh.laohu"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "RHIThread"
+          ],
+          "4-7": [
+            "GameThread",
+            "Render Thread",
+            "Foregro-rker*"
+          ],
+          "0-3": [
+            "RenderThread",
+            "TaskGraphNP *"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "梦幻西游",
+      "packages": [
+        "com.netease.my",
+        "com.tencent.tmgp.mhxy.sqsy"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Transaction*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "斗罗大陆",
+      "packages": [
+        "com.jiguang.dldl.sy37"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GLThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "重返未来1999",
+      "packages": [
+        "com.shenlan.m.reverse1999"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "棕色尘埃2",
+      "packages": [
+        "com.neowizgames.game.browndust2"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7,8-9": [
+            "Thread-*"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW"
+          ],
+          "0-3": [
+            "Job*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "迷你世界",
+      "packages": [
+        "com.minitech.miniworld",
+        "com.minitech.miniworld.TMobile.mi"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "MiniRainbowMain",
+            "MiniRenderThrea"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "心动小镇",
+      "packages": [
+        "com.xd.xdt"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "命运:冠位指定",
+      "packages": [
+        "com.bilibili.fatego"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "初音未来:缤纷舞台",
+      "packages": [
+        "com.hermes.mk"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "枪破黎明",
+      "packages": [
+        "com.hykb.qplm"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "少女前线2:追放",
+      "packages": [
+        "com.Sunborn.SnqxExilium"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Job.[Ww]orker*",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "妄想山海",
+      "packages": [
+        "com.tencent.tmgp.djsy"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ],
+          "4-7": [
+            "ncent.tmgp.djsy",
+            "MainThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "欢乐斗地主",
+      "packages": [
+        "com.qqgame.hlddz"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "欢乐钓鱼大师",
+      "packages": [
+        "com.xuejing.smallfish.official"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "传说对决",
+      "packages": [
+        "com.garena.game.kgtw"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "滚动的天空",
+      "packages": [
+        "com.turbochilli.rollingsky"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "影之诗",
+      "packages": [
+        "jp.co.cygames.ShadowverseWorldsBeyond",
+        "jp.co.craftegg.band",
+        "com.netease.yzs"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "蔚蓝档案",
+      "packages": [
+        "com.RoamingStar.BlueArchive"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "杀戮尖塔",
+      "packages": [
+        "com.humble.SlayTheSpire"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Thread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "烟雨江湖",
+      "packages": [
+        "com.lanjing.yanyu.aligames"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GLThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "时空猎人",
+      "packages": [
+        "com.yinhan.hunter.tx"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GLThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "时光大爆炸",
+      "packages": [
+        "com.sqw.cc.sgdbz_ta"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GLThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.proximabeta.mf.uamo",
+      "packages": [
+        "com.proximabeta.mf.uamo"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "RenderThread*",
+            "GameThread"
+          ],
+          "0-3": [
+            "RHIThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "鬼谷八荒",
+      "packages": [
+        "com.guigugame.guigubahuang"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "0-3": [
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "我的世界",
+      "packages": [
+        "com.netease.mc",
+        "com.mojang.minecraftpe",
+        "com.netease.mc.nearme.gamecenter",
+        "com.tencent.tmgp.wdsj666",
+        "com.netease.x19"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "MINECRAFT*",
+            "Rendering*",
+            "MINECRAFT MAIN",
+            "Streaming Pool("
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "萤火突击",
+      "packages": [
+        "com.netease.yhtj.nearme.gamecenter",
+        "com.netease.yhtj",
+        "com.netease.yhtj.mi",
+        "com.netease.yhtj.4399"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Game*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "剑与远征",
+      "packages": [
+        "com.lilithgames.hgame.cn"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GLThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "狂野飙车9",
+      "packages": [
+        "com.gameloft.android.ANMP.GloftA9HM"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "超自然行动组",
+      "packages": [
+        "com.pi.czrxdfirst"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "0-3": [
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "全明星街球派对",
+      "packages": [
+        "com.netease.allstar"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "PES",
+      "packages": [
+        "com.netease.pes"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GameThread",
+            "RenderThread*"
+          ],
+          "0-3": [
+            "RHIThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "战魂铭人",
+      "packages": [
+        "com.chillyroom.zhmr.yw"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "代号血战",
+      "packages": [
+        "com.netease.newspike"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "明日之后",
+      "packages": [
+        "com.netease.mrzh",
+        "com.netease.mrzh.mi",
+        "com.netease.mrzh.nearme.gamecenter"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "NIKKE",
+      "packages": [
+        "com.gamamobi.nikke"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "Thread-*",
+            "UnityChoreograp",
+            "FMOD*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "晶核",
+      "packages": [
+        "com.hermes.p6game",
+        "com.hermes.p6game.mi",
+        "com.hermes.p6game.aligames"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GameThread",
+            "RenderThread*"
+          ],
+          "0-3": [
+            "RHIThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "无畏契约",
+      "packages": [
+        "com.tencent.tmgp.codev"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread",
+            "RenderThread*"
+          ],
+          "4-7": [
+            "RenderThread",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "卡拉彼丘",
+      "packages": [
+        "com.idreamsky.klbqm"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "炉石传说",
+      "packages": [
+        "com.blizzard.wtcg.hearthstone",
+        "com.blizzard.wtcg.hearthstone.cn.huawei",
+        "com.blizzard.wtcg.hearthstone.cn.dashen"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ],
+          "0-3": [
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "无限暖暖",
+      "packages": [
+        "com.papegames.infinitynikki"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GameThread",
+            "RenderThread*"
+          ],
+          "0-3": [
+            "RHIThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "高能英雄",
+      "packages": [
+        "com.tencent.tmgp.gnyx"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Thread-[0-5][0-9]",
+            "Render*"
+          ],
+          "0-3": [
+            "RHIThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "幻塔",
+      "packages": [
+        "com.dw.h5yvzr.yt",
+        "com.pwrd.hotta.laohu",
+        "com.hottagames.hotta.bilibili",
+        "com.hottagames.hotta.mi"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GameThread",
+            "RenderThread*"
+          ],
+          "0-3": [
+            "RHIThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "荒野乱斗",
+      "packages": [
+        "com.tencent.tmgp.supercell.brawlstars",
+        "com.supercell.brawlstars"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Mainloop",
+            "Mainloop"
+          ],
+          "4-7": [
+            "Thread-*",
+            "FMOD_mixer_thre",
+            "Thread-*"
+          ],
+          "0-3": [
+            "mali-event-hand"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "决胜巅峰",
+      "packages": [
+        "com.dfjz.moba"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "黑色信标",
+      "packages": [
+        "com.mingzhou.blackbeacon"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "深空之眼",
+      "packages": [
+        "com.yongshi.tenojo.ys"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "无尽冬日",
+      "packages": [
+        "com.gof.china"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "0-3": [
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "王牌战争",
+      "packages": [
+        "com.yingxiong.heroo.nearme.gamecenter",
+        "com.yingxiong.heroo",
+        "com.yingxiong.gw.Android.hero",
+        "com.yingxiong.hero.huawei",
+        "com.yingxiong.hero.vivo"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "NBA",
+      "packages": [
+        "com.tencent.tmgp.NBA"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "0-3": [
+            "FMOD mixer thre",
+            "Worker Thread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "皇室战争",
+      "packages": [
+        "com.tencent.tmgp.supercell.clashroyale"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Mainloop"
+          ],
+          "4-7": [
+            "Thread-*",
+            "FMOD_mixer_thre"
+          ],
+          "0-3": [
+            "FMOD mixer thre"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "月圆之夜",
+      "packages": [
+        "com.ztgame.yyzy"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "0-3": [
+            "UnityGfxDeviceW",
+            "CoreThread",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "战双帕弥什",
+      "packages": [
+        "com.kurogame.haru.aligames",
+        "com.kurogame.haru.hero"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ],
+          "0-3": [
+            "NativeThread",
+            "core",
+            "WebView"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "王者荣耀",
+      "packages": [
+        "com.tencent.tmgp.sgame"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Thread*",
+            "Job.worker*",
+            "CoreThread"
+          ],
+          "0-3": [
+            "Job.*",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "第五人格",
+      "packages": [
+        "com.netease.dwrg.nearme.gamecenter",
+        "com.netease.dwrg",
+        "com.netease.dwrg.mi"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "永劫无间",
+      "packages": [
+        "com.netease.l22.nearme.gamecenter",
+        "com.netease.l22",
+        "com.netease.l22.mi"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "0-3": [
+            "UnityGfxDeviceW",
+            "Job.*",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "燕云十六声",
+      "packages": [
+        "com.netease.yyslscn"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Thread*",
+            "Thread-*"
+          ],
+          "4-7": [
+            "Compute_w*",
+            "NativeThread"
+          ],
+          "0-3": [
+            "Compute_w_*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "暗区突围",
+      "packages": [
+        "com.tencent.mf.uam"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread"
+          ],
+          "4-7": [
+            "RenderThread*",
+            "RHIThread",
+            "com.tencent.mf.uam"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "英魂之刃",
+      "packages": [
+        "com.nd.he.gamename.m4399",
+        "com.tq.he.nearme.gamecenter",
+        "com.tencent.tmgp.coslegend"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "GLThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "金铲铲之战",
+      "packages": [
+        "com.tencent.jkchess"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "Thread-*",
+            "LogicThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "崩坏:星穹铁道",
+      "packages": [
+        "com.miHoYo.hkrpg"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*",
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ],
+          "0-3": [
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "崩坏3(外服)",
+      "packages": [
+        "com.miHoYo.bh3.uc",
+        "com.miHoYo.bh3.mi",
+        "com.miHoYo.enterprise.NGHSoD",
+        "com.miHoYo.bh3.bilibili"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ],
+          "0-3": [
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "原神",
+      "packages": [
+        "com.miHoYo.Yuanshen"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*",
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ],
+          "0-3": [
+            "UnityMulti*",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.oplus.nas",
+      "packages": [
+        "com.oplus.nas"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.baidu.input_oppo",
+      "packages": [
+        "com.baidu.input_oppo"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将微信输入法进程绑定e_core",
+      "packages": [
+        "com.tencent.wetype:play"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.kugou.android.lite:support",
+      "packages": [
+        "com.kugou.android.lite:support"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "com.tencent.mm:push"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.oplus.onetrace",
+      "packages": [
+        "com.oplus.onetrace"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "scene-daemon",
+      "packages": [
+        "scene-daemon"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "touchDaemon",
+      "packages": [
+        "touchDaemon"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "surfaceflinger",
+      "packages": [
+        "surfaceflinger"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.heytap.mcs",
+      "packages": [
+        "com.heytap.mcs"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.coloros.smartsidebar:edgepanel",
+      "packages": [
+        "com.coloros.smartsidebar:edgepanel"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "top.hookvip.pro",
+      "packages": [
+        "top.hookvip.pro"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.oplus.consumerIRApp",
+      "packages": [
+        "com.oplus.consumerIRApp"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.oplus.screenshot",
+      "packages": [
+        "com.oplus.screenshot"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "mtio",
+      "packages": [
+        "mtio"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.ss.android.ugc.livepro",
+      "packages": [
+        "com.ss.android.ugc.livepro"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.quark.browser:channel",
+      "packages": [
+        "com.quark.browser:channel"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.quark.browser:push",
+      "packages": [
+        "com.quark.browser:push"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.quark.browser:sandboxed_privilege_process0",
+      "packages": [
+        "com.quark.browser:sandboxed_privilege_process0"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "微信小程序",
+      "packages": [
+        "com.tencent.mm:*"
+      ],
+      "cpuset": {
+        "main_thread": "0-9",
+        "other": "0-9"
+      }
+    },
+    {
+      "friendly": "支付宝小程序",
+      "packages": [
+        "com.eg.android.AlipayGphone:*"
+      ],
+      "cpuset": {
+        "main_thread": "0-9",
+        "other": "0-9"
+      }
+    },
+    {
+      "friendly": "com.taobao.idlefish:channel",
+      "packages": [
+        "com.taobao.idlefish:channel"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.phoenix.read:push",
+      "packages": [
+        "com.phoenix.read:push"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.sina.weibolite:lelinkps",
+      "packages": [
+        "com.sina.weibolite:lelinkps"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.sina.weibolite:remote",
+      "packages": [
+        "com.sina.weibolite:remote"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.netease.cloudmusic:play",
+      "packages": [
+        "com.netease.cloudmusic:play"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.tencent.qqmusic:QQPlayerService",
+      "packages": [
+        "com.tencent.qqmusic:QQPlayerService"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "com.oplus.melody",
+      "packages": [
+        "com.oplus.melody"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.melody:fg"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.oplus.melody:fg",
+      "packages": [
+        "com.oplus.melody:fg"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.melody:fg"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "系统桌面",
+      "packages": [
+        "com.android.launcher"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "*.launcher",
+            "binder*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI桌面",
+      "packages": [
+        "com.miui.home"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI相册",
+      "packages": [
+        "com.miui.gallery"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.gallery"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "OPPO相机",
+      "packages": [
+        "com.oplus.camera"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*camera"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI主题壁纸",
+      "packages": [
+        "com.android.thememanager"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.thememanager"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI天气",
+      "packages": [
+        "com.miui.weather2"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.weather2"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI编辑",
+      "packages": [
+        "com.miui.mediaeditor"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.mediaeditor",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI负一屏",
+      "packages": [
+        "com.miui.personalassistant"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.personalassistant"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "小米浏览器",
+      "packages": [
+        "com.android.browser"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "android.browser"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI扫一扫",
+      "packages": [
+        "com.xiaomi.scanner"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            ".xiaomi.scanner"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "小米搜索",
+      "packages": [
+        "com.android.quicksearchbox"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            ".quicksearchbox"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "小爱同学",
+      "packages": [
+        "com.miui.voiceassist"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.voiceassist"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "软件商店(OPPO)",
+      "packages": [
+        "com.heytap.market"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "hwui*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "智慧生活(华为)",
+      "packages": [
+        "com.huawei.smarthome"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.smarthome"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "相册(OPPO)",
+      "packages": [
+        "com.coloros.gallery3d"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "loros.gallery3d",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "手机管家",
+      "packages": [
+        "com.miui.securitycenter:ui",
+        "com.miui.securitycenter.remote"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.securitycenter",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "浏览器(OPPO)",
+      "packages": [
+        "com.heytap.browser"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.browser"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "便签(OPPO)",
+      "packages": [
+        "com.coloros.note"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.note"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "侧边(OPPO)",
+      "packages": [
+        "com.coloros.smartsidebar:ui"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "smartsidebar:ui"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "游戏助手(OPPO)",
+      "packages": [
+        "com.oplus.games"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.games"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "欢律(OPPO)",
+      "packages": [
+        "com.heytap.headset"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.heytap.headset"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "电话/信息",
+      "packages": [
+        "com.android.phone",
+        "com.android.contacts",
+        "com.android.incallui",
+        "com.android.mms"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.phone",
+            "*.contacts",
+            "*.incallui",
+            "*.mms"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "输入法(OPPO)",
+      "packages": [
+        "com.sohu.inputmethod.sogouoem"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.sogouoem"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI搜狗输入法",
+      "packages": [
+        "com.sohu.inputmethod.sogou.xiaomi"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.xiaomi"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "设置",
+      "packages": [
+        "com.android.settings"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.settings"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "小米视频",
+      "packages": [
+        "com.miui.video"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.video"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MIUI媒体查看器",
+      "packages": [
+        "com.miui.mediaviewer"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.mediaviewer"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "小米笔记",
+      "packages": [
+        "com.miui.notes"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.notes"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "miui音乐",
+      "packages": [
+        "com.miui.player"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.player"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Apple Music",
+      "packages": [
+        "com.apple.android.music"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "*.music",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "QQ",
+      "packages": [
+        "com.tencent.mobileqq"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "MediaCodec_loop",
+            "encent.mobileqq"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "TIM",
+      "packages": [
+        "com.tencent.tim"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "com.tencent.tim",
+            "RenderThread",
+            "HeapTaskDaemon"
+          ],
+          "0-3": [
+            "*.tim"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "钉钉",
+      "packages": [
+        "com.alibaba.android.rimet"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "a.android.rimet",
+            "Doraemon-Proces"
+          ],
+          "0-3": [
+            "*.android.rimet"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Soul",
+      "packages": [
+        "cn.soulapp.android"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.android"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "telegram",
+      "packages": [
+        "org.telegram.messenger"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "Thread-*",
+            "RenderThread",
+            "egram.messenger"
+          ],
+          "0-3": [
+            "*.messenger"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Nagram X",
+      "packages": [
+        "nu.gpu.nagram"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "Thread-*",
+            "RenderThread",
+            "nu.gpu.nagram"
+          ],
+          "0-3": [
+            "*.nagram"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "哔哩哔哩",
+      "packages": [
+        "tv.danmaku.bili"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "Thread*",
+            "IJK_External_Re",
+            "tv.danmaku.bili",
+            "MediaCodec_loop"
+          ],
+          "0-3": [
+            "ijkservice"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "抖音",
+      "packages": [
+        "com.ss.android.ugc.aweme.lite"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "*Thread",
+            "VDecod2-*",
+            "HeapTaskDaemon",
+            "danmaku-driver",
+            ".ugc.aweme.lite"
+          ],
+          "0-3": [
+            "RenderThread",
+            "*.aweme.lite"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "抖音商城",
+      "packages": [
+        "com.ss.android.ugc.livelite"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.ugc.livelite"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "TikTok",
+      "packages": [
+        "com.zhiliaoapp.musically"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.musically"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "快手",
+      "packages": [
+        "com.smile.gifmaker"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "smile.gifmaker",
+            "MediaCodec_*"
+          ],
+          "0-3": [
+            ".smile.gifmaker"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "快手",
+      "packages": [
+        "com.kuaishou.nebula"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "kuaishou.nebula",
+            "thread*",
+            "*ffmpeg*"
+          ],
+          "0-3": [
+            "Media*",
+            "ffmpeg*",
+            "Heap*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "快手子进程",
+      "packages": [
+        "com.smile.gifmaker:push_v3",
+        "com.smile.gifmaker:kwv_sandboxed_p0",
+        "com.smile.gifmaker:messagesdk",
+        "com.smile.gifmaker:mini0"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "抖音精选",
+      "packages": [
+        "com.ss.android.yumme.video"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "oid.yumme.video",
+            "MediaCodec_loop",
+            "TRThread*",
+            "VDecod*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "微博",
+      "packages": [
+        "com.sina.weibo"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "Thread-*",
+            "com.sina.weibo"
+          ],
+          "0-3": [
+            "*.weibo"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "微博轻享版",
+      "packages": [
+        "com.weico.international"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.international"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "微博极速版",
+      "packages": [
+        "com.sina.weibolite"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "Heap*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "虎牙",
+      "packages": [
+        "com.duowan.kiwi"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.kiwi"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "斗鱼",
+      "packages": [
+        "air.tv.douyu.android"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.android"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "腾讯视频",
+      "packages": [
+        "com.tencent.qqlive"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.qqlive"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "爱奇艺",
+      "packages": [
+        "com.qiyi.video"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "PLAYER_INFLATE_",
+            "RenderThread",
+            "DanmakuGLThread",
+            "com.qiyi.video",
+            "PumaPlyrVEgn"
+          ],
+          "0-3": [
+            "*.video"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "芒果TV",
+      "packages": [
+        "com.hunantv.imgo.activity"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.activity"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "西瓜视频",
+      "packages": [
+        "com.ss.android.article.video"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.video",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "皮皮虾",
+      "packages": [
+        "com.sup.android.superb"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.superb"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "豆瓣",
+      "packages": [
+        "com.douban.frodo"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.frodo"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "今日头条",
+      "packages": [
+        "com.ss.android.article.news"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.article.news"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "腾讯新闻",
+      "packages": [
+        "com.tencent.news"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.news",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "知乎",
+      "packages": [
+        "com.zhihu.android"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "m.zhihu.android"
+          ],
+          "0-3": [
+            "*.android"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "贴吧",
+      "packages": [
+        "com.baidu.tieba"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "com.baidu.tieba"
+          ],
+          "0-3": [
+            "*.tieba"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "虎扑",
+      "packages": [
+        "com.hupu.games"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.games",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "懂球帝",
+      "packages": [
+        "com.dongqiudi.news"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.news",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "淘宝",
+      "packages": [
+        "com.taobao.taobao"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "WeexJSBridgeTh",
+            "HeapTaskDaemon",
+            "m.taobao.taobao",
+            "8RYPVI8EZKhJUU"
+          ],
+          "0-3": [
+            "RenderThread",
+            "*.taobao"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "京东",
+      "packages": [
+        "com.jingdong.app.mall"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "pool-15-thread-",
+            "RunnerWrapper_8",
+            "ngdong.app.mall",
+            "JDFileDownloade"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "拼多多",
+      "packages": [
+        "com.xunmeng.pinduoduo"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "Chat#Single-Syn",
+            "Startup#RTDispa",
+            "nmeng.pinduoduo"
+          ],
+          "0-3": [
+            "*.pinduoduo"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "闲鱼",
+      "packages": [
+        "com.taobao.idlefish"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "*.idlefish",
+            "*.ui",
+            "*.raster"
+          ],
+          "0-3": [
+            "Heap*",
+            "Phenix*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "美团",
+      "packages": [
+        "com.sankuai.meituan"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "*.meituan"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "得物",
+      "packages": [
+        "com.shizhuang.duapp"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "shizhuang.duapp"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "58同城",
+      "packages": [
+        "com.wuba"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.wuba"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "大众点评",
+      "packages": [
+        "com.dianping.v1"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.v1"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "天眼查",
+      "packages": [
+        "com.tianyancha.skyeye"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.skyeye",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "企查查",
+      "packages": [
+        "com.tencent.qq.qc"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.qq.qc"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "高德地图",
+      "packages": [
+        "com.autonavi.minimap"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "utonavi.minimap",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "百度地图",
+      "packages": [
+        "com.baidu.BaiduMap"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "31.1_0223536945",
+            ".31.1_062565145",
+            ".baidu.BaiduMap",
+            "*Thread"
+          ],
+          "0-3": [
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "滴滴出行",
+      "packages": [
+        "com.sdu.didi.psnger"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.psnger",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "哈啰出行",
+      "packages": [
+        "com.jingyao.easybike"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.easybike",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "货拉拉",
+      "packages": [
+        "com.lalamove.huolala.client"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.client",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "顺丰",
+      "packages": [
+        "com.sgs.next"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "GuardService",
+            "SfPushService",
+            "core"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "菜鸟驿站",
+      "packages": [
+        "com.cainiao.wireless"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.wireless"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "携程旅行",
+      "packages": [
+        "ctrip.android.view"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.view"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "铁路12306",
+      "packages": [
+        "com.MobileTicket"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "om.MobileTicket",
+            "RenderThread"
+          ],
+          "0-3": [
+            "*.MobileTicket"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "安居客",
+      "packages": [
+        "com.anjuke.android.app"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.android.app"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "贝壳找房",
+      "packages": [
+        "com.lianjia.beike"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.beike"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "懂车帝",
+      "packages": [
+        "com.ss.android.auto"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.auto"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "汽车之家",
+      "packages": [
+        "com.autohome.main"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.main"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "营地",
+      "packages": [
+        "com.tencent.gamehelper.smoba"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.smoba"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "将QQ音乐主进程绑定e_core",
+      "packages": [
+        "com.tencent.qqmusic"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.qqmusic"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "网易云音乐",
+      "packages": [
+        "com.netease.cloudmusic"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "ease.cloudmusic",
+            "LooperTracer"
+          ],
+          "0-3": [
+            "*.cloudmusic"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "酷狗音乐",
+      "packages": [
+        "com.kugou.android"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.android"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "酷狗概念版",
+      "packages": [
+        "com.kugou.android.lite"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "ou.android.lite",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "酷我音乐",
+      "packages": [
+        "cn.kuwo.player"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "dMessageHandler",
+            "RenderThread",
+            "cdn.kuwo.cn*",
+            "cn.kuwo.player"
+          ],
+          "0-3": [
+            "*.player"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "汽水音乐",
+      "packages": [
+        "com.luna.music"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "*.music",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Salt Player",
+      "packages": [
+        "com.salt.music"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "com.salt.music",
+            "RenderThread"
+          ],
+          "0-3": [
+            "*.music"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "喜马拉雅",
+      "packages": [
+        "com.ximalaya.ting.android"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "ya.ting.android",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "全民K歌",
+      "packages": [
+        "com.tencent.karaoke"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.karaoke"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "我的听书",
+      "packages": [
+        "com.github.eprendre.tingshu"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.tingshu"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "番茄免费小说",
+      "packages": [
+        "com.dragon.read"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "HeapTaskDaemon",
+            "com.dragon.read"
+          ],
+          "0-3": [
+            "*.read"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "起点读书",
+      "packages": [
+        "com.qidian.QDReader"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "*.QDReader",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "七猫小说",
+      "packages": [
+        "com.kmxs.reader"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "*.reader",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "多看阅读",
+      "packages": [
+        "com.duokan.reader"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.reader"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "快看漫画",
+      "packages": [
+        "com.kuaikan.comic"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.comic"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "腾讯动漫",
+      "packages": [
+        "com.qq.ac.android"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.android"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "哔哩哔哩漫画",
+      "packages": [
+        "com.bilibili.comic"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.comic",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "阅读(OSS)",
+      "packages": [
+        "io.legado.app.release",
+        "io.legado.play.release"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "ado.app.release",
+            "RenderThread",
+            "binder*"
+          ],
+          "0-3": [
+            "*.release"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "红果免费短剧",
+      "packages": [
+        "com.phoenix.read"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "om.phoenix.read",
+            "RenderThread",
+            "Thread*"
+          ],
+          "0-3": [
+            "*phoenix.read"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "chrome",
+      "packages": [
+        "com.android.chrome",
+        "com.chrome.dev",
+        "com.chrome.canary",
+        "com.chrome.beta"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            ".android.chrome"
+          ],
+          "0-3": [
+            "*.chrome",
+            "*.dev",
+            "*.canary",
+            "*.beta"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "edge",
+      "packages": [
+        "com.microsoft.emmx",
+        "com.microsoft.emmx.dev",
+        "com.microsoft.emmx.canary",
+        "com.microsoft.emmx.beta"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            ".microsoft.emmx",
+            "Thread-*",
+            "NetworkService",
+            "hwuiTask*"
+          ],
+          "0-3": [
+            "*.emmx.dev"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "QQ浏览器",
+      "packages": [
+        "com.tencent.mtt"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "com.tencent.mtt"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "UC浏览器",
+      "packages": [
+        "com.UCMobile"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.raster",
+            "*.ui"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "夸克浏览器",
+      "packages": [
+        "com.quark.browser"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "Heap*"
+          ],
+          "4-7": [
+            "*.ui",
+            "*.raster"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "火狐浏览器",
+      "packages": [
+        "org.mozilla.fenix",
+        "org.mozilla.firefox"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.fenix",
+            "*.firefox"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "via",
+      "packages": [
+        "mark.via"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "mark.via",
+            "RenderThread"
+          ],
+          "0-3": [
+            "pool*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Alook浏览器",
+      "packages": [
+        "alook.browser"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.browser"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "百度网盘",
+      "packages": [
+        "com.baidu.netdisk"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.netdisk"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "移动云盘",
+      "packages": [
+        "com.chinamobile.mcloud"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.mcloud"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "123网盘",
+      "packages": [
+        "com.mfcloudcalculate.networkdisk"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "?.ui",
+            "?.raster"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "迅雷",
+      "packages": [
+        "com.xunlei.downloadprovider"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*vider"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "WPS Office",
+      "packages": [
+        "cn.wps.moffice_eng"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.moffice_eng"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "腾讯文档",
+      "packages": [
+        "com.tencent.docs"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.docs"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "MT文件管理",
+      "packages": [
+        "bin.mt.plus"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "bin.mt.plus",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "ES文件浏览器",
+      "packages": [
+        "com.estrongs.android.pop"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.android.pop"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "扫描全能王",
+      "packages": [
+        "com.intsig.camscanner"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.camscanner"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "解压缩全能王",
+      "packages": [
+        "com.cjtec.uncompress"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "jtec.uncompress"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "中国工商银行",
+      "packages": [
+        "com.icbc"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.icbc",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "招商银行",
+      "packages": [
+        "cmb.pb"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.pb",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "建设银行",
+      "packages": [
+        "com.chinamworld.main"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "hinamworld.main",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "中国邮政储蓄银行",
+      "packages": [
+        "com.psbc.psbc3"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.psbc3"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "个人所得税",
+      "packages": [
+        "cn.gov.tax.its"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.tax.its",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "数字人民币",
+      "packages": [
+        "cn.gov.pbc.dcep"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.dcep"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "天天基金",
+      "packages": [
+        "com.eastmoney.android.fund"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.fund"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "同花顺",
+      "packages": [
+        "com.hexin.plat.android"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "in.plat.android",
+            "RenderThread",
+            "Thread*"
+          ],
+          "0-3": [
+            "*.android"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "豆包",
+      "packages": [
+        "com.larus.nova"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "com.larus.nova",
+            "MediaLoad"
+          ],
+          "0-3": [
+            "*.nova"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "通义千问",
+      "packages": [
+        "com.aliyun.tongyi"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.tongyi"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "DeepSeek",
+      "packages": [
+        "com.deepseek.chat"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "m.deepseek.chat",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Grok",
+      "packages": [
+        "ai.x.grok"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.grok"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "KSU N",
+      "packages": [
+        "com.rifsxd.ksunext"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            ".rifsxd.ksunext"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Thanos",
+      "packages": [
+        "github.tornaco.android.thanos"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.thanos"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Noactive",
+      "packages": [
+        "cn.myflv.noactive"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            ".myflv.noactive",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "降压(KonaBess)",
+      "packages": [
+        "xzr.konabess"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.konabess"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "墓碑",
+      "packages": [
+        "io.github.MoWei.Frozen"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.Frozen"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Guise",
+      "packages": [
+        "com.houvven.guise"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.guise"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "SukiSu Ultra",
+      "packages": [
+        "com.sukisu.ultra"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.ultra"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "HXA",
+      "packages": [
+        "com.lab.hxaudio"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "com.lab.hxaudio"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "葫芦侠",
+      "packages": [
+        "com.huluxia.gametools"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.gametools"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "AppShare",
+      "packages": [
+        "info.muge.appshare"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.appshare"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Pica Comic",
+      "packages": [
+        "com.github.pacalini.pica_comic"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "*.ui",
+            "*.raster",
+            "RenderThread",
+            "*.pica_comic"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "椒盐笔记",
+      "packages": [
+        "com.moriafly.note"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "m.moriafly.note"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "腾讯会议",
+      "packages": [
+        "com.tencent.wemeet.app"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.wemeet.app"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "真我社区",
+      "packages": [
+        "com.realmecomm.app"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*realmecomm.app"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Boss直聘",
+      "packages": [
+        "com.hpbr.bosszhipin"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.bosszhipin"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "学习强国",
+      "packages": [
+        "cn.xuexi.android"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.android"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "学习通",
+      "packages": [
+        "com.chaoxing.mobile"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.mobile"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "作业帮",
+      "packages": [
+        "com.zuoyebang.zuoyebang"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.zuoyebang"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "微软翻译",
+      "packages": [
+        "com.microsoft.translator"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "soft.translator"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "囧次元",
+      "packages": [
+        "com.llmm.huiyuanuxiang"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.huiyuanuxiang"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "安心计件",
+      "packages": [
+        "com.julanling.piece"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.piece"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Outlook",
+      "packages": [
+        "com.microsoft.office.outlook"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.office.outlook"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "QQ邮箱",
+      "packages": [
+        "com.tencent.androidqqmail"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.androidqqmail"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "邮箱大师",
+      "packages": [
+        "com.netease.mail"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*netease.mail"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.unionpay",
+      "packages": [
+        "com.unionpay"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "com.unionpay"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.ctfile",
+      "packages": [
+        "com.ctfile"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.ctfile"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "优酷",
+      "packages": [
+        "com.youku.phone"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "NDK MediaCodec",
+            "Thread*",
+            "com.youku.phone"
+          ],
+          "0-3": [
+            "RenderThread",
+            "*.phone"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.netease.gl",
+      "packages": [
+        "com.netease.gl"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "com.netease.gl"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.coloros.weather2",
+      "packages": [
+        "com.coloros.weather2"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.weather2"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.oneplus.bbs",
+      "packages": [
+        "com.oneplus.bbs"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.bbs"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.heytap.themestore",
+      "packages": [
+        "com.heytap.themestore"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.themestore"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.tingfeng.tool",
+      "packages": [
+        "com.tingfeng.tool"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.tool"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.wuba.zhuanzhuan",
+      "packages": [
+        "com.wuba.zhuanzhuan"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "wuba.zhuanzhuan"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "eu.kanade.tachiyomi.yokai",
+      "packages": [
+        "eu.kanade.tachiyomi.yokai"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "tachiyomi.yokai",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "andes.oplus.documentsreader",
+      "packages": [
+        "andes.oplus.documentsreader"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.documentsreader"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "com.xycz.simple_live",
+      "packages": [
+        "com.xycz.simple_live"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "ycz.simple_live",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "豌豆荚",
+      "packages": [
+        "com.wandoujia.phoenix2"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "0-3": [
+            "RenderThread",
+            "*.phoenix2"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "崩坏因缘精灵",
+      "packages": [
+        "com.miHoYo.abccbtest"
+      ],
+      "cpuset": {
+        "other": "0-3",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "UnityGfxDeviceW"
+          ],
+          "0-3": [
+            "UnityMulti*",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "王者荣耀",
+      "packages": [
+        "com.levelinfinite.sgameGlobal.midaspay"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Thread*",
+            "Job.worker*",
+            "CoreThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "和平精英",
+      "packages": [
+        "com.tencent.tmgp.pubgmhd"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ],
+          "4-7,8-9": [
+            "RHIThread"
+          ],
+          "4-7": [
+            "TaskGraphNP*",
+            "RenderThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "PUBGM (GLO,GLOCE,TW,KR)",
+      "packages": [
+        "com.tencent.ig"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UEGameThread"
+          ],
+          "4-7": [
+            "RHIThread",
+            "TaskGraphNP*",
+            "MainThread-UE4"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "PUBGM (GLO,GLOCE,TW,KR)",
+      "packages": [
+        "com.tencent.igce"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UEGameThread"
+          ],
+          "4-7": [
+            "RHIThread",
+            "TaskGraphNP*",
+            "MainThread-UE4"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "PUBGM (GLO,GLOCE,TW,KR)",
+      "packages": [
+        "com.rekoo.pubgm"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UEGameThread"
+          ],
+          "4-7": [
+            "RHIThread",
+            "TaskGraphNP*",
+            "MainThread-UE4"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "PUBGM (GLO,GLOCE,TW,KR)",
+      "packages": [
+        "com.pubg.krmobile"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UEGameThread"
+          ],
+          "4-7": [
+            "RenderThread*",
+            "TaskGraphNP*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "使命召唤手游(CN,Garena)",
+      "packages": [
+        "com.tencent.tmgp.cod"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*",
+            "Audio*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "使命召唤手游(CN,Garena)",
+      "packages": [
+        "com.garena.game.codm"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Thread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "英雄联盟",
+      "packages": [
+        "com.tencent.lolm"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "LogicThread",
+            "Thread-*",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "明日方舟",
+      "packages": [
+        "com.hypergryph.arknights"
+      ],
+      "cpuset": {
+        "other": "4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ],
+          "0-3,4-7": [
+            "Audio*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "明日方舟",
+      "packages": [
+        "com.hypergryph.arknights.bilibili"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ],
+          "0-3,4-7": [
+            "Audio*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "原神",
+      "packages": [
+        "com.miHoYo.GenshinImpact"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "原神",
+      "packages": [
+        "com.miHoYo.ys.bilibili"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "原神",
+      "packages": [
+        "com.miHoYo.ys.mi"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "崩坏:星穹铁道",
+      "packages": [
+        "com.miHoYo.hkrpg.bilibili"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "崩坏:星穹铁道",
+      "packages": [
+        "com.HoYoverse.hkrpgoversea"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain*"
+          ],
+          "4-7": [
+            "UnityGfx*",
+            "Thread-*",
+            "Job.worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "绝区零",
+      "packages": [
+        "com.miHoYo.Nap"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*",
+            "NativeThread",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "绝区零",
+      "packages": [
+        "com.HoYoverse.Nap"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*",
+            "NativeThread",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "绝区零",
+      "packages": [
+        "com.mihoyo.nap.bilibili"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*",
+            "NativeThread",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "鸣潮",
+      "packages": [
+        "com.kurogame.mingchao"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread"
+          ],
+          "4-7": [
+            "RHIThread",
+            "RenderThread*",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "鸣潮",
+      "packages": [
+        "com.kurogame.wutheringwaves.global"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread"
+          ],
+          "4-7": [
+            "RHIThread",
+            "RenderThread*",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "CFM",
+      "packages": [
+        "com.tencent.tmgp.cf"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "火影忍者",
+      "packages": [
+        "com.tencent.KiHan"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "三角洲行动",
+      "packages": [
+        "com.tencent.tmgp.dfm"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "RenderThread"
+          ],
+          "4-7": [
+            "GameThread",
+            "TaskGraphNP 0",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "三角洲行动",
+      "packages": [
+        "com.proxima.dfm"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "RenderThread"
+          ],
+          "4-7": [
+            "GameThread",
+            "TaskGraphNP 0",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "妮姬：新的希望",
+      "packages": [
+        "com.tencent.nikke"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "Thread-*",
+            "UnityChoreograp"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "NIKKE",
+      "packages": [
+        "com.proximabeta.nikke"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "Thread-*",
+            "UnityChoreograp",
+            "FMOD*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "BlueArchive(GLO)",
+      "packages": [
+        "com.nexon.bluearchive"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "xon.bluearchive"
+          ],
+          "4-7": [
+            "UnityMain",
+            "UnityGfxDeviceW10",
+            "UnityChoreograp"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "DNF",
+      "packages": [
+        "com.tencent.tmgp.dnf"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "0-3,4-7": [
+            "Thread-[0-9]*"
+          ],
+          "4-7": [
+            "UnityChoreograp",
+            "UnityGfxDeviceW"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "尘白禁区",
+      "packages": [
+        "com.dragonli.projectsnow.lhm"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "RHIThread"
+          ],
+          "4-7": [
+            "RenderThread*",
+            "GameThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "巅峰极速",
+      "packages": [
+        "com.netease.race"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "RHIThread"
+          ],
+          "4-7": [
+            "GameThread",
+            "RenderThread",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "qq飞车",
+      "packages": [
+        "com.tencent.tmgp.speedmobile"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "0-3,4-7": [
+            "Thread-*"
+          ],
+          "4-7": [
+            "UnityGfxRenderS",
+            "Job.Worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "雀魂",
+      "packages": [
+        "com.soulgamechst.majsoul"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "0-3": [
+            "Thread-??"
+          ],
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "Job.Worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "崩坏3(官服)",
+      "packages": [
+        "com.miHoYo.enterprise.NGHSoD"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "NativeThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "多乐够级(HW)",
+      "packages": [
+        "com.k7k7.goujihd.huawei"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GLThread*"
+          ],
+          "4-7": [
+            "AudioTrack",
+            "binder*",
+            "Thread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "枪火重生",
+      "packages": [
+        "com.duoyi.m2m1"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker",
+            "NativeThread ",
+            "AudioTrack"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "皇室战争 GLO",
+      "packages": [
+        "com.supercell.clashroyale"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Mainloop"
+          ],
+          "4-7": [
+            "FMOD mixer thre",
+            "Thread*",
+            "Binder*",
+            "AudioTrack"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "SMAPI Launcher(星露谷物语)",
+      "packages": [
+        "abc.ningban.gameloades"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "gban.gameloades"
+          ],
+          "4-7": [
+            ".NET_Long_Runni",
+            "AudioTrack"
+          ],
+          "0-3": [
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "洛克王国",
+      "packages": [
+        "com.tencent.nrc"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread",
+            "GameThread"
+          ],
+          "4-7": [
+            "RHIThread",
+            "RenderThread*",
+            "TaskGraphHP*",
+            "RHIThread",
+            "RenderThread*",
+            "TaskGraphHP*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "决胜巅峰",
+      "packages": [
+        "com.dfjz.moba.kuaishou"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "dfp-1-thread-4",
+            "Thread*",
+            "*Thread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "香肠派对",
+      "packages": [
+        "com.sofunny.sausage"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain",
+            "Job.Worker*"
+          ],
+          "4-7": [
+            "Thread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "逆战:未来",
+      "packages": [
+        "com.tencent.tmgp.nz"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread"
+          ],
+          "4-7": [
+            "RenderThread",
+            "TaskGraphNP",
+            "Thread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "明日方舟:终末地",
+      "packages": [
+        "com.hypergryph.endfield"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*",
+            "Thread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "战争雷霆",
+      "packages": [
+        "com.gaijingames.wtm"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7,8-9": [
+            "gaijingames.wtm"
+          ],
+          "4-7": [
+            "AudioTrack"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "失控进化",
+      "packages": [
+        "com.tencent.rmcn"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Thread*",
+            "AudioTrack"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "开门就是仙侠世界",
+      "packages": [
+        "com.LoongCharm.infinityworld"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GLThread*"
+          ],
+          "4-7": [
+            "V8 DefaultWorke",
+            "m.infinityworld"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "迷你世界(4399)",
+      "packages": [
+        "com.minitech.miniworld.m4399"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "0-3": [
+            "Thread*"
+          ],
+          "8-9": [
+            "MiniRainbowMain"
+          ],
+          "4-7": [
+            "MiniRenderThrea",
+            "miniworld.m4399"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Roblox",
+      "packages": [
+        "com.roblox.client"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ],
+          "4-7": [
+            "RBX Worker A",
+            "RBX Worker B"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "鹅鸭杀",
+      "packages": [
+        "com.seayoo.ggd"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "liteav_audio_pr"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "萤火突击",
+      "packages": [
+        "com.netease.yhtj"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Game*"
+          ],
+          "4-7": [
+            "ALooperThread",
+            "om.netease.yhtj",
+            "MainThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "王者荣耀世界",
+      "packages": [
+        "com.tencent.ngr"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread"
+          ],
+          "4-7": [
+            "RHIThread",
+            "RenderThread",
+            "TaskGraphHP*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "PlantsVsZombiesRH",
+      "packages": [
+        "com.LanPiaoPiao.PlantsVsZombiesRH"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "魂斗罗:归来",
+      "packages": [
+        "com.tencent.shootgame"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*",
+            "Thread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "kards",
+      "packages": [
+        "com.android1939.kards"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread"
+          ],
+          "4-7": [
+            "Thread-*",
+            "RenderThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "kards",
+      "packages": [
+        "com.android1939.kardsapk"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "GameThread"
+          ],
+          "4-7": [
+            "Thread-*",
+            "RenderThread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Minecraft,我的世界",
+      "packages": [
+        "com.mojang.minecraftpe"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Rendering Pool*"
+          ],
+          "4-7": [
+            "MINECRAFT MAIN",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Minecraft,我的世界",
+      "packages": [
+        "com.netease.x19"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "MINECRAFT MAIN"
+          ],
+          "4-7": [
+            "AsyncTask*",
+            "RenderThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "第五人格",
+      "packages": [
+        "com.netease.dwrg"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Thread-*"
+          ],
+          "4-7": [
+            "NativeThread",
+            "om.netease.dwrg"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "欧洲卡车模拟器3",
+      "packages": [
+        "com.WandaSoftware.TruckersofEurope3"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "对峙2",
+      "packages": [
+        "com.axlebolt.standoff2"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "UnityMain"
+          ],
+          "4-7": [
+            "UnityGfxDeviceW",
+            "Job.Worker*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "遗忘之海",
+      "packages": [
+        "com.netease.ywzh"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7,8-9": [
+            "Thread*"
+          ],
+          "4-7": [
+            "om.netease.ywzh"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Nekogram",
+      "packages": [
+        "tw.nekomimi.nekogram"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "files_database_",
+            "searchQueue",
+            "komimi.nekogram"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "telegram",
+      "packages": [
+        "org.telegram.group"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "Thread-*",
+            "RenderThread",
+            ".telegram.group"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Nagram",
+      "packages": [
+        "xyz.nextalone.nagram"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "extalone.nagram",
+            "stageQueue",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Ayugram",
+      "packages": [
+        "com.radolyn.ayugram"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "radolyn.ayugram",
+            "SpoilerEffectBi",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "美团外卖",
+      "packages": [
+        "com.sankuai.meituan.takeoutnew"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "tuan.takeoutnew",
+            "J*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "饿了么",
+      "packages": [
+        "me.ele"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "dp2ndk",
+            "Xxdn-Worker",
+            "1.raster",
+            "2.raster"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "piliplus",
+      "packages": [
+        "com.example.piliplus"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "Thread-*",
+            "xample.piliplus",
+            "MediaCodec_loop",
+            "demux",
+            "1.raster"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "优乐享视频",
+      "packages": [
+        "com.yishu.ylxsp"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "com.yishu.ylxsp",
+            "MediaCodec_loop",
+            "1.raster"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "komikku",
+      "packages": [
+        "app.komikku.beta"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "pp.komikku.beta",
+            "*thread*",
+            "RenderThread",
+            "AsyncTask*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "kototoro",
+      "packages": [
+        "org.skepsun.kototoro"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "kepsun.kototoro",
+            "DefaultDispatch"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Readest",
+      "packages": [
+        "com.bilingify.readest"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "lingify.readest",
+            "RenderThread",
+            "Chrome InProcGp"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "纯粹直播",
+      "packages": [
+        "com.mystyle.purelive"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "1.raster",
+            "ystyle.purelive",
+            "Thread-*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "NGA玩家社区",
+      "packages": [
+        "gov.pianzong.androidnga"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "zong.androidnga",
+            "RenderThread",
+            "Thread*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "小黑盒",
+      "packages": [
+        "com.max.xiaoheihe"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "glide-animation",
+            "m.max.xiaoheihe"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "悠悠有品",
+      "packages": [
+        "com.uu898.uuhavequality:core"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "8.uuhavequality",
+            "RenderThread",
+            "BR-LagTrace-Thr"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "四川集客",
+      "packages": [
+        "com.inspur.mobilefsp"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "nspur.mobilefsp"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "四川集客",
+      "packages": [
+        "com.inspur.mobilefsp:jse"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "nspur.mobilefsp"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "X",
+      "packages": [
+        "com.twitter.android"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "twitter.android",
+            "RenderThread",
+            "MediaCodec_loop"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "YouTube",
+      "packages": [
+        "com.google.android.youtube"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "android.youtube",
+            "RenderThread",
+            "ExoPlayer:Playb",
+            "MediaCodec_loop"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Facebook",
+      "packages": [
+        "com.facebook.katana"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "facebook.katana",
+            "RenderThread",
+            "ComponentLavout"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Discord",
+      "packages": [
+        "com.discord"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "com.discord",
+            "pool-10-thread-*",
+            "RenderThread",
+            "mqt_js"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "动漫共和国",
+      "packages": [
+        "com.shizi.tool.p3"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "imore.wallpaper",
+            "glide-disk-cach"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "边缘视频",
+      "packages": [
+        "com.hjmore.wallpaper"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "imore.wallpaper",
+            "RenderThread",
+            "HeapTaskDaemon"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Lanerc",
+      "packages": [
+        "com.xuzly.hy.lanerc.app"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "Thread-*",
+            "1.ui",
+            "mpv/demux",
+            "1.raster"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "小猿搜题",
+      "packages": [
+        "com.fenbi.android.solar"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "i.android.solar",
+            "RenderThread",
+            "VizWebView",
+            "Chrome_InProcGp"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "快对AI",
+      "packages": [
+        "com.kuaiduizuoye.scan"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "aiduizuoye.scan",
+            "RenderThread",
+            "Chrome_IOThread"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "醒图(可能无效)",
+      "packages": [
+        "com.xt.retouch"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "Signal Catcher",
+            "perfetto_hprof_",
+            "Jit thread pool"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "3Dmark",
+      "packages": [
+        "com.futuremark.dmandroid.application"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "8-9": [
+            "Thread-??"
+          ],
+          "4-7": [
+            "*binder"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "顺丰同城骑士",
+      "packages": [
+        "com.sfexpress.knight"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "fexpress.knight",
+            "RenderThread",
+            "binder"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "360极速浏览器",
+      "packages": [
+        "com.qihoo.contents"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            ".qihoo.contents",
+            "RenderThread",
+            "Thread-*",
+            "VizWebView"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "Breezy Weather",
+      "packages": [
+        "org.breezyweather"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "g.breezyweather",
+            "Binder:*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "今日水印相机",
+      "packages": [
+        "com.xhey.xcamera"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RxCachedThreadS"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "将酷狗音乐后台播放的子进程绑定e_core",
+      "packages": [
+        "com.kugou.android.support"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将酷狗音乐后台播放的子进程绑定e_core",
+      "packages": [
+        "com.kugou.android.message"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "com.luna.music:push"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "com.ss.android.ugc.aweme.mobile:push"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "com.bilibili.app.in:pushservice"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "tv.danmaku.bilibilihd:pushservice"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "tv.danmaku.bili:pushservice"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "com.tencent.mobileqq:MSF"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "com.tencent.tim:MSF"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "将Push消息推送进程绑定e_core",
+      "packages": [
+        "com.alibaba.android.rimet:push"
+      ],
+      "cpuset": {
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "pixel启动器",
+      "packages": [
+        "com.google.android.apps.nexuslauncher"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "s.nexuslauncher",
+            "binder*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "launcher3",
+      "packages": [
+        "com.android.launcher3"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "*.launcher3",
+            "binder*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "oneuilauncher",
+      "packages": [
+        "com.sec.android.app.launcher"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            "RenderThread",
+            "id.app.launcher",
+            "binder*"
+          ]
+        }
+      }
+    },
+    {
+      "friendly": "flyme桌面",
+      "packages": [
+        "com.meizu.flyme.launcher"
+      ],
+      "cpuset": {
+        "other": "0-3,4-7",
+        "comm": {
+          "4-7": [
+            ".flyme.launcher",
+            "binder*",
+            "RenderThread"
+          ]
+        }
+      }
+    }
+,
+    {
+      "friendly": "自定义·com.xingin.xhs",
+      "packages": ["com.xingin.xhs"],
+      "cpuset": {
+        "main_thread": "0-3",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "0-3",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "0-3",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process0",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process0"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process1",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process1"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process2",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process2"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process3",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process3"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process4",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process4"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:tools",
+      "packages": ["com.eg.android.AlipayGphone:tools"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone",
+      "packages": ["com.eg.android.AlipayGphone"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Worker",
+            "Job",
+            "Async",
+            "Pool",
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand",
+      "packages": ["com.tencent.mm:appbrand"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.coolapk.market",
+      "packages": ["com.coolapk.market"],
+      "cpuset": {
+        "main_thread": "0-3",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "0-3",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "0-3",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm",
+      "packages": ["com.tencent.mm"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Worker",
+            "Job",
+            "Async",
+            "Pool",
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand0",
+      "packages": ["com.tencent.mm:appbrand0"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand1",
+      "packages": ["com.tencent.mm:appbrand1"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand2",
+      "packages": ["com.tencent.mm:appbrand2"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand3",
+      "packages": ["com.tencent.mm:appbrand3"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand4",
+      "packages": ["com.tencent.mm:appbrand4"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand5",
+      "packages": ["com.tencent.mm:appbrand5"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand6",
+      "packages": ["com.tencent.mm:appbrand6"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand7",
+      "packages": ["com.tencent.mm:appbrand7"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand8",
+      "packages": ["com.tencent.mm:appbrand8"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand9",
+      "packages": ["com.tencent.mm:appbrand9"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand10",
+      "packages": ["com.tencent.mm:appbrand10"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand11",
+      "packages": ["com.tencent.mm:appbrand11"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:appbrand12",
+      "packages": ["com.tencent.mm:appbrand12"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.tencent.mm:toolsmp",
+      "packages": ["com.tencent.mm:toolsmp"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread;2.raster;rt-launcher",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread,2.raster,rt-launcher",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ],
+          "4-7": [
+            "RenderThread",
+            "Job.",
+            "Loading.",
+            "TaskGraph",
+            "NativeThread",
+            "Background"
+          ]
+        },
+        "other": "0-3,4-7"
+      }
+    },
+    {
+      "friendly": "自定义·com.eg.android.AlipayGphone:sandboxed_privilege_process",
+      "packages": ["com.eg.android.AlipayGphone:sandboxed_privilege_process"],
+      "cpuset": {
+        "main_thread": "4-7",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "4-7",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "4-7",
+        "comm": {
+          "0-3": [
+            "Worker",
+            "Job",
+            "Async",
+            "Pool",
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.bilibili.app.in",
+      "packages": ["com.bilibili.app.in"],
+      "cpuset": {
+        "main_thread": "0-3",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "0-3",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "0-3",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.ss.android.ugc.aweme",
+      "packages": ["com.ss.android.ugc.aweme"],
+      "cpuset": {
+        "main_thread": "0-3",
+        "heaviest_thread": "RenderThread",
+        "heaviest_cores": "0-3",
+        "heavy_thread": "RenderThread",
+        "heavy_cores": "0-3",
+        "comm": {
+          "0-3": [
+            "Audio",
+            "AudioTrack",
+            "FMOD",
+            "Http",
+            "Socket",
+            "Download",
+            "GC",
+            "Pool",
+            "TAsync"
+          ]
+        },
+        "other": "0-3"
+      }
+    },
+    {
+      "friendly": "自定义·com.android.camera",
+      "packages": ["com.android.camera"],
+      "cpuset": {
+        "main_thread": "0-9",
+        "other": "0-9"
+      }
+    }
+  ]
+}

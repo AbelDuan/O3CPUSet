@@ -1,0 +1,7 @@
+{
+  "config_file": "/data/adb/O3CPUSet/o3lim.conf",
+  "check_interval": 2,
+  "cpuset_name": "O3CPUSet",
+  "web_enable": true,
+  "mode": 2
+}

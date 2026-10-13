@@ -1,68 +1,78 @@
 #!/system/bin/sh
 # ============================================================
-#  开机自启（玄戒O3 · Abel 调度工具箱 · v18 模块自有版）
-#   三块职责（v18 起全部由本模块自持，不再依赖 调度App）：
-#     ① CPU 频率 —— 模块 PM QoS 接管：service 启动时按全局模式下发频率；
-#        守护每轮兜底 + 前台应用按 app 模式覆盖。
-#     ② 平台调优 —— 执行方案包内 powercfg.sh（core_ctl / sched_boost 等 sysfs）。
-#     ③ 线程核心分配 —— 艇长 aether-optext 引擎（默认开启）。
-#   分工清晰：频率 = 模块 QoS，线程 = 艇长引擎，调度器 = powercfg。
+#  开机自启（玄戒O3 · Abel 调度工具箱 · v19 · AppOpt 引擎版）
+#  ★ 线程模块已切换到 AppOpt 原生引擎（v2.2.6 Rust 版）：
+#    · 引擎：Scripts/4+4+2/O3/AppOpt（-w 开自带网页 127.0.0.1:8889）
+#    · 唯一真值：$STATE_DIR/applist.conf（AppOpt 原生格式 + 语义核心）
+#    · o3lim.sh：只维护 applist.conf 的「管理区」段（应用→模式 + 默认档 + 8-9 闸门）
+#    · 精细线程规则（块语法/通配/游戏大核）由 AppOpt 网页(8889)全权管理
+#    · AppOpt.json：mode=2 纯 /proc 模式（无 eBPF 自作主张提核）、web_enable=true
+#    · 语义核心按 O3(4+4+2) 自动映射：e-core=0-3 / p-core=4-7 / hp-core=8-9
+#    · 频率侧不变（apply_freq.sh / guard.sh 与线程引擎解耦）
 # ============================================================
 MODDIR="${0%/*}"
 export MODDIR
 . "$MODDIR/lib/util.sh"
 
-# ★ 关键：先把 CWD 切到模块目录之外（/），再拉任何守护。
-#   守护与 aether-optext 会反复 exec sh "$MODDIR/.../*.sh" 子进程，这些子进程
-#   继承 CWD。若 CWD 停在模块目录，常驻进程会一直持有该目录的 fd →
-#   KSU「禁用/卸载」时要 umount/rm 模块目录会 EBUSY、管理线程卡死，
-#   表现为 KSU 闪退、模块无法禁用/卸载。切走后卸载路径才能干净释放。
 cd / || cd /data
-
-# 等 /data 就绪
 until [ -d "/data/data" ] || [ -d "/data/user/0" ]; do sleep 5; done
 mkdir -p "$STATE_DIR" "$TMPD" 2>/dev/null
 
-log "⚡ 玄戒O3 调度工具箱 service 启动（v18 模块自有）"
+AETHER_DIR_SCRIPT="$MODDIR/Scripts/4+4+2/O3/o3lim.sh"
+APPOPT="$MODDIR/Scripts/4+4+2/O3/AppOpt"
+APPOPT_JSON="$MODDIR/Scripts/4+4+2/O3/AppOpt.json"
+CONF="$STATE_DIR/applist.conf"
+
+# 等 boot 完成（自带网页/拓扑探测需要系统就绪；参考 AppOpt 官方 service 行为）
+_i=9
+until [ "$(getprop sys.boot_completed)" = "1" ] || [ "$_i" -le 0 ]; do _i=$((_i-1)); sleep 3; done
+
+log "⚡ 玄戒O3 调度工具箱 service 启动（v19 · 线程引擎=AppOpt）"
 
 SCHEME=$(active_scheme)
 [ -z "$SCHEME" ] && SCHEME="sweet_bal"
 
-# 1) 频率接管：按当前全局模式下发 PM QoS（O3 上唯一被强制执行的频率旋钮）
+# 1) 频率接管
 current_mode_read 2>/dev/null
 sh "$MODDIR/Scripts/4+4+2/O3/apply_freq.sh" --mode "${CUR_MODE:-balance}" >> "$LOG_FILE" 2>&1
 log "· 频率已按模式[${CUR_MODE:-balance}]下发（QoS）"
 
-# 2) 平台调优脚本（sysfs 节点，与方案包内 powercfg.sh 同源）
+# 2) 平台调优脚本
 PC="${MODDIR}/Config/4+4+2/O3/${SCHEME}/powercfg.sh"
 if [ -f "$PC" ]; then
     sh "$PC" >> "$LOG_FILE" 2>&1
     log "· powercfg.sh 已执行（方案 $SCHEME）"
 fi
 
-# 3) 线程核心分配 —— 艇长引擎（默认开启）
-#    aether_ctl.sh 内部自行判 aether.on / 二进制是否存在：
-#      · 未启用 → 跳过；
-#      · 二进制缺失 / 内核不支持 eBPF → aether-optext 自身静默退出，不影响其余功能。
-AETHER_CTL="$MODDIR/Scripts/4+4+2/O3/aether/aether_ctl.sh"
-if [ -f "$AETHER_CTL" ]; then
-    # 首次/升级：确保拓扑展开配置已落地（幂等）
-    sh "$AETHER_CTL" deploy >/dev/null 2>&1
-    out=$(sh "$AETHER_CTL" start 2>&1)
-    log "· 艇长线程引擎: $out"
+# 3) 线程模块 —— AppOpt 引擎
+#    · o3lim.sh boot/gen：生成 applist.conf 的「管理区」段（按 O3 语义核心）
+#    · AppOpt -w -c applist.conf -b O3CPUSet：原生二进制落核 + 开自带网页
+if [ -f "$AETHER_DIR_SCRIPT" ]; then
+    sh "$AETHER_DIR_SCRIPT" boot >> "$LOG_FILE" 2>&1
+    log "· 线程配置已生成（o3lim boot，applist.conf 管理区）"
+fi
+# AppOpt.json 就位（若模块目录里的模板被改过，以模块目录为准；否则引擎自动落盘）
+if [ -f "$APPOPT_JSON" ]; then
+    cp -f "$APPOPT_JSON" "${MODDIR}/Scripts/4+4+2/O3/AppOpt.json" 2>/dev/null
+fi
+if [ -f "$APPOPT" ]; then
+    chmod 0755 "$APPOPT" 2>/dev/null
+    pkill -f AppOpt 2>/dev/null
+    # 工作目录 = 二进制所在目录，AppOpt.json 相对 "./AppOpt.json" 在此目录
+    ( cd "$MODDIR/Scripts/4+4+2/O3" && nohup ./AppOpt -w -c "$CONF" -b O3CPUSet -s 2 </dev/null >> "$LOG_FILE" 2>&1 & )
+    log "· 线程引擎 AppOpt 已启动（-w 开自带网页 8889 · -c applist.conf · -s 2）"
 else
-    log "· 未找到 aether_ctl.sh，跳过线程引擎"
+    log "· 未找到 AppOpt 二进制，跳过线程引擎"
 fi
 
-# 4) 调度守护 guard.sh —— 每轮兜底频率 + 线程分配 + 大核限制
-#   （CWD 已在文件顶部切到 /，守护与子进程均不持有模块目录，见顶部注释）
+# 4) 调度守护 guard.sh（前台识别 + 频率兜底 + 触发 o3lim 增量）
 GUARD_SH="$MODDIR/Scripts/4+4+2/O3/guard.sh"
 if [ -f "$GUARD_SH" ]; then
     nohup sh "$GUARD_SH" </dev/null >> "$LOG_FILE" 2>&1 &
     log "· 调度守护已拉起（guard.sh pid $!）"
 fi
 
-# 5) 模块卡片描述 = 当前功能启用状态
+# 5) 模块卡片描述
 update_module_desc >/dev/null 2>&1
 
 exit 0

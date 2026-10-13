@@ -34,13 +34,10 @@ cd / || cd /data
 # 「QoS 遗留值只清一次」的标记（见主循环里亮/息屏切换那段的原因说明）
 QOS_CLEARED="${STATE_DIR}/qos_cleared"
 
-# 线程配置：v18.2.9 起本守护只保证「配置存在」+「引擎在跑」，生成与落核全归舰长引擎。
-AETHER_CTL="$MODDIR/Scripts/4+4+2/O3/aether/aether_ctl.sh"
+# 线程配置（v19）：本守护只保证「applist.conf 存在」+「AppOpt 引擎在跑」；
+#   生成与落核全归 o3lim.sh（生成管理区）+ AppOpt（纯规则落核）。
+#   aether 相关路径已停用（仅保留卸载清理用）。
 AETHER_THREADS="/sdcard/Android/Aether/threads.json"
-ONF="${STATE_DIR}/aether.on"
-# 本模块二进制路径（pgrep -f 的完整路径已 regex 转义；「+」是元字符）
-AETHER_BIN="$MODDIR/Scripts/4+4+2/O3/aether/aether-optext"
-AETHER_BIN_RE="$(printf '%s' "$AETHER_BIN" | sed 's/[.[\*^$()+?{}|]/\\&/g')"
 
 log "🛡 守护启动（亮屏 ${INTERVAL}s / 息屏 $((INTERVAL*6))s；频率兜底 + 线程配置保活，线程落核归舰长引擎）"
 
@@ -144,8 +141,9 @@ while :; do
     #   ${MODDIR}/Scripts 目录随之消失 → 守护立刻退出，避免常驻进程挡住 KSU
     #   卸载时的目录释放（否则 KSU 卡死闪退、模块无法禁用/卸载）。
     if [ ! -d "${MODDIR}/Scripts" ]; then
-        # 模块要没了：顺手把独立的线程引擎（aether-optext）也停掉，
+        # 模块要没了：顺手把独立的线程引擎也停掉，
         # 否则它仍持有二进制文件、挡住卸载目录释放。
+        pkill -f "O3/AppOpt" 2>/dev/null
         pkill -f "O3/aether/aether-optext" 2>/dev/null
         exit 0
     fi
@@ -230,27 +228,25 @@ while :; do
             fi
         fi
 
-        # ---- 3) 确保舰长的线程配置存在（规则生成 + 覆盖合并都归 aether_ctl）----
-        #   v18.3.1：本守护**不再**生成/落核线程 —— 只负责「配置在不在」。
-        #   · threads.json 丢失/为空 → 让 aether_ctl deploy 重新生成
-        #   · 用户改了自定义分配 → WebUI 调 aetherset 时已即时 deploy，此处无需轮询
-        if [ ! -s "$AETHER_THREADS" ]; then
-            sh "$AETHER_CTL" deploy >/dev/null 2>&1
-            log_quiet "🔁 threads.json 缺失 → 已让舰长重新部署配置"
-        fi
+    # ---- 3) 确保线程配置存在（v19：线程归 AppOpt，唯一真值 applist.conf）----
+    #   AppOpt 自带网页(8889) 与 我方 WebUI 联动同一份 applist.conf（管理区段）。
+    #   配置丢失/为空 → 让 o3lim 重新生成管理区（AppOpt inotify 热重载）。
+    APPCONF="$STATE_DIR/applist.conf"
+    if [ ! -s "$APPCONF" ]; then
+        sh "$MODDIR/Scripts/4+4+2/O3/o3lim.sh" gen >/dev/null 2>&1
+        log_quiet "🔁 applist.conf 缺失 → 已重新生成管理区"
+    fi
 
-        # ---- 4) 超大核 8-9 锁：常态锁掉，仅游戏/不接管放行 ----
-        #   v18.3.2：引擎会把普通应用的渲染线程「保护性提升」到 8-9（实测小红书 95 次、
-        #   小爱 57 次…），且该行为是二进制硬编码、无法用 features 关闭。
-        #   v18.3.4：实测证明「迁进程进锁核组」拦不住引擎 —— 引擎的落核是**逐线程**
-        #   cgroup 迁移（写 OptExt/<g>/tasks），进程在 locked 组里它的线程照样被
-        #   单独拎去 8-9。也试过收窄 OptExt 子组 cpus（被引擎重建）、收窄根组
-        #   （子组占 8-9 → EINVAL）、bind-mount 冻结（引擎另建怪名组绕过）。
-        #   因此 v18.3.4 起主链路改为下面的 ⑤ 组级清扫；这里仍保留进程迁移作为
-        #   「第一道」与放行判定（游戏/不接管要迁回系统组才能拿全核）。
-        if [ -x "$MODDIR/Scripts/4+4+2/O3/bigcore_lock.sh" ]; then
-            sh "$MODDIR/Scripts/4+4+2/O3/bigcore_lock.sh" "$FG" >/dev/null 2>&1
-        fi
+    # ---- 4) 超大核 8-9 锁：v19 起**不再需要** ----
+    #   v18.x 期间引擎（aether）会把普通应用的渲染线程「保护性提升」到 8-9，
+    #   且二进制硬编码无法关闭 —— 那时才需要 bigcore_lock 组级清扫来夺回。
+    #   v19 换用 AppOpt：它是**纯规则驱动**（无任何自作主张提核），配置写 0-3/4-7，
+    #   它就只落 0-3/4-7；8-9 只在规则显式写 hp-core 时出现（游戏）。
+    #   因此清扫链路（bigcore_lock.sh）停用，避免与 AppOpt 正当规则打架。
+    #   （如需应急恢复：export O3_BIGCORE_LOCK=1 即可重新启用清扫。）
+    if [ "${O3_BIGCORE_LOCK:-0}" = "1" ] && [ -x "$MODDIR/Scripts/4+4+2/O3/bigcore_lock.sh" ]; then
+        sh "$MODDIR/Scripts/4+4+2/O3/bigcore_lock.sh" "$FG" >/dev/null 2>&1
+    fi
 
 
         # （相机档位看护、超大核 8-9 cpuset 限制、camera_freq_guard 拉起 —— 均已移除。
@@ -267,25 +263,22 @@ while :; do
     #   （高频采样看到 0~31 个线程在两次 sweep 之间被重新写回 8-9）。
     #   两次把平均窗口压到 ~1.5~2.5s，代价是稳态多一次 fork（零写入不变）。
     #   关闭：touch $STATE_DIR/allow_bigcore
-    if [ -x "$MODDIR/Scripts/4+4+2/O3/bigcore_lock.sh" ] && [ ! -f "$STATE_DIR/allow_bigcore" ]; then
+    # ---- 5) 组级清扫：v19 起停用（AppOpt 无自作主张提核，见上）----
+    if [ "${O3_BIGCORE_LOCK:-0}" = "1" ] && [ -x "$MODDIR/Scripts/4+4+2/O3/bigcore_lock.sh" ] && [ ! -f "$STATE_DIR/allow_bigcore" ]; then
         sh "$MODDIR/Scripts/4+4+2/O3/bigcore_lock.sh" sweep >/dev/null 2>&1
         sleep "${SWEEP_SPLIT:-2}"
         sh "$MODDIR/Scripts/4+4+2/O3/bigcore_lock.sh" sweep >/dev/null 2>&1
     fi
 
     # ---- 引擎看护（每轮，不限于 WORK）----
-    #   ⚠ v18.3.1 新增：线程完全交舰长后，**引擎是否活着**就成了唯一的线程保障。
-    #   此前守护只查「threads.json 在不在」，引擎崩了/没起来一律无人察觉 ——
-    #   实测强杀引擎后守护连等 3 轮都不会自愈，线程分配静默失效。
-    #   这里每轮用一次 pgrep（≈30ms）比对，掉了就用 aether_ctl start 拉起（幂等）。
-    # ★ 落核引擎改为 AppOpt（JZzz v14 二进制，aether 已停用）；掉线即拉起，保证配置=现场。
-    #   注意：AppOpt 运行期 cmdline 只含 basename（"AppOpt -c ..."），用完整路径 pgrep 永远匹配不到，
-    #   会导致每轮重复拉起、进程堆积。故用 "AppOpt -c" 片段匹配。
+    #   v19：线程引擎 = AppOpt（含自带网页 -w）。引擎是线程分配的唯一保障，掉了就拉起。
+    #   注意：AppOpt 运行期 cmdline 只含 basename（"AppOpt -w -c ..."），用完整路径 pgrep
+    #   匹配不到，会导致每轮重复拉起、进程堆积。故用 "AppOpt" 片段匹配。
     APPOPT="$MODDIR/Scripts/4+4+2/O3/AppOpt"
     if [ -x "$APPOPT" ]; then
-        if ! pgrep -f 'AppOpt -c' >/dev/null 2>&1; then
-            nohup "$APPOPT" -c "$STATE_DIR/o3lim.conf" -s 2 </dev/null >> "$LOG_FILE" 2>&1 &
-            log_quiet "🔄 AppOpt 落核引擎未运行 → 已自动拉起（守护看护）"
+        if ! pgrep -f 'AppOpt' >/dev/null 2>&1; then
+            ( cd "$MODDIR/Scripts/4+4+2/O3" && nohup ./AppOpt -w -c "$STATE_DIR/applist.conf" -b O3CPUSet -s 2 </dev/null >> "$LOG_FILE" 2>&1 & )
+            log_quiet "🔄 AppOpt 引擎未运行 → 已自动拉起（守护看护，含自带网页）"
         fi
     fi
 
