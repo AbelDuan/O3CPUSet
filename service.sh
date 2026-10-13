@@ -58,6 +58,68 @@ if [ -f "$AETHER_CTL" ]; then
     log "· 线程基准已部署（aether_ctl deploy：模板+自定义→threads.json）"
 fi
 
+# 2c) ★ v19.0.6：aether-optext 已废弃（线程引擎统一为 AppOpt），这里做开机自愈清理。
+#     背景：v18 时代的 aether-optext 进程会在设备上留下孤儿实例（实测存活 13h+），
+#     它按 /sdcard/Android/Aether/threads.json 自建 /dev/cpuset/OptExt/ 组树并与
+#     AppOpt 抢同一批线程的 cgroup（一个线程只能属于一个组）→ 表现为「省电应用
+#     的 RenderThread 被改到 2-3」「冷启动瞬态核位不回落」等假异常。
+#     v19 起所有启动路径已不含 aether start，本段只负责：
+#       ① 停掉仍在跑的本模块 aether-optext（含读同一份 -c CFG 的兄弟实例）
+#       ② 删除 aether.on 开关，杜绝任何路径再次拉起
+#       ③ 移除空的 /dev/cpuset/OptExt 组树（残留线程先迁回根组再删空组）
+#     ⚠ 只读 deploy 仍保留（o3lim 的兜底源依赖它生成的 threads.json），不停。
+AETHER_BIN="$MODDIR/Scripts/4+4+2/O3/aether/aether-optext"
+AETHER_BIN_RE=$(printf '%s' "$AETHER_BIN" | sed 's/[][\.*+?(){}|^$]/\\&/g')
+AETHER_CFG="/sdcard/Android/Aether/threads.json"
+rm -f "$STATE_DIR/aether.on" 2>/dev/null     # 先摘开关，防止边杀边被拉起
+pkill -f "$AETHER_BIN_RE" 2>/dev/null
+# 同配置竞争实例：读同一份 -c CFG 但不是本模块二进制的 aether-optext
+for _p in $(pgrep -f "aether-optext -c $AETHER_CFG" 2>/dev/null); do
+    case "$(tr '\0' ' ' < "/proc/$_p/cmdline" 2>/dev/null)" in
+        *"$AETHER_BIN"*) continue ;;   # 本模块自己，跳过
+    esac
+    kill "$_p" 2>/dev/null
+done
+sleep 1
+if pgrep -f "$AETHER_BIN_RE" >/dev/null 2>&1; then
+    log "⚠ aether-optext 仍有残留（已废弃，建议手动核查）"
+else
+    log "· aether-optext 已废弃清理完成（无残留进程）"
+fi
+# 清理 OptExt 组树：先把残留线程迁回根组，再从深处删空组。
+# ⚠ 两个实测陷阱：
+#   ① 必须**先迁根组自己的 tasks** 再删 —— 只清子组会留下「根组非空」导致 rmdir EBUSY
+#      （实测根组残留 87 个线程，子组全空也删不掉）。
+#   ② 迁移用 `echo <tid> > /dev/cpuset/tasks`（逐线程）而不是 cgroup.procs ——
+#      写 cgroup.procs 传 tid 会迁**整个线程组**，把同进程的兄弟线程一起带跑
+#      （实测小红书主进程被整体踢到根组）。
+if [ -d /dev/cpuset/OptExt ]; then
+    # ① 子组线程先归位
+    for _d in /dev/cpuset/OptExt/*/; do
+        [ -d "$_d" ] || continue
+        for _t in $(cat "$_d/tasks" 2>/dev/null); do
+            echo "$_t" > /dev/cpuset/tasks 2>/dev/null
+        done
+    done
+    # ② 根组自身线程归位（关键，漏了这步 rmdir 必然失败）
+    for _t in $(cat /dev/cpuset/OptExt/tasks 2>/dev/null); do
+        echo "$_t" > /dev/cpuset/tasks 2>/dev/null
+    done
+    sleep 1
+    # ③ 从深到浅删空组
+    _i=0
+    while [ "$_i" -lt 6 ]; do
+        rmdir /dev/cpuset/OptExt/*/ 2>/dev/null
+        _i=$((_i+1))
+    done
+    rmdir /dev/cpuset/OptExt 2>/dev/null
+    if [ -d /dev/cpuset/OptExt ]; then
+        log "⚠ /dev/cpuset/OptExt 仍有残留线程，未能移除（不影响功能）"
+    else
+        log "· 已移除废弃的 /dev/cpuset/OptExt 组树"
+    fi
+fi
+
 # 3) 线程模块 —— AppOpt 引擎
 #    · o3lim.sh boot/gen：生成 applist.conf 的「管理区」段（按 O3 语义核心）
 #    · AppOpt -w -c applist.conf -b O3CPUSet：原生二进制落核 + 开自带网页

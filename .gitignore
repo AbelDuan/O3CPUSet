@@ -1,4 +1,4 @@
-﻿.git/
+.git/
 .gitattributes
 .gitignore
 LICENSE
@@ -6,3 +6,21 @@ LICENSE
 dist/
 *.bak-*
 __pycache__/
+
+# ---- 自检沙盒（tools/test_*.py 建在仓库根的临时目录）----
+# ⚠ 这些规则必须与 tools/test_pack_hygiene.py 的 SANDBOX 正则、
+#   build_module.py 的 SKIP_PREFIXES 保持同一口径：
+#     · .test_*  ← .test_sync_skip/ 等
+#     · _t_*     ← _t_lw_*/ _t_v16_*/ _t_schedcores_*/ 等
+#     · _rep_*   ← 报告类临时产物
+#     · scratch*
+#   任一侧新增前缀，三处都要同步，否则 test_pack_hygiene 的 [3] 会失败。
+#   测试故意不在退出时 rmtree（宿主 safe-delete 钩子会因批量删除 >50 文件
+#   抛 SystemExit(1)，把全绿测试的退出码染成 1），残留靠这里忽略。
+.test_sync_skip/
+.test_*/
+_t_*/
+_t_*
+_rep_*/
+_rep_*
+scratch*/
