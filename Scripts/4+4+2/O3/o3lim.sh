@@ -50,6 +50,35 @@ mode_to_core() {
 # 语义核心 → 是否含大核（闸门判据）
 core_has_big() { case "$1" in *hp-core*|*8*|*9*) return 0 ;; *) return 1 ;; esac; }
 
+# ---------- OVR 覆盖（pkg<TAB>角色档）→ 语义核心 ----------
+#   来源：① 模块内置种子 $MODDIR/Config/aether_overrides.tsv（出厂默认，如小红书=省电）
+#         ② 运行时用户自定义 $STATE_DIR/aether_overrides.tsv（WebUI/前端 set 写入）
+#   优先级：低于 WebUI 的 game_assign/app_assign（用户显式选择仍生效），
+#           高于 threads.json 兜底源与默认 backfill（p-core）。
+#   ★ 小红书等「省电」应用靠这里稳定落到 e-core(0-3)，不再依赖 aether_ctl deploy 是否跑过。
+emit_ovr() {
+  local f="$1"
+  [ -f "$f" ] || return 0
+  awk -F'\t' -v ALLOWF="$ALLOW" '
+    BEGIN { while ((getline a < ALLOWF) > 0) { gsub(/[ \t\r]/,"",a); if (a!="") allow[a]=1 } close(ALLOWF) }
+    $1 ~ /^[a-zA-Z0-9._:]+$/ && $1 !~ /\*/ {
+      role=$2; gsub(/[\r \t]/,"",role)
+      core=""
+      if (role=="powersave")        core="e-core"
+      else if (role=="balance")     core="p-core"
+      else if (role=="performance") core="e-core,p-core"
+      else if (role=="game"||role=="fast") core="hp-core"
+      else if (role=="none"||role=="") core=""
+      if (core=="") next
+      # 8-9 闸门：核位含 hp-core 且包非放行 → 收敛为 p-core
+      if (core ~ /hp-core/ && !($1 in allow)) {
+        gsub(/hp-core,?/,"",core); sub(/,$/,"",core)
+        if (core=="") core="p-core"
+      }
+      print $1 "=" core
+    }' "$f" 2>/dev/null </dev/null
+}
+
 # ---------- 放行判据（gamelist + 用户自定义 + apprules 含 8/9）----------
 build_allow() {
   : > "$ALLOW"
@@ -213,6 +242,12 @@ gen_managed_section() {
     done < "${out}.r"
     rm -f "${out}.r"
   fi
+
+  # ②b 覆盖档（OVR 风格：模块内置种子 + 运行时用户自定义）→ 语义核心
+  #    优先级低于 WebUI 的 game_assign/app_assign，高于 threads.json 兜底与默认 backfill。
+  #    ★ 小红书等「省电」应用在此稳定落 e-core(0-3)，不再依赖 aether_ctl deploy 是否跑过。
+  emit_ovr "$MODDIR/Config/aether_overrides.tsv" >> "$out"
+  emit_ovr "$STATE_DIR/aether_overrides.tsv"    >> "$out"
 
   # ① 高优先：游戏表 game_assign.tsv（pkg<TAB>mode）→ 按其模式映射
   #    游戏档 performance/game/空 → hp-core（8-9 定死大核）；balance → p-core；powersave → e-core

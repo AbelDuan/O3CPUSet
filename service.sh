@@ -44,6 +44,20 @@ if [ -f "$PC" ]; then
     log "· powercfg.sh 已执行（方案 $SCHEME）"
 fi
 
+# 2b) 线程基准部署：把「模板 + 用户自定义覆盖」按真机拓扑展开成 threads.json，
+#     供 o3lim.sh 的 ③ 兜底源消费（含小红书=省电等出厂默认）。
+#     ⚠ 必须跑：否则 o3lim 只读得到陈旧/缺失的 threads.json，普通应用会漏到默认 p-core(4-7)。
+#     已安装设备若缺运行时 OVR，这里顺手播种一次（模块内置种子 Config/aether_overrides.tsv）。
+if [ ! -f "$STATE_DIR/aether_overrides.tsv" ] && [ -f "$MODDIR/Config/aether_overrides.tsv" ]; then
+    cp -f "$MODDIR/Config/aether_overrides.tsv" "$STATE_DIR/aether_overrides.tsv" 2>/dev/null
+    chmod 0666 "$STATE_DIR/aether_overrides.tsv" 2>/dev/null
+fi
+AETHER_CTL="$MODDIR/Scripts/4+4+2/O3/aether/aether_ctl.sh"
+if [ -f "$AETHER_CTL" ]; then
+    sh "$AETHER_CTL" deploy >> "$LOG_FILE" 2>&1
+    log "· 线程基准已部署（aether_ctl deploy：模板+自定义→threads.json）"
+fi
+
 # 3) 线程模块 —— AppOpt 引擎
 #    · o3lim.sh boot/gen：生成 applist.conf 的「管理区」段（按 O3 语义核心）
 #    · AppOpt -w -c applist.conf -b O3CPUSet：原生二进制落核 + 开自带网页

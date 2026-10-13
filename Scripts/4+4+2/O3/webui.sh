@@ -372,17 +372,23 @@ cmd_appfreqapps() {
     if [ ! -s "$apps_f" ] && has pm; then
         pm list packages 2>/dev/null | sed 's/^package://' | sort -u > "$apps_f"
     fi
-    # ② 子进程集合（并集）—— 追加到 apps_f
+    # ② 子进程集合（仅微信 / 支付宝小程序，其余 :xxx 子进程不进列表）
+    #    ⚠ v19 修复：① 用 shell 内建 read 逐 /proc 读取（零逐进程 fork —— 之前每个进程 spawn
+    #       tr|head 两个子进程 → 列表卡死）；② 只收 com.tencent.mm: / com.eg.android.AlipayGphone:
+    #       的子进程，其他应用的 :xxx 子进程（推送/服务）不展示为「小程序」，避免列表膨胀。
     {
-        # a) /proc 运行中的（cmdline 首段含 : ）
+        # a) /proc 运行中进程的 cmdline 首段（read 内建，零 fork；
+        #    变量不能含 NUL → 自动只拿到首个 NUL 前字段 = 包名）
         for d in /proc/[0-9]*; do
             [ -r "$d/cmdline" ] || continue
-            n=$(tr '\0' '\n' < "$d/cmdline" 2>/dev/null | head -1)
-            case "$n" in *:*) printf '%s\n' "$n" ;; esac
+            IFS= read -r pkg < "$d/cmdline" 2>/dev/null
+            case "$pkg" in
+                com.tencent.mm:*|com.eg.android.AlipayGphone:*) [ -n "$pkg" ] && printf '%s\n' "$pkg" ;;
+            esac
         done 2>/dev/null
-        # b) 我方配置文件里已有的
+        # b) 我方配置文件里已有的（同口径：仅微信 / 支付宝小程序）
         for f in "$mode_f" "$assign_f" "$conf"; do
-            [ -f "$f" ] && awk -F'[=\t]' '$1 ~ /:/{print $1}' "$f" 2>/dev/null
+            [ -f "$f" ] && awk -F'[=\t]' '$1 ~ /^(com\.tencent\.mm|com\.eg\.android\.AlipayGphone):/{print $1}' "$f" 2>/dev/null
         done
     # ⚠ 过滤含 * 的通配伪包名（如 `pkg:sub*`、`pkg:*`）：不是真进程名，只造成脏数据
     } | grep -v '^[[:space:]]*$' | grep -v '\*' | sort -u >> "$apps_f"

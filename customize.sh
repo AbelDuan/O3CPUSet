@@ -97,6 +97,17 @@ done
 
 mkdir -p "$STATE_DIR" "${STATE_DIR}/webui"
 
+# ---------- 播种运行时 OVR 覆盖表（仅首次安装）----------
+#   Config/aether_overrides.tsv 是模块内置「出厂默认覆盖」（如小红书=省电），
+#   运行时真正被 aether_ctl / o3lim 消费的是 $STATE_DIR/aether_overrides.tsv。
+#   首次安装把种子落进状态目录（已存在则不覆盖，保留用户自定义）。
+if [ ! -f "$STATE_DIR/aether_overrides.tsv" ] && [ -f "$MODPATH/Config/aether_overrides.tsv" ]; then
+    cp -f "$MODPATH/Config/aether_overrides.tsv" "$STATE_DIR/aether_overrides.tsv" 2>/dev/null
+    chmod 0666 "$STATE_DIR/aether_overrides.tsv" 2>/dev/null
+    chown 0:0 "$STATE_DIR/aether_overrides.tsv" 2>/dev/null
+    ui_print "- 已播种线程覆盖表（含小红书=省电 等出厂默认）"
+fi
+
 # ---------- 初始化状态 ----------
 if [ ! -f "${STATE_DIR}/active_scheme" ]; then
     echo "sweet_bal" > "${STATE_DIR}/active_scheme"
