@@ -154,22 +154,37 @@ fi
 #   根因：AppOpt 运行时会**自行持久化**工作模式到 AppOpt.json（在 8889 页切换
 #     即写盘），实测把 web_enable 写成了 false；而 v19.0.5 起 service.sh 不再
 #     覆盖该文件（为的是不把用户选的 mode 打回默认），于是 false 被永久保留。
-#   修法：只补 web_enable=true 这一项，mode / check_interval 一律不动 ——
-#     既保住用户对引擎模式的选择，又保证网页永远可达。
-if [ -f "$APPOPT_JSON" ] && ! grep -q '"web_enable"[[:space:]]*:[[:space:]]*true' "$APPOPT_JSON" 2>/dev/null; then
+#   ⚠ 关键顺序：**必须在 AppOpt 启动之后**再补。实测放在启动前无效 ——
+#     引擎启动时会把自己内存里的 web_enable=false 写回文件，把修改覆盖掉。
+#     所以流程是：启动 → 补 true → 重启引擎让它读到。
+#   只动 web_enable 一项，mode / check_interval 一律保留用户选择。
+fix_web_enable() {
+    [ -f "$APPOPT_JSON" ] || return 0
+    grep -q '"web_enable"[[:space:]]*:[[:space:]]*true' "$APPOPT_JSON" 2>/dev/null && return 0
     if grep -q '"web_enable"' "$APPOPT_JSON" 2>/dev/null; then
         sed -i -E 's/"web_enable"[[:space:]]*:[[:space:]]*[^,}]*/"web_enable": true/' "$APPOPT_JSON" 2>/dev/null
     else
         sed -i -E 's/^([[:space:]]*)("[a-z_]+":)/\1"web_enable": true,\n\1\2/' "$APPOPT_JSON" 2>/dev/null
     fi
-    log "· AppOpt.json 的 web_enable 已补为 true（8889 网页可达）"
-fi
-if [ -f "$APPOPT" ]; then
+    log "· AppOpt.json 的 web_enable 已补为 true（重启引擎使生效）"
+    return 1   # 1 = 改过，需要重启引擎
+}
+start_appopt() {
     chmod 0755 "$APPOPT" 2>/dev/null
     pkill -f AppOpt 2>/dev/null
+    sleep 1
     # 工作目录 = 二进制所在目录，AppOpt.json 相对 "./AppOpt.json" 在此目录
     ( cd "$MODDIR/Scripts/4+4+2/O3" && nohup ./AppOpt -w -c "$CONF" -b O3CPUSet -s 2 </dev/null >> "$LOG_FILE" 2>&1 & )
+}
+if [ -f "$APPOPT" ]; then
+    start_appopt
     log "· 线程引擎 AppOpt 已启动（-w 开自带网页 8889 · -c applist.conf · -s 2）"
+    # 启动后引擎已把自己的模式写盘；此时再补 web_enable 并重启一次，才不会被覆盖
+    sleep 2
+    if ! fix_web_enable; then
+        start_appopt
+        log "· 已按 web_enable=true 重启线程引擎"
+    fi
 else
     log "· 未找到 AppOpt 二进制，跳过线程引擎"
 fi
