@@ -366,17 +366,30 @@ cmd_appfreqapps() {
     local apps_f="${TMPD}/apps.list" sys_f="${TMPD}/apps.sys"
     mkdir -p "$TMPD" 2>/dev/null
 
-    # ① 主包集合：已安装应用（pm list packages，快且稳定）
-    #    ⚠ 不再用 `cmd package query-activities`：部分 ROM 该命令极慢/挂起（界面卡死主因之一），
-    #      且其 launcher 输出可能带 `:sub` 子进程名，污染主列表、被误判成小程序。
-    if has pm; then
-        pm list packages 2>/dev/null | sed 's/^package://' > "$apps_f"
-    elif has cmd; then
-        cmd package list packages 2>/dev/null | sed 's/^package://' > "$apps_f"
+    # ★ 一次性清理旧版遗留的 :xxx 子进程规则（旧版 WebUI 曾把全部子进程当小程序 dump 进
+    #   app_freq.tsv，导致配置膨胀、每次保存/渲染变慢）。WebUI 只给无冒号主包设档，含冒号行=遗留。
+    #   用标记文件保证仅升级后首次触发一次（无需重启）。
+    if [ -f "$APP_FREQ_FILE" ] && [ ! -f "${STATE_DIR}/.cleanup_legacy_done" ]; then
+        awk -F'\t' '$1 !~ /:/' "$APP_FREQ_FILE" > "${APP_FREQ_FILE}.clean" 2>/dev/null && mv -f "${APP_FREQ_FILE}.clean" "$APP_FREQ_FILE" 2>/dev/null
+        : > "${STATE_DIR}/.cleanup_legacy_done"
     fi
-    # 主包只保留「无冒号」（带冒号子进程不进主列表；小程序仅由步骤②按微信/支付宝口径提供）
-    grep -v ':' "$apps_f" 2>/dev/null | sort -u > "${apps_f}.m" 2>/dev/null
-    mv -f "${apps_f}.m" "$apps_f" 2>/dev/null
+
+    # ① 主包集合：仅「有界面（LAUNCHER 入口）」的应用
+    #    ⚠ 用 `cmd package query-activities -a MAIN -c LAUNCHER` 拿 launcher 应用，
+    #      剔除无界面后台服务/系统组件（用户要求：不要没有界面的应用）。
+    #      —— 部分 ROM 该命令偶发极慢/挂起，故包 timeout 兜底；超时/失败退化为全量主包（至少不卡死）。
+    local apps_t="${TMPD}/apps.launcher"
+    : > "$apps_t"
+    if has cmd; then
+        ( timeout 15 cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.LAUNCHER 2>/dev/null \
+          | sed 's#/.*##; s/^[[:space:]]*//; s/[[:space:]]*$//' ) > "$apps_t" 2>/dev/null
+    fi
+    if [ ! -s "$apps_t" ] && has pm; then
+        # 退化：全量主包（无冒号）；此分支下「无界面应用」过滤不保证，但保证界面不卡死
+        pm list packages 2>/dev/null | sed 's/^package://' > "$apps_t"
+    fi
+    # 仅保留合法包名 + 无冒号（带冒号子进程不进主列表；小程序仅由步骤②按微信/支付宝口径提供）
+    grep -E '^[a-zA-Z][a-zA-Z0-9._]+$' "$apps_t" 2>/dev/null | grep -v ':' | sort -u > "$apps_f"
     # ② 子进程集合（仅微信 / 支付宝小程序，其余 :xxx 子进程不进列表）
     #    ⚠ v19 修复：① 用 shell 内建 read 逐 /proc 读取（零逐进程 fork —— 之前每个进程 spawn
     #       tr|head 两个子进程 → 列表卡死）；② 只收 com.tencent.mm: / com.eg.android.AlipayGphone:
@@ -701,14 +714,38 @@ cmd_pkginfo() {
     local pkgs="$1"; [ -n "$pkgs" ] || { echo "ERR 缺少包名列表"; return 1; }
     mkdir -p "$WEBUI_DIR" 2>/dev/null
     [ -f "$PKG_LABEL_CACHE" ] || : > "$PKG_LABEL_CACHE"
+    # 并行解析：每个未命中包起一个后台 aapt（限流 8 并发），结果写各自临时文件避免缓存文件竞争，
+    # 末了统一汇总进 PKG_LABEL_CACHE。把一个一个串行 aapt（40 个≈数秒）压到 ~2 秒内，
+    # 直接消除「加载应用 / 首次渲染」的长时间卡死感。
+    local tmpd="${TMPD}/pkginfo.$$"; mkdir -p "$tmpd" 2>/dev/null
+    local n=0
     echo "$pkgs" | while IFS= read -r pkg; do
         [ -z "$pkg" ] && continue
-        # 命中缓存 → 直接回（跳过 aapt，瞬时）
         local hit; hit=$(awk -F'\t' -v P="$pkg" '$1==P{print $2"\t"$3; exit}' "$PKG_LABEL_CACHE" 2>/dev/null)
         if [ -n "$hit" ]; then echo "PKG=${pkg}	${hit}"; continue; fi
-        # 未命中 → aapt 解析（zh 优先）并写回缓存
-        echo "PKG=${pkg}	$(_cmd_pkginfo_one "$pkg")"
+        n=$((n+1))
+        (
+          apk=$(pm path "$pkg" 2>/dev/null | head -1 | sed 's/package://')
+          sys=0; case "$apk" in /system/*|/vendor/*|/product/*|/system_ext/*|/odm/*) sys=1 ;; esac
+          label="$pkg"; l=""
+          if [ -n "$PKGINFO_AAPT" ] && [ -n "$apk" ]; then
+            bad=$("$PKGINFO_AAPT" d badging "$apk" 2>/dev/null)
+            l=$(printf '%s\n' "$bad" | grep -m1 "^application-label-zh-CN:'" | sed "s/^[^:]*:'//;s/'$//")
+            [ -z "$l" ] && l=$(printf '%s\n' "$bad" | grep -m1 -E "^application-label-zh(-[A-Za-z-]+)?'" | sed "s/^[^:]*:'//;s/'$//")
+            [ -z "$l" ] && l=$(printf '%s\n' "$bad" | grep -m1 "^application-label:'" | sed "s/^[^:]*:'//;s/'$//")
+            [ -n "$l" ] && label="$l"
+          fi
+          printf 'PKG=%s\t%s\t%s\n' "$pkg" "$label" "$sys" > "$tmpd/$pkg"
+        ) &
+        [ $((n % 8)) -eq 0 ] && wait
     done
+    wait
+    for f in "$tmpd"/*; do
+        [ -f "$f" ] || continue
+        cat "$f" >> "$PKG_LABEL_CACHE" 2>/dev/null
+        cat "$f"
+    done
+    rm -rf "$tmpd" 2>/dev/null
 }
 
 # 取某簇「最接近目标频率、且不超过目标」的可用档位（目标用于省电上限）。

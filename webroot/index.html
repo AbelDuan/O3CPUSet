@@ -963,12 +963,10 @@ async function viewAppFreq() {
     '</div>';
 
   // ★ 容错：任一环节抛错都要给出可见提示，绝不把界面留在「加载中…」
+  //   ⚠ 首次加载需解析可见应用的中文名（aapt，仅命中缓存前慢），用 busy 给明确「读取中」反馈，避免误判卡死。
   try {
-    await loadAppFreq();
-  } catch (e) { showToast('读取应用频率失败：' + (e && e.message || e)); }
-  try {
-    await loadAppList();
-  } catch (e) { showToast('读取应用列表失败：' + (e && e.message || e)); S.appList = S.appList || []; }
+    await busy('读取应用…', async () => { await loadAppFreq(); await loadAppList(); });
+  } catch (e) { showToast('读取应用失败：' + (e && e.message || e)); S.appList = S.appList || []; }
   try {
     renderAppFreq();
   } catch (e) {
@@ -1873,7 +1871,7 @@ document.addEventListener('click', async (e) => {
       const rows = grp.members.map(p => p + '\t' + val);
       grp.members.forEach(p => { if (S.appfreq) S.appfreq[p] = val; });
       renderAppFreq();
-      const r = await Api.appsetbatch(b64enc(rows.join('\n')), kind);
+      const r = await busy('保存中…', () => Api.appsetbatch(b64enc(rows.join('\n')), kind));
       showToast(/OK/.test(r) ? ('已设「' + grp.label + '」→ ' + (MODE_CN[val] || val) + '（' + grp.members.length + ' 个进程同步）') : ('失败：' + (r || '').slice(0, 60)));
       await loadAppFreq(); renderAppFreq();
     });
@@ -1886,7 +1884,7 @@ document.addEventListener('click', async (e) => {
       if (!val) { showToast('已选「跟随全局」：该应用按全局档运行'); await loadAppFreq(); if (S.tab === 'game') renderGame(); else renderAppFreq(); return; }
       if (kind === 'game') { if (S.gamefreq) S.gamefreq[pkg] = val; } else { if (S.appfreq) S.appfreq[pkg] = val; }
       if (S.tab === 'game') renderGame(); else renderAppFreq();
-      const r = await Api.appsetbatch(b64enc(pkg + '\t' + val), kind);
+      const r = await busy('保存中…', () => Api.appsetbatch(b64enc(pkg + '\t' + val), kind));
       const kindCn = kind === 'game' ? '游戏' : '应用';
       showToast(/OK/.test(r) ? ('已设为' + kindCn + '[' + (MODE_CN[val] || val) + ']（频率+线程同步）') : ('失败：' + (r || '').slice(0, 60)));
       await loadAppFreq(); await loadGameFreq();
